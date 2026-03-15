@@ -1,6 +1,6 @@
 using AquaVivarium.Components.Account.Pages;
 using AquaVivarium.Components.Account.Pages.Manage;
-using AquaVivarium.Data;
+using Domain.Models;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;

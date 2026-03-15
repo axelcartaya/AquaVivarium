@@ -1,8 +1,9 @@
 ﻿@page "/Account/LoginWith2fa"
 
 @using System.ComponentModel.DataAnnotations
+@using Domain.Models
 @using Microsoft.AspNetCore.Identity
-@using AquaVivarium.Data
+@using Data.Context
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
