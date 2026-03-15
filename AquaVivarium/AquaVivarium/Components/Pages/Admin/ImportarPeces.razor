@@ -1,0 +1,106 @@
+﻿@page "/admin/importar"
+@rendermode InteractiveServer
+@using System.Text.Json
+@using Domain.Interfaces.Repositories
+@using Domain.Models
+@using AquaVivarium.DTOs
+@inject IEspecieRepository EspecieRepo
+@inject IPezRepository PezRepo
+@inject NavigationManager Nav
+
+
+<div class="container mt-4">
+    <h3>Importador Masivo de Peces</h3>
+    <p class="text-muted">Pega el código JSON aquí abajo para llenar la base de datos.</p>
+
+    <div class="mb-3">
+        <textarea @bind="jsonRaw" class="form-control" rows="10" placeholder='[ { "Nombre": "Neón", ... } ]'></textarea>
+    </div>
+
+    @if (procesando)
+    {
+        <div class="alert alert-info">Procesando importación... no cierres la página.</div>
+    }
+
+    <button class="btn btn-primary" @onclick="EjecutarImportacion" disabled="@string.IsNullOrWhiteSpace(jsonRaw)">
+        Iniciar Importación
+    </button>
+</div>
+
+@code {
+    private string jsonRaw = "";
+    private bool procesando = false;
+
+    private async Task EjecutarImportacion()
+    {
+        try
+        {
+            procesando = true;
+            await ProcesarImportacion(jsonRaw);
+            Nav.NavigateTo("/peces"); 
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+        finally
+        {
+            procesando = false;
+        }
+    }
+   private async Task ProcesarImportacion(string jsonRaw)
+{
+    try 
+    {
+        var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var listaDto = JsonSerializer.Deserialize<List<ImportPezDto>>(jsonRaw, opciones);
+
+        if (listaDto == null || listaDto.Count == 0)
+        {
+            Console.WriteLine("Error: El JSON parece estar vacío o mal formado.");
+            return;
+        }
+
+        foreach (var dto in listaDto)
+        {
+            Console.WriteLine($"Procesando: {dto.Nombre}...");
+
+            var nuevaEspecie = new Especie
+            {
+                Nombre = dto.Nombre,
+                NombreCientifico = dto.NombreCientifico,
+                Descripcion = dto.Descripcion,
+                PhMin = dto.PhMin,
+                PhMax = dto.PhMax,
+                TempMin = dto.TempMin,
+                TempMax = dto.TempMax,
+                GhMin = dto.GhMin,
+                GhMax = dto.GhMax,
+                Dificultad = dto.Dificultad,
+                TipoEspecie = dto.TipoEspecie
+            };
+
+            await EspecieRepo.AddAsync(nuevaEspecie);
+            Console.WriteLine($"Especie guardada con ID: {nuevaEspecie.Id}");
+
+            var nuevoPez = new Pez
+            {
+                EspecieId = nuevaEspecie.Id,
+                TamanoMaxCm = dto.PezInfo.TamanoMaxCm,
+                Temperamento = dto.PezInfo.Temperamento,
+                ZonaNado = dto.PezInfo.ZonaNado,
+                Gregarismo = dto.PezInfo.Gregarismo
+            };
+
+            await PezRepo.AddAsync(nuevoPez);
+            Console.WriteLine($"Pez guardado correctamente.");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"¡ERROR CRÍTICO!: {ex.Message}");
+        if (ex.InnerException != null) 
+            Console.WriteLine($"Detalle: {ex.InnerException.Message}");
+    }
+}
+}

@@ -1,6 +1,8 @@
 using AquaVivarium.Components;
 using AquaVivarium.Components.Account;
 using Data.Context;
+using Data.Repositories;
+using Domain.Interfaces.Repositories;
 using Domain.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -32,12 +34,6 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-//SERVICIOS DE AUTENTICACIÓN Y BLAZOR
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents()
-    .AddAuthenticationStateSerialization();
-
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
@@ -48,6 +44,23 @@ builder.Services.AddAuthentication(options =>
     options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
 })
     .AddIdentityCookies();
+
+//SERVICIOS DE AUTENTICACIÓN Y BLAZOR
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents()
+    .AddInteractiveWebAssemblyComponents()
+    .AddAuthenticationStateSerialization();
+
+//Dependencias
+builder.Services.AddScoped<IPezRepository, PezRepository>();
+builder.Services.AddScoped<IEspecieRepository, EspecieRepository>();
+
+//Aumentam el tamaño máximo de los mensajes que Blazor Server puede recibir para evitar problemas con la carga de imágenes o datos más grandes
+builder.Services.AddServerSideBlazor()
+    .AddHubOptions(options =>
+    {
+        options.MaximumReceiveMessageSize = 1024 * 1024; // Lo subimos a 1MB
+    });
 
 //buscador de emails falso para que el registro funcione sin configurar un servidor SMTP
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();

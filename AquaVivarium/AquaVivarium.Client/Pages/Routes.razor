@@ -1,0 +1,15 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+@using AquaVivarium.Client
+
+<Router AppAssembly="@typeof(Program).Assembly" 
+        AdditionalAssemblies="new[] { typeof(AquaVivarium.Client._Imports).Assembly }">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(AquaVivarium.Client.Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(AquaVivarium.Client.Layout.MainLayout)">
+            <p role="alert">Lo sentimos, no hay nada en esta dirección.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
