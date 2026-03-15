@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="AquaVivarium/AquaVivarium.Client/AquaVivarium.Client.csproj" />
+  <Project Path="AquaVivarium/AquaVivarium/AquaVivarium.csproj" />
+  <Project Path="Data/Data.csproj" />
+  <Project Path="Domain/Domain.csproj" />
+</Solution>
