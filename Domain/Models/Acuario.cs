@@ -13,7 +13,6 @@ public partial class Acuario
 
     [StringLength(450)]
     public string UsuarioId { get; set; } = null!;
-   
 
     [StringLength(100)]
     public string Nombre { get; set; } = null!;
@@ -29,7 +28,6 @@ public partial class Acuario
 
     [InverseProperty("Acuario")]
     public virtual ICollection<AcuarioEspecie> AcuarioEspecies { get; set; } = new List<AcuarioEspecie>();
-    public virtual ApplicationUser Usuario { get; set; } = null!; //propiedad de navegación
 
     [ForeignKey("EstiloId")]
     [InverseProperty("Acuarios")]

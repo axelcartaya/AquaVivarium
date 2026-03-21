@@ -1,16 +1,19 @@
 using AquaVivarium.Components;
 using AquaVivarium.Components.Account;
+using AquaVivarium.Services;
 using Data.Context;
 using Data.Repositories;
 using Domain.Interfaces.Repositories;
+using Domain.Interfaces.Services;
 using Domain.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//CONFIGURACIÓN DE LA BASE DE DATOS
+//Configuración de la base de datos
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -19,7 +22,7 @@ builder.Services.AddDbContext<AquaVivariumContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-//CONFIGURACIÓN DE IDENTITY 
+//COnfiguración de Identity
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
@@ -51,9 +54,18 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents()
     .AddAuthenticationStateSerialization();
 
-//Dependencias
+//MudBlazor
+builder.Services.AddMudServices();
+
+//Dependencias Repository
 builder.Services.AddScoped<IPezRepository, PezRepository>();
 builder.Services.AddScoped<IEspecieRepository, EspecieRepository>();
+
+//Dependencias Services
+builder.Services.AddScoped<IPezService, PezService>();
+
+//Dependencias API
+builder.Services.AddControllers();
 
 //Aumentam el tamaño máximo de los mensajes que Blazor Server puede recibir para evitar problemas con la carga de imágenes o datos más grandes
 builder.Services.AddServerSideBlazor()
@@ -65,9 +77,21 @@ builder.Services.AddServerSideBlazor()
 //buscador de emails falso para que el registro funcione sin configurar un servidor SMTP
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
+//JSON
+// En el Program.cs del proyecto SERVER
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Esta línea es la que rompe el bucle infinito
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+
+        // Opcional: para que el JSON se vea bien en el navegador (opcional)
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
+
 var app = builder.Build();
 
-// 4. MIDDLEWARE
+// Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
@@ -85,6 +109,8 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 
+//API
+app.MapControllers();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()

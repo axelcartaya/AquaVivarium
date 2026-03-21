@@ -39,6 +39,15 @@ public partial class Especie
     [StringLength(50)]
     public string? TipoEspecie { get; set; }
 
+    [StringLength(100)]
+    public string? Familia { get; set; }
+
+    [StringLength(100)]
+    public string? Genero { get; set; }
+
+    [StringLength(255)]
+    public string? Origen { get; set; }
+
     [InverseProperty("Especie")]
     public virtual ICollection<AcuarioEspecie> AcuarioEspecies { get; set; } = new List<AcuarioEspecie>();
 
@@ -49,7 +58,7 @@ public partial class Especie
     public virtual ICollection<EspecieImagen> EspecieImagenes { get; set; } = new List<EspecieImagen>();
 
     [InverseProperty("Especie")]
-    public virtual Pez? Pece { get; set; }
+    public virtual Pez? Pez { get; set; }
 
     [InverseProperty("Especie")]
     public virtual Planta? Planta { get; set; }

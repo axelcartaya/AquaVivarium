@@ -2,9 +2,6 @@
 using Domain.Interfaces.Repositories;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Data.Repositories
 {
@@ -19,7 +16,9 @@ namespace Data.Repositories
 
         public async Task<IEnumerable<Pez>> GetAllAsync()
         {
-            return await _context.Peces.Include(p => p.Especie).ToListAsync();
+            return await _context.Peces
+                .Include(p => p.Especie) 
+                .ToListAsync();
         }
 
         public async Task AddAsync(Pez pez)
@@ -31,6 +30,11 @@ namespace Data.Repositories
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<Pez> GetPezByIdAsync(int id)
+        {
+            return await _context.Peces.Include(p => p.Especie).FirstOrDefaultAsync(p => p.EspecieId == id);
         }
     }
 }

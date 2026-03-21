@@ -1,0 +1,38 @@
+﻿@* AquaVivarium.Client/Components/PezCard.razor *@
+
+<div class="av-card-float">
+    @* Cabecera Imagen *@
+    <div class="av-card-image-wrapper">
+        <img src="@ImagenUrl" alt="@Nombre" class="av-card-img" />
+    </div>
+
+    @* Cuerpo tarjeta *@
+    <div class="av-card-content">
+        <h3 class="av-fish-name">@Nombre</h3>
+        <p class="av-fish-scientific">@NombreCientifico</p>
+        
+        <div class="av-divider"></div>
+
+        @* Parámetros *@
+        <div class="av-params-grid">
+            <div class="av-param-item">
+                <span class="av-icon">💧</span>
+                <span>@PhMin - @PhMax pH</span>
+            </div>
+            <div class="av-param-item">
+                <span class="av-icon">🌡️</span>
+                <span>@TempMin - @TempMax°C</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Nombre { get; set; } = "Especie";
+    [Parameter] public string? NombreCientifico { get; set; } = "N/A";
+    [Parameter] public string? ImagenUrl { get; set; }
+    [Parameter] public decimal? PhMin { get; set; }
+    [Parameter] public decimal? PhMax { get; set; }
+    [Parameter] public int? TempMin { get; set; }
+    [Parameter] public int? TempMax { get; set; }
+}

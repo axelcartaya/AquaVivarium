@@ -1,11 +1,14 @@
 ﻿using Domain.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Reflection.Emit;
 
 namespace Data.Context;
 
 public partial class AquaVivariumContext : IdentityDbContext<ApplicationUser>
-{
+{  
     public AquaVivariumContext()
     {
     }
@@ -35,25 +38,10 @@ public partial class AquaVivariumContext : IdentityDbContext<ApplicationUser>
 
     public virtual DbSet<Planta> Plantas { get; set; }
 
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // configura las tablas de Identity
         base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<Acuario>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Acuarios__3214EC0767DBFA4E");
-
-            entity.HasOne(d => d.Usuario)
-                .WithMany(p => p.Acuarios)
-                .HasForeignKey(d => d.UsuarioId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_Acuario_Usuario");
-
-            entity.HasOne(d => d.Estilo).WithMany(p => p.Acuarios)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK_Acuario_Estilo");
-        });
 
         modelBuilder.Entity<Acuario>(entity =>
         {
@@ -123,7 +111,7 @@ public partial class AquaVivariumContext : IdentityDbContext<ApplicationUser>
 
             entity.Property(e => e.EspecieId).ValueGeneratedNever();
 
-            entity.HasOne(d => d.Especie).WithOne(p => p.Pece).HasConstraintName("FK_Peces_Especies");
+            entity.HasOne(d => d.Especie).WithOne(p => p.Pez).HasConstraintName("FK_Peces_Especies");
         });
 
         modelBuilder.Entity<Planta>(entity =>

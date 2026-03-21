@@ -1,20 +1,31 @@
-#blazor-error-ui {
-    color-scheme: light only;
-    background: lightyellow;
-    bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
-    box-sizing: border-box;
-    display: none;
-    left: 0;
-    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
-    position: fixed;
-    width: 100%;
-    z-index: 1000;
+﻿:root {
+    --mud-typography-default-family: 'Inter', 'Montserrat', sans-serif;
+    --mud-typography-default-size: 0.95rem;
+    --mud-typography-default-lineheight: 1.6;
+    --mud-typography-h5-weight: 800;
+    --mud-typography-h5-letterspacing: 1px;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
+/* ::deep asegura que el estilo llegue al componente aunque esté anidado */
+::deep .av-logo-text {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #2D3436;
+    text-transform: uppercase;
+}
+
+::deep .nav-link-av {
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #636E72 !important;
+    padding: 0 20px;
+}
+
+::deep .nav-link-ada:hover {
+    color: #74B816 !important;
+    background-color: transparent !important;
+}

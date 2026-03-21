@@ -1,0 +1,60 @@
+﻿@page "/peces"
+@using AquaVivarium.Client.Components
+@using Domain.Interfaces.Services
+@using Domain.Models
+@inject IPezService PezService
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+    <MudText Typo="Typo.h3" Class="av-text-main mb-2" Style="font-weight: 800;"> Galería de Especies </MudText>
+    <MudText Typo="Typo.subtitle1" Class="av-text-muted mb-8"> Explorando los habitantes de AquaVivarium </MudText>
+
+    @if (_peces == null)
+    {
+
+        <div class="d-flex justify-center align-center" style="height: 400px;">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
+        </div>
+    }
+    else if (!_peces.Any())
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mt-4">
+            Aún no hay peces registrados.
+        </MudAlert>
+    }
+    else
+    {
+        <MudGrid>
+            @foreach (var pez in _peces)
+            {
+                if (pez?.Especie != null)
+                {
+                    <MudItem xs="12" sm="6" md="4" lg="3">
+                        <PezCard Nombre="@pez.Especie.Nombre"
+                                 NombreCientifico="@pez.Especie.NombreCientifico"
+                                 PhMin="@pez.Especie.PhMin"
+                                 PhMax="@pez.Especie.PhMax"
+                                 TempMin="@pez.Especie.TempMin"
+                                 TempMax="@pez.Especie.TempMax"/>
+                    </MudItem>
+                }
+            }
+        </MudGrid>
+    }
+</MudContainer>
+
+@code {
+    private IEnumerable<Pez>? _peces;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try 
+        {
+            _peces = await PezService.GetAllPecesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar peces: {ex.Message}");
+            _peces = Enumerable.Empty<Pez>();
+        }
+    }
+}

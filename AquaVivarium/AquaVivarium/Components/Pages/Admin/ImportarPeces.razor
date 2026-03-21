@@ -3,7 +3,7 @@
 @using System.Text.Json
 @using Domain.Interfaces.Repositories
 @using Domain.Models
-@using AquaVivarium.DTOs
+@using global::AquaVivarium.DTOs
 @inject IEspecieRepository EspecieRepo
 @inject IPezRepository PezRepo
 @inject NavigationManager Nav
@@ -48,27 +48,20 @@
             procesando = false;
         }
     }
-   private async Task ProcesarImportacion(string jsonRaw)
-{
-    try 
+    private async Task ProcesarImportacion(string jsonRaw)
     {
         var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var listaDto = JsonSerializer.Deserialize<List<ImportPezDto>>(jsonRaw, opciones);
 
-        if (listaDto == null || listaDto.Count == 0)
-        {
-            Console.WriteLine("Error: El JSON parece estar vacío o mal formado.");
-            return;
-        }
-
         foreach (var dto in listaDto)
         {
-            Console.WriteLine($"Procesando: {dto.Nombre}...");
-
             var nuevaEspecie = new Especie
             {
                 Nombre = dto.Nombre,
                 NombreCientifico = dto.NombreCientifico,
+                Familia = dto.Familia,
+                Genero = dto.Genero,
+                Origen = dto.Origen,
                 Descripcion = dto.Descripcion,
                 PhMin = dto.PhMin,
                 PhMax = dto.PhMax,
@@ -77,11 +70,10 @@
                 GhMin = dto.GhMin,
                 GhMax = dto.GhMax,
                 Dificultad = dto.Dificultad,
-                TipoEspecie = dto.TipoEspecie
+                TipoEspecie = "Pez"
             };
 
             await EspecieRepo.AddAsync(nuevaEspecie);
-            Console.WriteLine($"Especie guardada con ID: {nuevaEspecie.Id}");
 
             var nuevoPez = new Pez
             {
@@ -89,18 +81,11 @@
                 TamanoMaxCm = dto.PezInfo.TamanoMaxCm,
                 Temperamento = dto.PezInfo.Temperamento,
                 ZonaNado = dto.PezInfo.ZonaNado,
-                Gregarismo = dto.PezInfo.Gregarismo
+                Gregarismo = dto.PezInfo.Gregarismo,
+                Alimentacion = dto.PezInfo.Alimentacion
             };
 
             await PezRepo.AddAsync(nuevoPez);
-            Console.WriteLine($"Pez guardado correctamente.");
         }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"¡ERROR CRÍTICO!: {ex.Message}");
-        if (ex.InnerException != null) 
-            Console.WriteLine($"Detalle: {ex.InnerException.Message}");
-    }
-}
 }

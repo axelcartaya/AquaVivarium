@@ -1,0 +1,83 @@
+﻿.ada-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: clamp(3rem, 8vw, 5rem);
+    line-height: 0.9;
+    letter-spacing: -2px;
+    color: var(--av-text-main);
+}
+
+.av-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    color: var(--av-text-muted);
+    max-width: 500px;
+}
+
+.av-btn-main {
+    border-radius: 0 !important;
+    padding: 16px 40px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    box-shadow: none !important;
+}
+
+.av-btn-alt {
+    border-radius: 0 !important;
+    padding: 16px 40px !important;
+    border-width: 1px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+}
+
+/*Ajustes Carrusel */
+.hero-image-container {
+    position: relative;
+    padding: 20px;
+}
+
+::deep .hero-carousel {
+    z-index: 2;
+    height: 450px !important; /* tamaño fotos */
+    background-color: transparent !important;
+}
+
+.hero-img {
+    position: relative;
+    object-fit: cover;
+    height: 400px;
+    width: 100%;
+}
+
+.image-accent {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 70%;
+    height: 85%;
+    background-color: #E8F5E9;
+    z-index: 1;
+}
+
+/* puntos del carrusel */
+::deep .mud-carousel-bullets .mud-button-root {
+    color: var(--av-primary) !important;
+    opacity: 0.3;
+}
+
+    ::deep .mud-carousel-bullets .mud-button-root.mud-ripple.mud-button-filled {
+        opacity: 1;
+    }
+
+.feature-card {
+    padding: 40px;
+    border-left: 1px solid var(--av-border);
+}
+
+.bg-light-green {
+    background-color: var(--av-bg-soft);
+}
+
+.fw-light {
+    font-weight: 300 !important;
+}

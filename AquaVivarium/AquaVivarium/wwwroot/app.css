@@ -1,3 +1,21 @@
+:root {
+
+    --av-bg-pure: #FFFFFF; /* Fondo principal */
+    --av-bg-soft: #F9FBF9; /* Fondos secundarios/secciones */
+
+    --av-primary: #74B816; /* Principal */
+    --av-primary-light: #E8F5E9; /* Para acentos suaves */
+    --av-primary-deep: #2D5A27; /* Para textos destacados */
+
+    --av-text-main: #2D3436; /* Títulos y textos importantes */
+    --av-text-muted: #636E72; /* Nombres científicos y detalles */
+
+    --av-border: #F1F2F6; /* Divisiones sutiles */
+
+    --av-shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.03);
+    --av-transition-smooth: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
 h1:focus {
     outline: none;
 }

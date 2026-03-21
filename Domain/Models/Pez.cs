@@ -21,7 +21,10 @@ public partial class Pez
 
     public int? Gregarismo { get; set; }
 
+    [StringLength(30)]
+    public string? Alimentacion { get; set; }
+
     [ForeignKey("EspecieId")]
-    [InverseProperty("Pece")]
+    [InverseProperty("Pez")]
     public virtual Especie Especie { get; set; } = null!;
 }

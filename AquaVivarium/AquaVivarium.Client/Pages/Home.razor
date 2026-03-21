@@ -1,7 +1,96 @@
 ﻿@page "/"
+@rendermode InteractiveAuto
+@*Sección Hero*@
+<section class="hero-section d-flex align-center">
+    <MudGrid Justify="Justify.Center" Class="align-center px-10">
+        <MudItem xs="12" md="6" Class="pr-md-16">
+            <MudText Typo="Typo.h1" Class="av-title mb-4">
+                Nature <span class="text-primary fw-light">Aquarium</span>
+            </MudText>
+            <MudText Typo="Typo.h5" Class="av-subtitle mb-10">
+                Donde la botánica se encuentra con la acuariofilia. Una enciclopedia diseñada para el aquascaping profesional.
+            </MudText>
+            <div class="d-flex gap-4">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                           Class="adv-btn-main" Href="/peces">
+                    Explorar Especies
+                </MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                           Class="av-btn-alt">
+                    Nuestra Filosofía
+                </MudButton>
+            </div>
+        </MudItem>
 
-<PageTitle>Home</PageTitle>
+        <MudItem xs="12" md="6" Class="mt-10 mt-md-0">
+            <div class="hero-image-container">
+                <MudCarousel Class="hero-carousel"
+                             TData="object"
+                             ShowArrows="false"
+                             ShowBullets="true"
+                             AutoCycle="true"
+                             ItemsSource="@_carrouselImages">
+                    <ItemTemplate>
+                        <div class="d-flex justify-center">
+                            <MudImage Src="@((string)context)"
+                                      Alt="Nature Aquarium"
+                                      Fluid="true"
+                                      Class="hero-img shadow-xl" />
+                        </div>
+                    </ItemTemplate>
+                </MudCarousel>
+                <div class="image-accent"></div>
+            </div>
+        </MudItem>
+    </MudGrid>
+</section>
 
-<h1>Hello, world!</h1>
+@*Sección Cita*@
+<section class="py-16 my-16 bg-light-green">
+    <MudContainer MaxWidth="MaxWidth.Medium" Class="text-center py-10">
+        <MudIcon Icon="@Icons.Material.Filled.FormatQuote" Color="Color.Primary" Size="Size.Large" Class="mb-4" />
+        <MudText Typo="Typo.h4" Class="fst-italic fw-light mb-6" Style="color: #2D3436; line-height: 1.6;">
+            "Aprender de la naturaleza para crear la naturaleza."
+        </MudText>
+        <MudText Typo="Typo.overline" Style="letter-spacing: 3px; font-weight: 700;">— Takashi Amano</MudText>
+    </MudContainer>
+</section>
 
-Welcome to your new app.
+@*Sección Características: Tres pilares*@
+<MudContainer MaxWidth="MaxWidth.False" Class="px-10 mb-16 pb-16">
+    <MudGrid Spacing="6">
+        <MudItem xs="12" md="4">
+            <div class="feature-card">
+                <MudText Typo="Typo.h6" Color="Color.Primary" Class="mb-2">01. BIODIVERSIDAD</MudText>
+                <MudText Typo="Typo.body1" Class="text-muted">
+                    Base de datos exhaustiva con más de 250 especies seleccionadas por su valor estético y biológico.
+                </MudText>
+            </div>
+        </MudItem>
+        <MudItem xs="12" md="4">
+            <div class="feature-card">
+                <MudText Typo="Typo.h6" Color="Color.Primary" Class="mb-2">02. PARÁMETROS</MudText>
+                <MudText Typo="Typo.body1" Class="text-muted">
+                    Datos técnicos precisos sobre pH, dureza y temperatura para el éxito de tu ecosistema.
+                </MudText>
+            </div>
+        </MudItem>
+        <MudItem xs="12" md="4">
+            <div class="feature-card border-none">
+                <MudText Typo="Typo.h6" Color="Color.Primary" Class="mb-2">03. DISEÑO</MudText>
+                <MudText Typo="Typo.body1" Class="text-muted">
+                    Herramientas pensadas para paisajistas acuáticos que buscan la perfección visual.
+                </MudText>
+            </div>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+@code {
+    // Lista de imágenes carrusel
+    private List<string> _carrouselImages = new()
+    {
+        "https://www.nascapers.es/wp-content/uploads/2024/11/acuario-tipo-iwagumi-nascapers-online.webp",
+        "https://upload.wikimedia.org/wikipedia/commons/7/79/Nature_style_aquascape.png",
+        "https://premiumbuces.com/wp-content/uploads/2020/06/contact-banner-1250x800.jpg"
+    };
+}

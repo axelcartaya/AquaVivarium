@@ -4,6 +4,9 @@
     {
         public string Nombre { get; set; } = null!;
         public string? NombreCientifico { get; set; }
+        public string? Familia { get; set; }
+        public string? Genero { get; set; }
+        public string? Origen { get; set; }
         public string? Descripcion { get; set; }
         public decimal PhMin { get; set; }
         public decimal PhMax { get; set; }
@@ -21,6 +24,7 @@
         public string Temperamento { get; set; } = null!;
         public string ZonaNado { get; set; } = null!;
         public int Gregarismo { get; set; }
-       
+        public string Alimentacion { get; set; } = null!;
+
     }
 }
