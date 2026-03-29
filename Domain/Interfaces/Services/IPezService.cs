@@ -9,5 +9,6 @@ namespace Domain.Interfaces.Services
     {
         Task<IEnumerable<Pez>> GetAllPecesAsync();
         Task<Pez?> GetPezByIdAsync(int id);
+        Task<(IEnumerable<Pez> Peces, int Total)> GetPecesPaginadosAsync(int page, int pageSize);
     }
 }

@@ -79,3 +79,14 @@
 .av-icon {
     font-size: 0.9rem;
 }
+
+.mud-carousel-item .mud-image-root {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.av-card-image-wrapper {
+    position: relative;
+    border-radius: 12px 12px 0 0;
+}

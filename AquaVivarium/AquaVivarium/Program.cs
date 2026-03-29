@@ -48,7 +48,7 @@ builder.Services.AddAuthentication(options =>
 })
     .AddIdentityCookies();
 
-//SERVICIOS DE AUTENTICACIÓN Y BLAZOR
+//Servicios de autenticación y Blazor
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents()
@@ -67,7 +67,7 @@ builder.Services.AddScoped<IPezService, PezService>();
 //Dependencias API
 builder.Services.AddControllers();
 
-//Aumentam el tamaño máximo de los mensajes que Blazor Server puede recibir para evitar problemas con la carga de imágenes o datos más grandes
+//Aumentar el tamaño máximo de los mensajes que Blazor Server puede recibir para evitar problemas con la carga de imágenes o datos más grandes
 builder.Services.AddServerSideBlazor()
     .AddHubOptions(options =>
     {
@@ -78,14 +78,10 @@ builder.Services.AddServerSideBlazor()
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 //JSON
-// En el Program.cs del proyecto SERVER
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        // Esta línea es la que rompe el bucle infinito
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-
-        // Opcional: para que el JSON se vea bien en el navegador (opcional)
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
@@ -108,6 +104,8 @@ app.UseHttpsRedirection();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
+
+app.UseStaticFiles(); 
 
 //API
 app.MapControllers();

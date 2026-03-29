@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\imagenes\imagenesEspecie\1\**" />
+    <Content Remove="wwwroot\imagenes\imagenesEspecie\1\**" />
+    <EmbeddedResource Remove="wwwroot\imagenes\imagenesEspecie\1\**" />
+    <None Remove="wwwroot\imagenes\imagenesEspecie\1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Data\Data.csproj" />
     <ProjectReference Include="..\..\Domain\Domain.csproj" />
     <ProjectReference Include="..\AquaVivarium.Client\AquaVivarium.Client.csproj" />
@@ -24,6 +31,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="MudBlazor" Version="9.1.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\imagenes\imagenesEspecie\" />
   </ItemGroup>
 
 </Project>

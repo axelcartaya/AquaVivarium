@@ -20,5 +20,15 @@ namespace AquaVivarium.Controllers
             var peces = await _pezService.GetAllPecesAsync();
             return Ok(peces);
         }
+
+        [HttpGet("paginados")]
+        public async Task<ActionResult> GetPaginados(int page = 1, int pageSize = 44)
+        {
+            var (peces, total) = await _pezService.GetPecesPaginadosAsync(page, pageSize);
+
+            return Ok(new { Peces = peces, Total = total });
+        }
+
+
     }
 }

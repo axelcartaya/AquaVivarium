@@ -27,5 +27,18 @@ namespace Data.Repositories
             _context.Especies.Add(especie);
             await _context.SaveChangesAsync();
         }
+
+        public async Task AddImagenAsync(EspecieImagen imagen)
+        {
+            await _context.EspecieImagenes.AddAsync(imagen);
+            await _context.SaveChangesAsync();
+        }
+        public async Task<List<EspecieImagen>> GetImagenesByEspecieIdAsync(int especieId)
+        {
+            return await _context.EspecieImagenes
+                .Where(x => x.EspecieId == especieId)
+                .OrderBy(x => x.Url)
+                .ToListAsync();
+        }
     }
 }

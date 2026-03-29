@@ -9,5 +9,7 @@ namespace Domain.Interfaces.Repositories
     {
         Task<IEnumerable<Especie>> GetAllAsync();
         Task AddAsync(Especie especie);
+        Task AddImagenAsync(EspecieImagen imagen);
+        Task<List<EspecieImagen>> GetImagenesByEspecieIdAsync(int especieId);
     }
 }

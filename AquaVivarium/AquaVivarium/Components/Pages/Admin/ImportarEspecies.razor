@@ -1,0 +1,312 @@
+﻿@page "/admin/importar"
+@rendermode InteractiveServer
+@using System.Text.Json
+@using Domain.Interfaces.Repositories
+@using Domain.Models
+@using global::AquaVivarium.DTOs
+@using SixLabors.ImageSharp
+@using SixLabors.ImageSharp.Processing
+@using System.IO
+@inject IEspecieRepository EspecieRepo
+@inject IPezRepository PezRepo
+@inject IWebHostEnvironment WebHostEnvironment
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8">
+    <MudText Typo="Typo.h4" GutterBottom="true">Importador Masivo de Peces</MudText>
+    <MudText Typo="Typo.body2" Class="mb-4">Pega el código JSON para llenar la base de datos.</MudText>
+
+    <MudTextField @bind-Value="jsonRaw" Label="JSON de Peces" Variant="Variant.Outlined"
+                  Lines="10" Placeholder='[ { "Nombre": "Neón", ... } ]' FullWidth="true" />
+
+    <div class="d-flex justify-end mt-4">
+        <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary"
+                   OnClick="EjecutarImportacion" Disabled="@(procesando || string.IsNullOrWhiteSpace(jsonRaw))">
+            @(procesando ? "Procesando..." : "Iniciar Importación")
+        </MudButton>
+    </div>
+
+    @if (procesando)
+    {
+        <MudAlert Severity="Severity.Info" Class="mt-4">Importando datos... por favor, espera.</MudAlert>
+    }
+
+    @if (sincronizandoTodo)
+    {
+        <MudPaper Class="pa-4 mb-4" Elevation="4">
+            <MudText Typo="Typo.h6">Sincronización Masiva en curso...</MudText>
+            <MudText Typo="Typo.body2">Procesando: <b>@pezActual</b></MudText>
+            <MudProgressLinear Color="MudBlazor.Color.Primary" Value="@progreso" Class="my-7" Size="MudBlazor.Size.Large">
+                <MudText Typo="Typo.subtitle1" Color="MudBlazor.Color.Dark"><b>@progreso.ToString("F1")%</b></MudText>
+            </MudProgressLinear>
+        </MudPaper>
+    }
+
+    <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Secondary" StartIcon="@Icons.Material.Filled.CloudDownload"
+               OnClick="SincronizarTodosLosPeces" Disabled="sincronizandoTodo" Class="mb-6">
+        Sincronizar Imágenes de Toda la Base de Datos
+    </MudButton>
+
+    <MudCard Class="mt-10 pa-4" Elevation="3">
+        <MudCardContent>
+            <MudText Typo="Typo.h6">Prueba de Imagen Única</MudText>
+            <MudText Typo="Typo.caption">Verifica la conexión con Fishipedia y la conversión WebP.</MudText>
+            
+            <MudGrid Class="mt-4" Spacing="2">
+                <MudItem xs="12" sm="3">
+                    <MudNumericField @bind-Value="testEspecieId" Label="ID Especie" Variant="Variant.Outlined" Min="1" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="testNombreCientifico" Label="Nombre Científico"
+                                  Variant="Variant.Outlined" Placeholder="Ej: Paracheirodon innesi" />
+                </MudItem>
+                <MudItem xs="12" sm="3" Class="d-flex align-center">
+                    <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Warning" FullWidth="true"
+                               OnClick="EjecutarPruebaUnica" Disabled="procesandoImagen">
+                        @(procesandoImagen ? "Procesando..." : "Procesar Imagen")
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+
+            @if (!string.IsNullOrEmpty(estadoPrueba))
+            {
+                <MudAlert Severity="@GetSeverity()" Class="mt-4" Variant="Variant.Filled">
+                    @estadoPrueba
+                </MudAlert>
+            }
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
+
+@code {
+    private int testEspecieId;
+    private string testNombreCientifico = "";
+    private string estadoPrueba = "";
+    private string jsonRaw = "";
+    private bool procesando = false;
+    private bool procesandoImagen = false;
+    private bool sincronizandoTodo = false;
+    private double progreso = 0;
+    private string pezActual = "";
+
+    private Severity GetSeverity()
+    {
+        if (estadoPrueba.Contains("✅")) return Severity.Success;
+        if (estadoPrueba.Contains("❌") || estadoPrueba.Contains("⚠️")) return Severity.Error;
+        return Severity.Normal;
+    }
+
+    private async Task EjecutarPruebaUnica()
+    {
+        if (testEspecieId <= 0 || string.IsNullOrWhiteSpace(testNombreCientifico)) return;
+
+        procesandoImagen = true;
+        estadoPrueba = "⏳ Buscando galería en Fishipedia...";
+        StateHasChanged();
+
+        bool exito = await ProcesarImagenesEspecie(testEspecieId, testNombreCientifico);
+
+        if (exito)
+        {
+            estadoPrueba = "✅";
+            Snackbar.Add($"Imágenes descargadas para {testNombreCientifico}", Severity.Success);
+        }
+        else
+        {
+            estadoPrueba = "❌ No se encontraron imágenes o el pez no existe.";
+            Snackbar.Add("Error al procesar la galería", Severity.Error);
+        }
+
+        procesandoImagen = false;
+    }
+
+    private async Task EjecutarImportacion()
+    {
+        try
+        {
+            procesando = true;
+            await ProcesarImportacion(jsonRaw);
+            Snackbar.Add("Importación completada con éxito", Severity.Success);
+            Nav.NavigateTo("/peces");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            procesando = false;
+        }
+    }
+
+    private async Task ProcesarImportacion(string jsonRaw)
+    {
+        var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var listaDto = JsonSerializer.Deserialize<List<ImportPezDto>>(jsonRaw, opciones);
+        if (listaDto == null) return;
+
+        foreach (var dto in listaDto)
+        {
+            var nuevaEspecie = new Especie
+            {
+                Nombre = dto.Nombre,
+                NombreCientifico = dto.NombreCientifico,
+                Familia = dto.Familia,
+                Genero = dto.Genero,
+                Origen = dto.Origen,
+                Descripcion = dto.Descripcion,
+                PhMin = dto.PhMin,
+                PhMax = dto.PhMax,
+                TempMin = dto.TempMin,
+                TempMax = dto.TempMax,
+                GhMin = dto.GhMin,
+                GhMax = dto.GhMax,
+                Dificultad = dto.Dificultad,
+                TipoEspecie = "Pez"
+            };
+            await EspecieRepo.AddAsync(nuevaEspecie);
+
+            var nuevoPez = new Pez
+            {
+                EspecieId = nuevaEspecie.Id,
+                TamanoMaxCm = dto.PezInfo.TamanoMaxCm,
+                Temperamento = dto.PezInfo.Temperamento,
+                ZonaNado = dto.PezInfo.ZonaNado,
+                Gregarismo = dto.PezInfo.Gregarismo,
+                Alimentacion = dto.PezInfo.Alimentacion
+            };
+            await PezRepo.AddAsync(nuevoPez);
+        }
+    }
+
+    private async Task<bool> ProcesarImagenesEspecie(int especieId, string nombreCientifico)
+    {
+        try
+        {
+            string nombreLimpio = nombreCientifico.ToLower().Replace(".", "").Replace("(", "").Replace(")", "").Trim();
+            string[] partes = nombreLimpio.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (partes.Length < 2) return false;
+
+            string especie = partes[1];
+            string slugCompleto = $"{partes[0]}-{especie}";
+            string urlPagina = $"https://www.fishipedia.es/pez/{slugCompleto}";
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+
+            var response = await client.GetAsync(urlPagina);
+            if (!response.IsSuccessStatusCode || response.RequestMessage.RequestUri.ToString().EndsWith("/pez/")) return false;
+
+            string html = await response.Content.ReadAsStringAsync();
+            var listaUrlsCandidatas = new List<string>();
+
+            // Obtener la imagen principal
+            string metaTag = "property=\"og:image\" content=\"";
+            int inicioMeta = html.IndexOf(metaTag);
+            if (inicioMeta != -1)
+            {
+                inicioMeta += metaTag.Length;
+                listaUrlsCandidatas.Add(html.Substring(inicioMeta, html.IndexOf("\"", inicioMeta) - inicioMeta));
+            }
+
+            // Imagenes del carrusel
+            int inicioArticulo = html.IndexOf("<article");
+            int finArticulo = html.IndexOf("penci-post-related") > 0 ? html.IndexOf("penci-post-related") : html.IndexOf("</article>");
+
+            if (inicioArticulo != -1 && finArticulo > inicioArticulo)
+            {
+                string htmlGaleria = html.Substring(inicioArticulo, finArticulo - inicioArticulo);
+                var regex = new System.Text.RegularExpressions.Regex(@"(?:src|data-src|data-lazy-src)=[""']([^""']+\.(?:jpg|jpeg|png|webp))[""']", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+                foreach (System.Text.RegularExpressions.Match m in regex.Matches(htmlGaleria))
+                {
+                    string u = m.Groups[1].Value.ToLower();
+                    if (u.Contains("/uploads/") && u.Contains(especie) && !u.Contains("avatar") && !u.Contains("logo"))
+                        listaUrlsCandidatas.Add(m.Groups[1].Value);
+                }
+            }
+
+            // Evitar repetidos
+            var urlsUnicas = listaUrlsCandidatas
+                .Select(url =>
+                {
+                    string u = url.Split('?')[0];
+                    string adn = System.Text.RegularExpressions.Regex.Replace(u, @"-\d+x\d+(?=\.(jpg|jpeg|png|webp))", "").ToLower();
+                    return new { Original = url, ADN = adn };
+                })
+                .GroupBy(x => x.ADN).Select(g => g.First().Original).ToList();
+
+            if (!urlsUnicas.Any()) return false;
+
+            // carpeta y archivos
+            string folderPath = Path.Combine(WebHostEnvironment.WebRootPath, "imagenes", "imagenesEspecie", especieId.ToString());
+            if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+            else foreach (var file in Directory.GetFiles(folderPath)) File.Delete(file);
+
+            // descargar masiva y convertir a WebP
+            int contador = 0;
+            foreach (var url in urlsUnicas)
+            {
+                try
+                {
+                    string urlFinal = url.StartsWith("http") ? url : $"https://www.fishipedia.es{url}";
+                    var bytes = await client.GetByteArrayAsync(urlFinal);
+                    using var image = Image.Load(bytes);
+
+                    if (image.Width < 400) continue;
+
+                    image.Mutate(x => x.Resize(new ResizeOptions { Size = new SixLabors.ImageSharp.Size(1200, 0), Mode = SixLabors.ImageSharp.Processing.ResizeMode.Max }));
+
+                    string nombreArchivo = contador == 0 ? "principal.webp" : $"foto_{contador}.webp";
+                    await image.SaveAsWebpAsync(Path.Combine(folderPath, nombreArchivo));
+
+                    string descripcionAlt = contador == 0
+                    ? $"Imagen representativa de la especie {nombreCientifico}"
+                    : $"Galería fotográfica de {nombreCientifico} - Imagen {contador}";
+
+                    await EspecieRepo.AddImagenAsync(new EspecieImagen
+                        {
+                            EspecieId = especieId,
+                            Url = $"/imagenes/imagenesEspecie/{especieId}/{nombreArchivo}",
+                            AltText = descripcionAlt
+                        });
+
+                    contador++;
+                    if (contador >= 12) break; 
+                }
+                catch { continue; }
+            }
+            return contador > 0;
+        }
+        catch { return false; }
+    }
+    private async Task SincronizarTodosLosPeces()
+    {
+        var todasLasEspecies = await EspecieRepo.GetAllAsync();
+        var listaPeces = todasLasEspecies.Where(e => e.TipoEspecie == "Pez").ToList();
+    
+        if (!listaPeces.Any()) return;
+
+        sincronizandoTodo = true;
+        int procesados = 0;
+        int total = listaPeces.Count;
+
+        foreach (var pez in listaPeces)
+        {
+            pezActual = pez.NombreCientifico;
+            progreso = (double)procesados / total * 100;
+            StateHasChanged();
+
+            // llamada al scraper
+            await ProcesarImagenesEspecie(pez.Id, pez.NombreCientifico);
+
+            procesados++;
+        }
+
+        progreso = 100;
+        pezActual = "¡Sincronización Completada!";
+        sincronizandoTodo = false;
+        Snackbar.Add("Se han procesado todas las imágenes correctamente", Severity.Success);
+    }
+}

@@ -1,33 +1,37 @@
-﻿@* AquaVivarium.Client/Components/PezCard.razor *@
+﻿@using Domain.Interfaces.Services
+@using Domain.Models
+@inject IEspecieService EspecieService 
+@* AquaVivarium.Client/Components/PezCard.razor *@
 
 <div class="av-card-float">
-    @* Cabecera Imagen *@
-    <div class="av-card-image-wrapper">
-        <img src="@ImagenUrl" alt="@Nombre" class="av-card-img" />
+    <div class="av-card-image-wrapper" style="height: 200px;">
+        @{
+            var imagenPrincipal = Imagenes?.FirstOrDefault(i => i.Url.Contains("principal"))
+                                 ?? Imagenes?.FirstOrDefault();
+        }
+
+        @if (imagenPrincipal != null)
+        {
+            <MudImage Src="@imagenPrincipal.Url"
+                      Alt="@Nombre"
+                      ObjectFit="ObjectFit.Cover"
+                      Style="width: 100%; height: 200px;" />
+        }
+        else
+        {
+          <p>Not found</p>
+        }
     </div>
 
     @* Cuerpo tarjeta *@
     <div class="av-card-content">
         <h3 class="av-fish-name">@Nombre</h3>
         <p class="av-fish-scientific">@NombreCientifico</p>
-        
-        <div class="av-divider"></div>
-
-        @* Parámetros *@
-        <div class="av-params-grid">
-            <div class="av-param-item">
-                <span class="av-icon">💧</span>
-                <span>@PhMin - @PhMax pH</span>
-            </div>
-            <div class="av-param-item">
-                <span class="av-icon">🌡️</span>
-                <span>@TempMin - @TempMax°C</span>
-            </div>
-        </div>
     </div>
 </div>
 
 @code {
+    [Parameter] public int EspecieId { get; set; }
     [Parameter] public string Nombre { get; set; } = "Especie";
     [Parameter] public string? NombreCientifico { get; set; } = "N/A";
     [Parameter] public string? ImagenUrl { get; set; }
@@ -35,4 +39,6 @@
     [Parameter] public decimal? PhMax { get; set; }
     [Parameter] public int? TempMin { get; set; }
     [Parameter] public int? TempMax { get; set; }
+    [Parameter] public List<EspecieImagen> Imagenes { get; set; } = new();
+
 }

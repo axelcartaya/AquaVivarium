@@ -23,5 +23,20 @@ namespace AquaVivarium.Client.Services
         {
             return await _http.GetFromJsonAsync<Pez>($"api/peces/{id}");
         }
+        public async Task<(IEnumerable<Pez> Peces, int Total)> GetPecesPaginadosAsync(int page, int pageSize)
+        {
+            var url = $"api/peces/paginados?page={page}&tamaño={pageSize}";
+            var resultado = await _http.GetFromJsonAsync<PaginacionHelper>(url);
+            if (resultado == null) return (Enumerable.Empty<Pez>(), 0);
+
+            return (resultado.Peces, resultado.Total);
+        }
+
+        // Clase de apoyo 
+        private class PaginacionHelper
+        {
+            public List<Pez> Peces { get; set; } = new();
+            public int Total { get; set; }
+        }
     }
 }

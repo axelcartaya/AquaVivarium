@@ -18,5 +18,10 @@ namespace AquaVivarium.Services
 
         public async Task<Pez?> GetPezByIdAsync(int id)
             => await _repository.GetPezByIdAsync(id);
+
+        public async Task<(IEnumerable<Pez> Peces, int Total)> GetPecesPaginadosAsync(int page, int pageSize)
+        {
+            return await _repository.GetPecesPaginadosAsync(page, pageSize);
+        }
     }
 }

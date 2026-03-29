@@ -3,14 +3,14 @@
 @using Domain.Interfaces.Services
 @using Domain.Models
 @inject IPezService PezService
+@inject IJSRuntime JS
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
-    <MudText Typo="Typo.h3" Class="av-text-main mb-2" Style="font-weight: 800;"> Galería de Especies </MudText>
-    <MudText Typo="Typo.subtitle1" Class="av-text-muted mb-8"> Explorando los habitantes de AquaVivarium </MudText>
-
+    <MudText Typo="Typo.h3" Class="av-text-main mb-2 pb-4" Style="font-weight: 800;"> Galería de Peces </MudText>
     @if (_peces == null)
     {
-
+        @* Estado de carga *@
         <div class="d-flex justify-center align-center" style="height: 400px;">
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
         </div>
@@ -18,43 +18,70 @@
     else if (!_peces.Any())
     {
         <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mt-4">
-            Aún no hay peces registrados.
+            No se encontraron peces en esta sección.
         </MudAlert>
     }
     else
     {
+        @* Renderizado del Grid *@
         <MudGrid>
             @foreach (var pez in _peces)
             {
                 if (pez?.Especie != null)
                 {
                     <MudItem xs="12" sm="6" md="4" lg="3">
-                        <PezCard Nombre="@pez.Especie.Nombre"
+                        <PezCard EspecieId="@pez.Especie.Id"
+                                 Nombre="@pez.Especie.Nombre"
                                  NombreCientifico="@pez.Especie.NombreCientifico"
                                  PhMin="@pez.Especie.PhMin"
                                  PhMax="@pez.Especie.PhMax"
                                  TempMin="@pez.Especie.TempMin"
-                                 TempMax="@pez.Especie.TempMax"/>
+                                 TempMax="@pez.Especie.TempMax"
+                                 Imagenes="@pez.Especie.EspecieImagenes.ToList()" />
                     </MudItem>
                 }
             }
         </MudGrid>
+
+        @* Paginación *@
+        <div class="d-flex justify-center mt-10 mb-10">
+            <MudPagination Color="Color.Primary" 
+                   Variant="Variant.Filled"
+                   Count="@_totalPaginas" 
+                   Selected="_currentPage"
+                   SelectedChanged="OnPageChanged" />
+        </div>
     }
 </MudContainer>
 
 @code {
-    private IEnumerable<Pez>? _peces;
+    private List<Pez>? _peces;
+    private int _totalItems;
+    private int _pageSize = 44; 
+    private int _currentPage = 1;
+    // Cálculo num páginas
+    private int _totalPaginas => (int)Math.Ceiling((decimal)_totalItems / _pageSize);
 
     protected override async Task OnInitializedAsync()
     {
-        try 
-        {
-            _peces = await PezService.GetAllPecesAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al cargar peces: {ex.Message}");
-            _peces = Enumerable.Empty<Pez>();
-        }
+        await LoadData(1);
+    }
+
+    private async Task OnPageChanged(int page)
+    {
+        _currentPage = page;
+        await LoadData(page);
+        await JS.InvokeVoidAsync("window.scrollTo", 0, 0);
+    }
+
+    private async Task LoadData(int page)
+    {
+        _peces = null;        
+        var (peces, total) = await PezService.GetPecesPaginadosAsync(page, _pageSize);
+        _peces = peces.ToList();
+        _totalItems = total;
+
+        Console.WriteLine($"Cargando página: {page}");
+        StateHasChanged();
     }
 }

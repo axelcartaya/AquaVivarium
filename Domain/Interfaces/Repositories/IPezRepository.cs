@@ -11,5 +11,6 @@ namespace Domain.Interfaces.Repositories
         Task<Pez> GetPezByIdAsync(int id);
         Task AddAsync(Pez pez);
         Task SaveChangesAsync(); //Para guardar el JSon
+        Task<(IEnumerable<Pez> Peces, int Total)> GetPecesPaginadosAsync(int pagina, int tamañoPagina);
     }
 }

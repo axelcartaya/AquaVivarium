@@ -18,6 +18,7 @@ builder.Services.AddScoped(sp => new HttpClient
 
 //Dependicias Services
 builder.Services.AddScoped<IPezService, PezServiceClient>();
+builder.Services.AddScoped<IEspecieService, EspecieServiceClient>();
 
 await builder.Build().RunAsync();
 
