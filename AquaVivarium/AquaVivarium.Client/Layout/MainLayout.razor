@@ -12,7 +12,10 @@
 
             @* Logo *@
             <NavLink href="/" Style="text-decoration: none; display: flex; align-items: center;" Class="mr-8 cursor-pointer">
-                <MudIcon Icon="@Icons.Material.Filled.Spa" Color="Color.Primary" Size="Size.Large" Class="mr-2" />
+                <MudIcon Icon="@Icons.Material.Filled.Spa"
+                         Color="Color.Primary"
+                         Class="mr-2"
+                         Style="width: 36px; height: 36px; flex-shrink: 0;" />
                 <MudText Typo="Typo.h6" Style="font-weight: 800; letter-spacing: 2px; color: #2D3436;">
                     AQUA<span style="color: #74B816; font-weight: 300;"> • VIVARIUM</span>
                 </MudText>
@@ -29,7 +32,7 @@
 
             @* Acciones *@
             <MudIconButton Icon="@Icons.Material.Outlined.Search" Color="Color.Default" />
-            <MudIconButton Icon="@Icons.Material.Outlined.Person" Color="Color.Default" Class="ml-2" />
+            <MudIconButton Icon="@Icons.Material.Outlined.Person" Href="/Account/Login" Color="Color.Default" Class="ml-2" />
 
         </MudContainer>
     </MudAppBar>
