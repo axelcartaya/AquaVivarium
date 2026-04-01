@@ -36,10 +36,43 @@ namespace Data.Repositories
 
         public async Task<Pez> GetPezByIdAsync(int id)
         {
-            return await _context.Peces
-        .Include(p => p.Especie) 
-            .ThenInclude(e => e.EspecieImagenes)
-        .FirstOrDefaultAsync(p => p.Especie.Id == id);
+            var pez = await _context.Peces
+            .Include(p => p.Especie)
+                .ThenInclude(e => e.EspecieImagenes)
+            .Include(p => p.Especie)
+                .ThenInclude(e => e.EspecieConsulta)
+                    .ThenInclude(c => c.EspecieRespuesta)
+            .FirstOrDefaultAsync(p => p.Especie.Id == id);
+
+            if (pez?.Especie?.EspecieConsulta == null) return pez;
+
+
+
+            //Traducción de nombre de usuario para obtener su alias y no su GUID en el apartado Comunidad
+            var userIds = pez.Especie.EspecieConsulta.Select(c => c.UsuarioId)
+                .Union(pez.Especie.EspecieConsulta.SelectMany(c => c.EspecieRespuesta).Select(r => r.UsuarioId))
+                .Distinct()
+                .ToList();
+
+            var diccionarioUsuarios = await _context.Users
+                .Where(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(
+                    u => u.Id,
+                    u => !string.IsNullOrEmpty(u.Alias) ? u.Alias : u.UserName.Split('@')[0] //Primero se mira si el usuario tiene asignado un alias, si no se coge la parte del nombre del correo
+                );
+
+            foreach (var consulta in pez.Especie.EspecieConsulta)
+            {
+                consulta.NombreUsuario = diccionarioUsuarios.GetValueOrDefault(consulta.UsuarioId);
+
+                foreach (var respuesta in consulta.EspecieRespuesta)
+                {
+                    respuesta.NombreUsuario = diccionarioUsuarios.GetValueOrDefault(respuesta.UsuarioId);
+                }
+            }
+
+            return pez;
+
         }
 
         public async Task<(IEnumerable<Pez> Peces, int Total)> GetPecesPaginadosAsync(int page, int pageSize)

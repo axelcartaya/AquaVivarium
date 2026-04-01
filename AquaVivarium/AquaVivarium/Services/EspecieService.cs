@@ -1,13 +1,23 @@
-﻿using Domain.Interfaces.Services;
+﻿using Domain.Interfaces.Repositories;
+using Domain.Interfaces.Services;
 using Domain.Models;
 
 namespace AquaVivarium.Services
 {
     public class EspecieService : IEspecieService
     {
-        public Task<List<EspecieImagen>> GetImagenesAsync(int especieId)
+        private readonly IEspecieRepository _repository;
+        public EspecieService(IEspecieRepository repository) {
+            _repository = repository;
+        }
+        public async Task AddConsultaAsync(EspecieConsulta consulta)
         {
-            throw new NotImplementedException();
+            await _repository.AddConsultaAsync(consulta);
+        }
+
+        public async Task AddRespuestaAsync(EspecieRespuesta respuesta)
+        {
+            await _repository.AddRespuestaAsync(respuesta);
         }
     }
 }

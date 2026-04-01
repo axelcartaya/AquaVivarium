@@ -1,12 +1,15 @@
-﻿using Domain.Models;
+﻿using Domain.Interfaces.Repositories;
+using Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Domain.Interfaces.Services
 {
+  
     public interface IEspecieService
     {
-        Task<List<EspecieImagen>> GetImagenesAsync(int especieId);
+        Task AddConsultaAsync(EspecieConsulta consulta);
+        Task AddRespuestaAsync(EspecieRespuesta respuesta);
     }
 }

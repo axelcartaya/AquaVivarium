@@ -63,7 +63,7 @@ builder.Services.AddScoped<IEspecieRepository, EspecieRepository>();
 
 //Dependencias Services
 builder.Services.AddScoped<IPezService, PezService>();
-
+builder.Services.AddScoped<IEspecieService, EspecieService>();
 //Dependencias API
 builder.Services.AddControllers();
 

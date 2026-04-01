@@ -16,6 +16,9 @@ public partial class EspecieRespuesta
     [StringLength(450)]
     public string UsuarioId { get; set; } = null!;
 
+    [NotMapped]
+    public string? NombreUsuario { get; set; }
+
     public string Cuerpo { get; set; } = null!;
 
     [Column(TypeName = "datetime")]

@@ -1,11 +1,14 @@
 ﻿@page "/peces/{Id:int}"
+@using AquaVivarium.Client.Components
 @using Domain.Models
 @using Domain.Interfaces.Services
+@using System.Net.Http.Json
 @inject IPezService PezService
+@inject IEspecieService EspecieService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveWebAssembly
 
-<PageTitle>@(Pez?.Especie?.Nombre) • AquaVivarium</PageTitle>
+<PageTitle>@(Pez?.Especie?.Nombre ?? "Cargando...") • AquaVivarium</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8 mb-16">
     @if (isLoading)
@@ -35,7 +38,7 @@
         </div>
 
         <MudGrid Spacing="10">
-            @* Columna izquierda: Imagenes *@
+            @* columna izquierda *@
             <MudItem xs="12" md="6">
                 @if (Pez.Especie.EspecieImagenes != null && Pez.Especie.EspecieImagenes.Any())
                 {
@@ -64,10 +67,8 @@
                 }
             </MudItem>
 
-            @* Columna derecha: Datos *@
+            @* columna derecha*@
             <MudItem xs="12" md="6" Class="pr-md-8 pt-md-10">
-
-                @* Títulos *@
                 <MudText Typo="Typo.h2" Style="font-weight: 800; color: #1a1a1a; line-height: 1.1; letter-spacing: -1px;" Class="mb-2">
                     @Pez.Especie.Nombre
                 </MudText>
@@ -79,14 +80,12 @@
                     Familia: @Pez.Especie.Familia
                 </MudText>
 
-                @* Descripción *@
                 <MudText Typo="Typo.body1" Style="line-height: 1.8; color: #4a4a4a; font-weight: 300;" Class="mb-10">
                     @Pez.Especie.Descripcion
                 </MudText>
 
                 @* Origen *@
                 <div style="position: relative; overflow: hidden; background-color: #fafafa; border: 1px solid #eaeaea; border-radius: 4px; width: 100%;" class="pa-6 mb-10">
-
                     <MudIcon Icon="@Icons.Material.Outlined.Public"
                              Style="position: absolute; right: -20px; bottom: -30px; font-size: 140px; color: #1a1a1a; opacity: 0.04; pointer-events: none;" />
 
@@ -97,7 +96,6 @@
                                 DISTRIBUCIÓN Y HÁBITAT
                             </MudText>
                         </div>
-
                         <MudText Typo="Typo.body1" Style="color: #1a1a1a; font-weight: 500; font-size: 1.1rem; line-height: 1.6;">
                             @Pez.Especie.Origen
                         </MudText>
@@ -116,61 +114,64 @@
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Rango pH</MudText>
                         <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@Pez.Especie.PhMin - @Pez.Especie.PhMax</MudText>
                     </MudItem>
-
                     <MudItem xs="6" sm="4">
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Rango gH</MudText>
                         <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@Pez.Especie.GhMin - @Pez.Especie.GhMax</MudText>
                     </MudItem>
-
                     <MudItem xs="6" sm="4">
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Temperatura</MudText>
                         <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@Pez.Especie.TempMin°C - @Pez.Especie.TempMax°C</MudText>
                     </MudItem>
-
                     <MudItem xs="6" sm="4">
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Dificultad</MudText>
                         <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@(Pez.Especie.Dificultad ?? "--")</MudText>
                     </MudItem>
-
                     <MudItem xs="6" sm="4">
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Tamaño Max.</MudText>
                         <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@(Pez.TamanoMaxCm) cm</MudText>
                     </MudItem>
-
                     <MudItem xs="6" sm="4">
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Temperamento</MudText>
                         <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@(Pez.Temperamento)</MudText>
                     </MudItem>
-
                     <MudItem xs="6" sm="4">
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Zona de nado</MudText>
                         <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@(Pez.ZonaNado)</MudText>
                     </MudItem>
-
                     <MudItem xs="6" sm="4">
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Gregarismo</MudText>
-                        <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@(Pez.Gregarismo) Ejemplares mín.</MudText>
+                        <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@(Pez.Gregarismo) ejemplares mín.</MudText>
                     </MudItem>
-
                     <MudItem xs="6" sm="4">
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Alimentación</MudText>
                         <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@(Pez.Alimentacion)</MudText>
                     </MudItem>
-
                 </MudGrid>
             </MudItem>
         </MudGrid>
+
+        @* Comunidad *@
+       <ComunidadEspecie EspecieId="Pez.Especie.Id" 
+                          Consultas="Pez.Especie.EspecieConsulta" 
+                          OnCambiosRealizados="CargarDatos" />
     }
 </MudContainer>
 
-@code {
+    @code {
     [Parameter]
     public int Id { get; set; }
 
     private Pez? Pez;
     private bool isLoading = true;
 
+  
+
     protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
     {
         try
         {
@@ -191,5 +192,5 @@
     private void Volver()
     {
         NavigationManager.NavigateTo("/peces");
-    }
+    }     
 }

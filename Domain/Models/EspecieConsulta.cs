@@ -16,6 +16,9 @@ public partial class EspecieConsulta
     [StringLength(450)]
     public string UsuarioId { get; set; } = null!;
 
+    [NotMapped]
+    public string? NombreUsuario { get; set; }
+
     [StringLength(150)]
     public string? Titulo { get; set; }
 
@@ -30,4 +33,5 @@ public partial class EspecieConsulta
 
     [InverseProperty("Consulta")]
     public virtual ICollection<EspecieRespuesta> EspecieRespuesta { get; set; } = new List<EspecieRespuesta>();
+
 }

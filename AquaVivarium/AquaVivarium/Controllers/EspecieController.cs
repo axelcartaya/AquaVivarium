@@ -1,7 +1,10 @@
 ﻿using Domain.Interfaces.Repositories;
+using Domain.Interfaces.Services;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AquaVivarium.Controllers
 {
@@ -9,19 +12,47 @@ namespace AquaVivarium.Controllers
     [ApiController]
     public class EspecieController : ControllerBase
     {
-        private readonly IEspecieRepository _especieRepo;
+        private readonly IEspecieService _especieService;
 
-        public EspecieController(IEspecieRepository especieRepo)
+        public EspecieController(IEspecieService especieService)
         {
-            _especieRepo = especieRepo;
+            _especieService = especieService;
         }
 
-        [HttpGet("{especieId}/imagenes")]
-        public async Task<ActionResult<List<EspecieImagen>>> GetImagenes(int especieId)
+        [HttpPost("{especieId}/consultas")]
+        [Authorize]
+        public async Task<IActionResult> PostConsulta(int especieId, [FromBody] string cuerpo)
         {
-            var imagenes = await _especieRepo.GetImagenesByEspecieIdAsync(especieId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            return Ok(imagenes ?? new List<EspecieImagen>());
+            var consulta = new EspecieConsulta
+            {
+                EspecieId = especieId,
+                UsuarioId = userId,
+                Cuerpo = cuerpo
+            };
+
+            await _especieService.AddConsultaAsync(consulta);
+            return Ok();
+        }
+
+        [HttpPost("consultas/{consultaId}/respuestas")]
+        [Authorize]
+        public async Task<IActionResult> PostRespuesta(int consultaId, [FromBody] string cuerpo)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var respuesta = new EspecieRespuesta
+            {
+                ConsultaId = consultaId,
+                UsuarioId = userId,
+                Cuerpo = cuerpo
+            };
+
+            await _especieService.AddRespuestaAsync(respuesta);
+            return Ok();
         }
     }
 }

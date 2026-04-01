@@ -11,5 +11,8 @@ namespace Domain.Interfaces.Repositories
         Task AddAsync(Especie especie);
         Task AddImagenAsync(EspecieImagen imagen);
         Task<List<EspecieImagen>> GetImagenesByEspecieIdAsync(int especieId);
+        Task AddConsultaAsync(EspecieConsulta consulta);
+        Task AddRespuestaAsync(EspecieRespuesta respuesta);
+        Task<List<EspecieConsulta>> GetConsultasByEspecieIdAsync(int especieId);
     }
 }

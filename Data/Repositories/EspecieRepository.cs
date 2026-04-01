@@ -40,5 +40,25 @@ namespace Data.Repositories
                 .OrderBy(x => x.Url)
                 .ToListAsync();
         }
+        public async Task AddConsultaAsync(EspecieConsulta consulta)
+        {
+            _context.EspecieConsultas.Add(consulta);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddRespuestaAsync(EspecieRespuesta respuesta)
+        {
+            _context.EspecieRespuestas.Add(respuesta);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<EspecieConsulta>> GetConsultasByEspecieIdAsync(int especieId)
+        {
+            return await _context.EspecieConsultas
+                .Include(c => c.EspecieRespuesta)
+                .Where(c => c.EspecieId == especieId)
+                .OrderByDescending(c => c.FechaPublicacion)
+                .ToListAsync();
+        }
     }
 }

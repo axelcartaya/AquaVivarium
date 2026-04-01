@@ -8,24 +8,17 @@ namespace AquaVivarium.Client.Services
     {
         private readonly HttpClient _http = http;
 
-        public async Task<List<EspecieImagen>> GetImagenesAsync(int especieId)
+        public async Task AddConsultaAsync(EspecieConsulta consulta)
         {
-            try
-            {
-                var response = await _http.GetAsync($"api/especie/{especieId}/imagenes");
+            var response = await _http.PostAsJsonAsync($"api/especie/{consulta.EspecieId}/consultas", consulta.Cuerpo);
+            response.EnsureSuccessStatusCode();
+        }
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var resultado = await response.Content.ReadFromJsonAsync<List<EspecieImagen>>();
-                    return resultado ?? new List<EspecieImagen>();
-                }
-
-                return new List<EspecieImagen>(); 
-            }
-            catch
-            {
-                return new List<EspecieImagen>(); 
-            }
+        public async Task AddRespuestaAsync(EspecieRespuesta respuesta)
+        {
+            var response = await _http.PostAsJsonAsync($"api/especie/consultas/{respuesta.ConsultaId}/respuestas", respuesta.Cuerpo);
+            response.EnsureSuccessStatusCode();
         }
     }
 }
+

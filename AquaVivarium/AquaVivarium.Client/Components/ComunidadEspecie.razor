@@ -1,0 +1,203 @@
+﻿@using Domain.Models
+@using Domain.Interfaces.Services
+@inject IEspecieService EspecieService
+
+<MudDivider Class="my-16" Style="border-color: #eaeaea;" />
+
+<MudText Typo="Typo.h5" Style="font-weight: 700; color: #1a1a1a; letter-spacing: -0.5px;" Class="mb-2">
+    Comunidad
+</MudText>
+<MudText Typo="Typo.body2" Style="color: #888;" Class="mb-8">
+    Preguntas y experiencias de otros acuaristas sobre esta especie.
+</MudText>
+
+@* Formulario preguntar *@
+<AuthorizeView>
+    <Authorized>
+        <div class="mb-10 pa-4" style="background-color: #fafafa; border-radius: 8px; border: 1px solid #eaeaea;">
+            <MudTextField @bind-Value="_nuevaPregunta" Label="¿Tienes alguna duda sobre esta especie?" Variant="Variant.Outlined" Lines="2" Class="mb-2" />
+            <div class="d-flex justify-end">
+                <MudButton OnClick="PublicarPregunta" Disabled="@_isSubmittingPregunta" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Style="font-weight: 600; letter-spacing: 1px;">
+                    @if (_isSubmittingPregunta)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    }
+                    else
+                    {
+                        <span>PUBLICAR PREGUNTA</span>
+                    }
+                </MudButton>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-10">
+            Debes <MudLink Href="/Account/Login" Color="Color.Primary" Style="font-weight: 600;">iniciar sesión</MudLink> para participar en la comunidad.
+        </MudAlert>
+    </NotAuthorized>
+</AuthorizeView>
+
+@* Lista preguntas y respuestas *@
+@if (Consultas != null && Consultas.Any())
+{
+    @foreach (var consulta in Consultas.OrderByDescending(c => c.FechaPublicacion))
+    {
+        <div class="mb-6 pb-6" style="border-bottom: 1px solid #f4f4f4;">
+            <div class="d-flex align-center mb-2">
+                <MudAvatar Color="Color.Dark" Size="Size.Small" Class="mr-3" Style="font-weight: 600;">
+                    @(consulta.NombreUsuario?.FirstOrDefault().ToString().ToUpper() ?? "?")
+                </MudAvatar>
+
+                <MudText Typo="Typo.subtitle2" Style="font-weight: 600;">@consulta.NombreUsuario</MudText>
+
+                @if (consulta.FechaPublicacion.HasValue)
+                {
+                    <MudText Typo="Typo.caption" Style="color: #aaa;" Class="ml-2">
+                        • @consulta.FechaPublicacion.Value.ToString("dd MMM yyyy, HH:mm")
+                    </MudText>
+                }
+            </div>
+
+            <MudText Typo="Typo.body1" Style="color: #4a4a4a; line-height: 1.6;" Class="mb-3 pl-10">
+                @consulta.Cuerpo
+            </MudText>
+
+            <AuthorizeView>
+                <Authorized>
+                    <div class="pl-10 mb-4">
+                        <MudButton OnClick="@(() => ToggleCajaRespuesta(consulta.Id))" Variant="Variant.Text" Size="Size.Small" Style="color: #888; text-transform: none; font-weight: 600;">
+                            Responder
+                        </MudButton>
+                    </div>
+
+                    @if (_mostrarCajaRespuesta.ContainsKey(consulta.Id) && _mostrarCajaRespuesta[consulta.Id])
+                    {
+                        <div class="pl-10 mb-4">
+                            <MudTextField @bind-Value="_nuevasRespuestas[consulta.Id]" Placeholder="Escribe tu respuesta..." Variant="Variant.Outlined" Margin="Margin.Dense" Class="mb-2" />
+                            <div class="d-flex justify-end">
+                                <MudButton OnClick="@(() => PublicarRespuesta(consulta.Id))" Disabled="@_isSubmittingRespuesta" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">
+                                    Enviar Respuesta
+                                </MudButton>
+                            </div>
+                        </div>
+                    }
+                </Authorized>
+            </AuthorizeView>
+
+            @if (consulta.EspecieRespuesta != null && consulta.EspecieRespuesta.Any())
+            {
+                <div class="pl-10">
+                    @foreach (var respuesta in consulta.EspecieRespuesta.OrderBy(r => r.FechaPublicacion))
+                    {
+                        <div class="pa-4 mb-2" style="background-color: #fcfcfc; border-left: 2px solid #74B816; border-radius: 0 8px 8px 0;">
+                            <div class="d-flex align-center mb-1">
+                                <MudText Typo="Typo.subtitle2" Style="font-weight: 600;">@respuesta.NombreUsuario</MudText>
+                                @if (respuesta.FechaPublicacion.HasValue)
+                                {
+                                    <MudText Typo="Typo.caption" Style="color: #aaa;" Class="ml-2">
+                                        • @respuesta.FechaPublicacion.Value.ToString("dd MMM yyyy, HH:mm")
+                                    </MudText>
+                                }
+                            </div>
+                            <MudText Typo="Typo.body2" Style="color: #4a4a4a; line-height: 1.6;">
+                                @respuesta.Cuerpo
+                            </MudText>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+}
+else
+{
+    <MudText Typo="Typo.body2" Style="color: #888; font-style: italic;" Class="mb-10 text-center">
+        Aún no hay preguntas en la comunidad. ¡Sé el primero en consultar tus dudas sobre esta especie!
+    </MudText>
+}
+
+@code {
+    [Parameter]
+    public int EspecieId { get; set; }
+
+    [Parameter]
+    public ICollection<EspecieConsulta>? Consultas { get; set; }
+
+    [Parameter]
+    public EventCallback OnCambiosRealizados { get; set; }
+
+    private string _nuevaPregunta = string.Empty;
+    private bool _isSubmittingPregunta = false;
+    private bool _isSubmittingRespuesta = false;
+
+    private Dictionary<int, bool> _mostrarCajaRespuesta = new();
+    private Dictionary<int, string> _nuevasRespuestas = new();
+
+    private async Task PublicarPregunta()
+    {
+        if (string.IsNullOrWhiteSpace(_nuevaPregunta) || EspecieId <= 0) return;
+
+        try
+        {
+            _isSubmittingPregunta = true;
+            var nuevaConsulta = new EspecieConsulta { EspecieId = EspecieId, Cuerpo = _nuevaPregunta };
+            await EspecieService.AddConsultaAsync(nuevaConsulta);
+
+            _nuevaPregunta = string.Empty;
+
+            if (OnCambiosRealizados.HasDelegate)
+            {
+                await OnCambiosRealizados.InvokeAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al publicar pregunta: {ex.Message}");
+        }
+        finally
+        {
+            _isSubmittingPregunta = false;
+        }
+    }
+
+    private void ToggleCajaRespuesta(int consultaId)
+    {
+        if (_mostrarCajaRespuesta.ContainsKey(consultaId))
+        {
+            _mostrarCajaRespuesta[consultaId] = !_mostrarCajaRespuesta[consultaId];
+        }
+        else
+        {
+            _mostrarCajaRespuesta[consultaId] = true;
+            _nuevasRespuestas[consultaId] = string.Empty;
+        }
+    }
+
+    private async Task PublicarRespuesta(int consultaId)
+    {
+        if (!_nuevasRespuestas.ContainsKey(consultaId) || string.IsNullOrWhiteSpace(_nuevasRespuestas[consultaId])) return;
+
+        try
+        {
+            _isSubmittingRespuesta = true;
+            var nuevaRespuesta = new EspecieRespuesta { ConsultaId = consultaId, Cuerpo = _nuevasRespuestas[consultaId] };
+            await EspecieService.AddRespuestaAsync(nuevaRespuesta);
+
+            _nuevasRespuestas[consultaId] = string.Empty;
+            _mostrarCajaRespuesta[consultaId] = false;
+
+            if (OnCambiosRealizados.HasDelegate)
+            {
+                await OnCambiosRealizados.InvokeAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al publicar respuesta: {ex.Message}");
+        }
+        finally
+        {
+            _isSubmittingRespuesta = false;
+        }
+    }
+}
