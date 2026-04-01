@@ -14,6 +14,19 @@ namespace AquaVivarium.Controllers
             _pezService = pezService;
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var pez = await _pezService.GetPezByIdAsync(id);
+
+            if (pez == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(pez);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {

@@ -36,7 +36,10 @@ namespace Data.Repositories
 
         public async Task<Pez> GetPezByIdAsync(int id)
         {
-            return await _context.Peces.Include(p => p.Especie).FirstOrDefaultAsync(p => p.EspecieId == id);
+            return await _context.Peces
+        .Include(p => p.Especie) 
+            .ThenInclude(e => e.EspecieImagenes)
+        .FirstOrDefaultAsync(p => p.Especie.Id == id);
         }
 
         public async Task<(IEnumerable<Pez> Peces, int Total)> GetPecesPaginadosAsync(int page, int pageSize)

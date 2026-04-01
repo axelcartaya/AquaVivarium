@@ -1,8 +1,9 @@
 ﻿@using Domain.Interfaces.Services
 @using Domain.Models
 @inject IEspecieService EspecieService 
+@inject NavigationManager NavigationManager
 
-<div class="av-card-float">
+<div class="av-card-float" @onclick="VerDetalles">
     <div class="av-card-image-wrapper" style="height: 200px;">
         @{
             var imagenPrincipal = Imagenes?.FirstOrDefault(i => i.Url.Contains("principal"))
@@ -40,4 +41,8 @@
     [Parameter] public int? TempMax { get; set; }
     [Parameter] public List<EspecieImagen> Imagenes { get; set; } = new();
 
+    private void VerDetalles()
+    {
+        NavigationManager.NavigateTo($"/peces/{EspecieId}");
+    }
 }
