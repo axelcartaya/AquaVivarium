@@ -1,5 +1,44 @@
-﻿@page "/not-found"
+﻿@page "/404"
+@page "/not-found"
 @layout MainLayout
+@inject NavigationManager Nav
 
-<h3>Not Found</h3>
-<p>Sorry, the content you are looking for does not exist.</p>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="d-flex flex-column align-center justify-center" Style="height: 80vh;">
+
+    <MudText Typo="Typo.h1" Align="Align.Center" Style="font-weight: 300; letter-spacing: 8px; color: var(--mud-palette-text-disabled);" Class="mb-8">
+        404
+    </MudText>
+
+    <div style="border-left: 3px solid var(--mud-palette-primary); padding-left: 24px; max-width: 600px;" class="mb-10">
+        <MudText Typo="Typo.h5" Style="font-family: 'Georgia', serif; font-style: italic; color: var(--mud-palette-text-primary); line-height: 1.6;" Class="mb-3">
+            "En el paisajismo acuático, el espacio vacío es tan importante como el espacio plantado."
+        </MudText>
+        <MudText Typo="Typo.subtitle2" Style="color: var(--mud-palette-text-secondary); letter-spacing: 1px; text-transform: uppercase;">
+            — Takashi Amano
+        </MudText>
+    </div>
+
+    <MudText Typo="Typo.body1" Align="Align.Center" Class="mb-10" Style="color: var(--mud-palette-text-secondary); max-width: 500px;">
+        Sin embargo, este espacio está demasiado vacío. La página que has intentado visitar no existe, ha sido movida o la dirección web es incorrecta.
+    </MudText>
+
+    <MudStack Row="true" Spacing="4" Class="flex-wrap justify-center">
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Dark"
+                   Size="Size.Large"
+                   DisableElevation="true"
+                   Href="/"
+                   Style="border-radius: 4px; padding: 10px 28px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">
+            Ir al Inicio
+        </MudButton>
+
+        <MudButton Variant="Variant.Outlined"
+                   Color="Color.Dark"
+                   Size="Size.Large"
+                   Href="/peces"
+                   Style="border-radius: 4px; padding: 10px 28px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">
+            Ver Catálogo
+        </MudButton>
+    </MudStack>
+
+</MudContainer>
