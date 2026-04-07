@@ -1,0 +1,23 @@
+﻿.buscador-wrapper {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.animacion-apertura {
+    animation: slideLeft 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    transform-origin: right center;
+}
+
+@keyframes slideLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(15px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

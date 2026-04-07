@@ -1,6 +1,7 @@
 ﻿using Data.Context;
 using Domain.Interfaces.Repositories;
 using Domain.Models;
+using Domain.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -58,6 +59,31 @@ namespace Data.Repositories
                 .Include(c => c.EspecieRespuesta)
                 .Where(c => c.EspecieId == especieId)
                 .OrderByDescending(c => c.FechaPublicacion)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<EspecieBusquedaDto>> BuscarEspeciesAsync(string nombreEspecie)
+        {
+            if (string.IsNullOrWhiteSpace(nombreEspecie))
+                return new List<EspecieBusquedaDto>();
+
+            nombreEspecie = nombreEspecie.ToLower().Trim();
+
+            return await _context.Especies
+                .Where(e => e.Nombre.ToLower().Contains(nombreEspecie) ||
+                            (e.NombreCientifico != null && e.NombreCientifico.ToLower().Contains(nombreEspecie)))
+                .Select(e => new EspecieBusquedaDto
+                {
+                    Id = e.Id,
+                    Nombre = e.Nombre,
+                    NombreCientifico = e.NombreCientifico,
+                    TipoEspecie = e.TipoEspecie,
+                    ImagenUrl = e.EspecieImagenes
+                                 .OrderBy(i => i.Id)
+                                 .Select(i => i.Url)
+                                 .FirstOrDefault()
+                })
+                .Take(10) 
                 .ToListAsync();
         }
     }

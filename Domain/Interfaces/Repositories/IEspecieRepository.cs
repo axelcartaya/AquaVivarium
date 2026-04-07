@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using Domain.Models.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,5 +15,6 @@ namespace Domain.Interfaces.Repositories
         Task AddConsultaAsync(EspecieConsulta consulta);
         Task AddRespuestaAsync(EspecieRespuesta respuesta);
         Task<List<EspecieConsulta>> GetConsultasByEspecieIdAsync(int especieId);
+        Task<IEnumerable<EspecieBusquedaDto>> BuscarEspeciesAsync(string nombreEspecie);
     }
 }

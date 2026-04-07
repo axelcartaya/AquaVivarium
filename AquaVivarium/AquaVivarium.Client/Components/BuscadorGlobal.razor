@@ -1,0 +1,105 @@
+﻿@using Domain.Models
+@using Domain.Interfaces.Services
+@using Domain.Models.DTOs
+@inject NavigationManager Nav
+@inject IEspecieService EspecieService
+@rendermode InteractiveWebAssembly
+
+<div class="buscador-wrapper">
+    @if (!buscando)
+    {
+        @* Buscador plegado *@
+        <MudTooltip Text="Buscar especies">
+            <MudIconButton Icon="@Icons.Material.Filled.Search"
+                           Color="Color.Default"
+                           OnClick="AbrirBusqueda" />
+        </MudTooltip>
+    }
+    else
+    {
+        @* Buscador desplegado *@
+        <div class="d-flex align-center animacion-apertura">
+            <MudAutocomplete @ref="autocompleteRef"
+                             T="EspecieBusquedaDto"
+                             Placeholder="Buscar peces, plantas..."
+                             SearchFunc="@Buscar"
+                             ToStringFunc="@(e => e == null ? null : e.Nombre)"
+                             ValueChanged="@OnEspecieSeleccionada"
+                             AdornmentIcon="@Icons.Material.Filled.Search"
+                             AdornmentColor="Color.Primary"
+                             Variant="Variant.Outlined"
+                             Margin="Margin.Dense"
+                             Clearable="true"
+                             Style="background-color: white; border-radius: 8px; width: 300px;">
+                <ItemTemplate Context="especie">
+                    <div class="d-flex align-center">
+                        @if (!string.IsNullOrWhiteSpace(especie.ImagenUrl))
+                        {
+                            <img src="@especie.ImagenUrl.Trim()"
+                                 alt="@especie.Nombre"
+                                 style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;"
+                                 class="mr-3" />
+                        }
+                        else
+                        {
+                            <MudAvatar Color="Color.Primary" Size="Size.Small" Class="mr-3">
+                                @especie.Nombre.FirstOrDefault()
+                            </MudAvatar>
+                        }
+                        <div>
+                            <MudText Typo="Typo.body2">@especie.Nombre</MudText>
+                            <MudText Typo="Typo.caption" Style="color: gray;">@especie.NombreCientifico</MudText>
+                        </div>
+                    </div>
+                </ItemTemplate>
+            </MudAutocomplete>
+
+            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                           Color="Color.Default"
+                           Size="Size.Small"
+                           OnClick="CerrarBusqueda"
+                           Class="ml-2" />
+        </div>
+    }
+</div>
+
+@code {
+    private bool buscando = false;
+    private MudAutocomplete<EspecieBusquedaDto> autocompleteRef;
+
+    private async Task AbrirBusqueda()
+    {
+        buscando = true;
+
+        // "Task.Yield() pausa el método un microsegundo, dibuja el HTML en la pantalla y luego sigue".
+        await Task.Yield();
+
+        if (autocompleteRef != null)
+        {
+            await autocompleteRef.FocusAsync();
+        }
+    }
+
+    private void CerrarBusqueda()
+    {
+        buscando = false;
+    }
+
+    private async Task<IEnumerable<EspecieBusquedaDto>> Buscar(string value, CancellationToken token)
+    {
+        if (string.IsNullOrEmpty(value)) return new List<EspecieBusquedaDto>();
+        return await EspecieService.BuscarEspeciesAsync(value);
+    }
+
+    private void OnEspecieSeleccionada(EspecieBusquedaDto especieSeleccionada)
+    {
+        if (especieSeleccionada == null) return;
+
+        buscando = false;
+
+        if (especieSeleccionada.TipoEspecie == "Pez")
+            Nav.NavigateTo($"/peces/{especieSeleccionada.Id}");
+        else if (especieSeleccionada.TipoEspecie == "Planta")
+            Nav.NavigateTo($"/plantas/{especieSeleccionada.Id}");
+    }
+}

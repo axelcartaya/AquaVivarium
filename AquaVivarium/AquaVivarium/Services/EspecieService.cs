@@ -1,6 +1,7 @@
 ﻿using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Models;
+using Domain.Models.DTOs;
 
 namespace AquaVivarium.Services
 {
@@ -18,6 +19,10 @@ namespace AquaVivarium.Services
         public async Task AddRespuestaAsync(EspecieRespuesta respuesta)
         {
             await _repository.AddRespuestaAsync(respuesta);
+        }
+        public async Task<IEnumerable<EspecieBusquedaDto>> BuscarEspeciesAsync(string nombreEspecie)
+        {
+            return await _repository.BuscarEspeciesAsync(nombreEspecie);
         }
     }
 }

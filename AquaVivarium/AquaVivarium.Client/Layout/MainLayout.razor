@@ -1,10 +1,15 @@
-﻿@inherits LayoutComponentBase
+﻿@using AquaVivarium.Client.Components
+@using Domain.Interfaces.Services
+@using Domain.Models
+@using Domain.Models.DTOs
+@inherits LayoutComponentBase
+@inject NavigationManager Nav
+@inject IEspecieService EspecieService
 
-<MudThemeProvider Theme="_avTheme" />
-<MudPopoverProvider />
-<MudDialogProvider />
-<MudSnackbarProvider />
-
+<MudThemeProvider Theme="_avTheme" @rendermode="InteractiveWebAssembly" />
+<MudPopoverProvider @rendermode="InteractiveWebAssembly" />
+<MudDialogProvider @rendermode="InteractiveWebAssembly" />
+<MudSnackbarProvider @rendermode="InteractiveWebAssembly" />
 <MudLayout>
     @* Navbar *@
     <MudAppBar Elevation="0" Class="bg-white border-bottom py-2" Fixed="true">
@@ -31,7 +36,8 @@
             <MudSpacer />
 
             @* Acciones *@
-            <MudIconButton Icon="@Icons.Material.Outlined.Search" Color="Color.Default" />
+            <BuscadorGlobal />
+
             <MudIconButton Icon="@Icons.Material.Outlined.Person" Href="/Account/Login" Color="Color.Default" Class="ml-2" />
 
         </MudContainer>

@@ -1,8 +1,5 @@
-﻿using Domain.Interfaces.Repositories;
-using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Domain.Models;
+using Domain.Models.DTOs;
 
 namespace Domain.Interfaces.Services
 {
@@ -11,5 +8,6 @@ namespace Domain.Interfaces.Services
     {
         Task AddConsultaAsync(EspecieConsulta consulta);
         Task AddRespuestaAsync(EspecieRespuesta respuesta);
+        Task<IEnumerable<EspecieBusquedaDto>> BuscarEspeciesAsync(string nombreEspecie);
     }
 }

@@ -1,8 +1,7 @@
-﻿using Domain.Interfaces.Repositories;
-using Domain.Interfaces.Services;
+﻿using Domain.Interfaces.Services;
 using Domain.Models;
+using Domain.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -53,6 +52,15 @@ namespace AquaVivarium.Controllers
 
             await _especieService.AddRespuestaAsync(respuesta);
             return Ok();
+        }
+
+        [HttpGet("buscar")]
+        public async Task<ActionResult<IEnumerable<EspecieBusquedaDto>>> Buscar([FromQuery] string? nombreEspecie)
+        {
+            if (string.IsNullOrWhiteSpace(nombreEspecie))
+                return Ok(new List<EspecieBusquedaDto>());
+
+            return Ok(await _especieService.BuscarEspeciesAsync(nombreEspecie));
         }
     }
 }
