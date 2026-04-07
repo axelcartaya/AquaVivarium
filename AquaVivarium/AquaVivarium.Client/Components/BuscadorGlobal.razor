@@ -30,7 +30,8 @@
                              Variant="Variant.Outlined"
                              Margin="Margin.Dense"
                              Clearable="true"
-                             Style="background-color: white; border-radius: 8px; width: 300px;">
+                             Class="buscador-input"
+                             Style="background-color: white; border-radius: 8px;">
                 <ItemTemplate Context="especie">
                     <div class="d-flex align-center">
                         @if (!string.IsNullOrWhiteSpace(especie.ImagenUrl))
@@ -58,7 +59,7 @@
                            Color="Color.Default"
                            Size="Size.Small"
                            OnClick="CerrarBusqueda"
-                           Class="ml-2" />
+                           Class="ml-1" />
         </div>
     }
 </div>
@@ -70,8 +71,6 @@
     private async Task AbrirBusqueda()
     {
         buscando = true;
-
-        // "Task.Yield() pausa el método un microsegundo, dibuja el HTML en la pantalla y luego sigue".
         await Task.Yield();
 
         if (autocompleteRef != null)

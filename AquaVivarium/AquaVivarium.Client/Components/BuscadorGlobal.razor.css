@@ -21,3 +21,14 @@
         transform: translateX(0);
     }
 }
+
+.buscador-input {
+    width: 140px;
+    transition: width 0.3s ease-in-out;
+}
+
+@media (min-width: 600px) {
+    .buscador-input {
+        width: 300px;
+    }
+}

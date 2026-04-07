@@ -12,36 +12,7 @@
 <MudSnackbarProvider @rendermode="InteractiveWebAssembly" />
 <MudLayout>
     @* Navbar *@
-    <MudAppBar Elevation="0" Class="bg-white border-bottom py-2" Fixed="true">
-        <MudContainer MaxWidth="MaxWidth.False" Class="d-flex align-center px-8">
-
-            @* Logo *@
-            <NavLink href="/" Style="text-decoration: none; display: flex; align-items: center;" Class="mr-8 cursor-pointer">
-                <MudIcon Icon="@Icons.Material.Filled.Spa"
-                         Color="Color.Primary"
-                         Class="mr-2"
-                         Style="width: 36px; height: 36px; flex-shrink: 0;" />
-                <MudText Typo="Typo.h6" Style="font-weight: 800; letter-spacing: 2px; color: #2D3436;">
-                    AQUA<span style="color: #74B816; font-weight: 300;"> • VIVARIUM</span>
-                </MudText>
-            </NavLink>
-
-            @* Navegación Central *@
-            <div class="d-flex gap-4">
-                <MudButton Variant="Variant.Text" Href="/" Class="nav-link-av">Home</MudButton>
-                <MudButton Variant="Variant.Text" Href="/peces" Class="nav-link-av">Peces</MudButton>
-                <MudButton Variant="Variant.Text" Href="/plantas" Class="nav-link-av">Plantas</MudButton>
-            </div>
-
-            <MudSpacer />
-
-            @* Acciones *@
-            <BuscadorGlobal />
-
-            <MudIconButton Icon="@Icons.Material.Outlined.Person" Href="/Account/Login" Color="Color.Default" Class="ml-2" />
-
-        </MudContainer>
-    </MudAppBar>
+    <AppNavbar />
 
     @* Contenido Principal *@
     <MudMainContent Class="pt-16">
