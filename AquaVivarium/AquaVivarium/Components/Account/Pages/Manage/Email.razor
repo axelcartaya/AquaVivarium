@@ -13,46 +13,73 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Manage email</PageTitle>
+<PageTitle>Gestionar Email</PageTitle>
 
-<h3>Manage email</h3>
+<MudText Typo="Typo.h5" Style="font-weight: 700; color: #2D3436;" Class="mb-4">Gestionar Email</MudText>
 
-<StatusMessage Message="@message"/>
-<div class="row">
-    <div class="col-xl-6">
+<StatusMessage Message="@message" />
+
+<MudGrid>
+    <MudItem xs="12" md="8" lg="6">
+
         <form @onsubmit="OnSendEmailVerificationAsync" @formname="send-verification" id="send-verification-form" method="post">
             <AntiforgeryToken />
         </form>
+
         <EditForm Model="Input" FormName="change-email" OnValidSubmit="OnValidSubmitAsync" method="post">
             <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
+            <ValidationSummary class="text-danger mb-4" role="alert" style="list-style-type: none; padding-left: 0;" />
+
             @if (isEmailConfirmed)
             {
-                <div class="form-floating mb-3 input-group">
-                    <input type="text" value="@email" id="email" class="form-control" placeholder="Enter your email" disabled />
-                    <div class="input-group-append">
-                        <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
-                    </div>
-                    <label for="email" class="form-label">Email</label>
-                </div>
+                <MudTextField Value="@email"
+                              Label="Email actual"
+                              Variant="Variant.Outlined"
+                              Disabled="true"
+                              Margin="Margin.Dense"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@Icons.Material.Filled.CheckCircle"
+                              AdornmentColor="Color.Success"
+                              Class="mb-4" />
             }
             else
             {
-                <div class="form-floating mb-3">
-                    <input type="text" value="@email" id="email" class="form-control" placeholder="Enter your email" disabled />
-                    <label for="email" class="form-label">Email</label>
-                    <button type="submit" class="btn btn-link" form="send-verification-form">Send verification email</button>
-                </div>
+                <MudTextField Value="@email"
+                              Label="Email actual (Sin verificar)"
+                              Variant="Variant.Outlined"
+                              Disabled="true"
+                              Margin="Margin.Dense"
+                              Class="mb-1" />
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           form="send-verification-form"
+                           Variant="Variant.Text"
+                           Color="Color.Info"
+                           Size="Size.Small"
+                           Class="mb-4 pl-0"
+                           Style="text-transform: none; font-weight: 600;">
+                    Enviar email de verificación
+                </MudButton>
             }
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.NewEmail" id="Input.NewEmail" class="form-control" autocomplete="email" aria-required="true" placeholder="Enter a new email" />
-                <label for="Input.NewEmail" class="form-label">New email</label>
-                <ValidationMessage For="() => Input.NewEmail" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Change email</button>
+
+            <MudTextField @bind-Value="Input.NewEmail"
+                          For="@(() => Input.NewEmail)"
+                          Label="Nuevo email"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Class="mb-6" />
+
+            <MudButton ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Size="Size.Large"
+                       FullWidth="true"
+                       Style="font-weight: 600; border-radius: 8px;">
+                Cambiar email
+            </MudButton>
         </EditForm>
-    </div>
-</div>
+    </MudItem>
+</MudGrid>
 
 @code {
     private string? message;
@@ -87,7 +114,7 @@
     {
         if (Input.NewEmail is null || Input.NewEmail == email)
         {
-            message = "Your email is unchanged.";
+            message = "Tu email no ha cambiado.";
             return;
         }
 
@@ -106,7 +133,7 @@
 
         await EmailSender.SendConfirmationLinkAsync(user, Input.NewEmail, HtmlEncoder.Default.Encode(callbackUrl));
 
-        message = "Confirmation link to change email sent. Please check your email.";
+        message = "Se ha enviado un enlace de confirmación. Por favor, revisa la bandeja de entrada de tu nuevo correo.";
     }
 
     private async Task OnSendEmailVerificationAsync()
@@ -131,14 +158,14 @@
 
         await EmailSender.SendConfirmationLinkAsync(user, email, HtmlEncoder.Default.Encode(callbackUrl));
 
-        message = "Verification email sent. Please check your email.";
+        message = "Se ha enviado el email de verificación. Por favor, revisa tu bandeja de entrada.";
     }
 
     private sealed class InputModel
     {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "New email")]
+        [Required(ErrorMessage = "El campo de nuevo email es obligatorio.")]
+        [EmailAddress(ErrorMessage = "El formato del email no es válido.")]
+        [Display(Name = "Nuevo email")]
         public string? NewEmail { get; set; }
     }
 }

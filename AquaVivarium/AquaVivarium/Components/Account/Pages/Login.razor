@@ -12,71 +12,76 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Login</PageTitle>
+<PageTitle>Iniciar Sesión</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.ExtraSmall" Class="mt-10">
     <MudCard Class="pa-6">
-        <MudText Typo="Typo.h4" Class="mb-4 text-center">Login</MudText>
+        <MudText Typo="Typo.h4" Class="mb-4 text-center" Style="font-weight: 700; color: #2D3436;">Iniciar Sesión</MudText>
 
         <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+            <DataAnnotationsValidator />
 
             <MudTextField @bind-Value="Input.Email"
-              Name="Input.Email"
-              Label="Email"
-              Placeholder="example@email.com"
-              Required="true"
-              Variant="Variant.Outlined"
-              Class="mb-4" />
+                          Name="Input.Email"
+                          For="@(() => Input.Email)"
+                          Label="Correo electrónico"
+                          Placeholder="ejemplo@correo.com"
+                          Required="true"
+                          Variant="Variant.Outlined"
+                          Class="mb-4" />
 
             <MudTextField @bind-Value="Input.Password"
-              Name="Input.Password"
-              Label="Password"
-              InputType="InputType.Password"
-              Placeholder="********* "
-              Required="true"
-              Variant="Variant.Outlined"
-              Class="mb-4" />
+                          Name="Input.Password"
+                          For="@(() => Input.Password)"
+                          Label="Contraseña"
+                          InputType="InputType.Password"
+                          Placeholder="*********"
+                          Required="true"
+                          Variant="Variant.Outlined"
+                          ShrinkLabel="true"
+                          Class="mb-4" />
 
             <div class="d-flex align-center mb-4 cursor-pointer">
                 <InputCheckbox id="rememberMe" @bind-Value="Input.RememberMe" style="width: 18px; height: 18px; accent-color: var(--mud-palette-primary);" />
-                <label for="rememberMe" class="ms-2 mud-typography mud-typography-body1" style="cursor:pointer;">
-                    Remember me
+                <label for="rememberMe" class="ms-2 mud-typography mud-typography-body1" style="cursor:pointer; color: #2D3436;">
+                    Recordarme
                 </label>
             </div>
 
             @if (!string.IsNullOrEmpty(errorMessage))
             {
-                <MudAlert Severity="Severity.Error" Class="mb-4">@errorMessage</MudAlert>
+                <MudAlert Severity="Severity.Error" Class="mb-4" Style="border-radius: 8px;">@errorMessage</MudAlert>
             }
 
             <MudButton Variant="Variant.Filled"
                        Color="Color.Primary"
                        FullWidth="true"
-                       ButtonType="ButtonType.Submit">
-                Log in
+                       ButtonType="ButtonType.Submit"
+                       Size="Size.Large"
+                       Style="font-weight: 600; border-radius: 8px;">
+                Entrar
             </MudButton>
         </EditForm>
 
         <MudDivider Class="my-4" />
 
         <div class="text-center">
-            <MudText Typo="Typo.body2">
-                <MudLink Href="Account/ForgotPassword">Forgot your password</MudLink>
+            <MudText Typo="Typo.body2" Class="mb-2">
+                <MudLink Href="Account/ForgotPassword" Color="Color.Primary">¿Olvidaste tu contraseña?</MudLink>
             </MudText>
-            <MudText Typo="Typo.body2">
-                <MudLink Href="@NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl })">
-                    Register as a new user
+            <MudText Typo="Typo.body2" Class="mb-2">
+                <MudLink Href="@NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl })" Color="Color.Primary">
+                    Registrarse como nuevo usuario
                 </MudLink>
             </MudText>
             <MudText Typo="Typo.body2">
-                <MudLink Href="Account/ResendEmailConfirmation">Resend email confirmation</MudLink>
+                <MudLink Href="Account/ResendEmailConfirmation" Color="Color.Primary">Reenviar confirmación por correo</MudLink>
             </MudText>
         </div>
     </MudCard>
 </MudContainer>
 
 @code {
-
     private string? errorMessage;
 
     [CascadingParameter]
@@ -98,7 +103,6 @@
 
     public async Task LoginUser()
     {
- 
         var result = await SignInManager.PasswordSignInAsync(
             Input.Email,
             Input.Password,
@@ -108,7 +112,7 @@
 
         if (result.Succeeded)
         {
-            Logger.LogInformation("User logged in.");
+            Logger.LogInformation("El usuario ha iniciado sesión.");
             RedirectManager.RedirectTo(ReturnUrl);
         }
         else if (result.RequiresTwoFactor)
@@ -123,16 +127,18 @@
         }
         else
         {
-            errorMessage = "Invalid login attempt.";
+            errorMessage = "El correo electrónico o la contraseña son incorrectos.";
         }
     }
 
     private sealed class InputModel
     {
-        [Required, EmailAddress]
+        [Required(ErrorMessage = "El correo electrónico es obligatorio.")]
+        [EmailAddress(ErrorMessage = "El formato del correo electrónico no es válido.")]
         public string Email { get; set; } = "";
 
-        [Required, DataType(DataType.Password)]
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        [DataType(DataType.Password)]
         public string Password { get; set; } = "";
 
         public bool RememberMe { get; set; }

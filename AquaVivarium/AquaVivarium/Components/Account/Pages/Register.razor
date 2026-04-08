@@ -16,26 +16,26 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Register</PageTitle>
+<PageTitle>Registro</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-10">
     <MudCard Class="pa-6">
-        <MudText Typo="Typo.h4" Class="mb-4 text-center">Register</MudText>
+        <MudText Typo="Typo.h4" Class="mb-4 text-center" Style="font-weight: 700; color: #2D3436;">Registro</MudText>
 
         @if (!string.IsNullOrEmpty(Message))
         {
-            <MudAlert Severity="Severity.Error" Class="mb-4">@Message</MudAlert>
+            <MudAlert Severity="Severity.Error" Class="mb-4" Style="border-radius: 8px;">@Message</MudAlert>
         }
 
         <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register">
             <DataAnnotationsValidator />
-            <MudText Typo="Typo.h6" Class="mb-2">Create a new account.</MudText>
+            <MudText Typo="Typo.h6" Class="mb-2">Crea una nueva cuenta.</MudText>
             <MudDivider Class="mb-6" />
 
             <MudTextField @bind-Value="Input.Email"
                           Name="Input.Email"
-                          Label="Email"
-                          Placeholder="example@email.com"
+                          Label="Correo electrónico"
+                          Placeholder="ejemplo@correo.com"
                           Required="true"
                           Variant="Variant.Outlined"
                           Class="mb-4"
@@ -44,22 +44,24 @@
 
             <MudTextField @bind-Value="Input.Password"
                           Name="Input.Password"
-                          Label="Password"
+                          Label="Contraseña"
                           InputType="InputType.Password"
                           Placeholder="********"
                           Required="true"
                           Variant="Variant.Outlined"
+                          ShrinkLabel="true"
                           Class="mb-4"
                           Error="@HasError("Password")"
                           ErrorText="@GetErrorText("Password")" />
 
             <MudTextField @bind-Value="Input.ConfirmPassword"
                           Name="Input.ConfirmPassword"
-                          Label="Confirm Password"
+                          Label="Confirmar contraseña"
                           InputType="InputType.Password"
                           Placeholder="********"
                           Required="true"
                           Variant="Variant.Outlined"
+                          ShrinkLabel="true"
                           Class="mb-6"
                           Error="@HasError("ConfirmPassword")"
                           ErrorText="@GetErrorText("ConfirmPassword")" />
@@ -68,15 +70,16 @@
                        Color="Color.Primary"
                        FullWidth="true"
                        ButtonType="ButtonType.Submit"
-                       Size="Size.Large">
-                Register
+                       Size="Size.Large"
+                       Style="font-weight: 600; border-radius: 8px;">
+                Registrarse
             </MudButton>
         </EditForm>
 
         <MudDivider Class="my-6" />
 
         <section class="text-center">
-            <MudText Typo="Typo.body2" Class="mb-4">Use another service to register.</MudText>
+            <MudText Typo="Typo.body2" Class="mb-4">O usa otro servicio para registrarte.</MudText>
             <ExternalLoginPicker />
         </section>
     </MudCard>
@@ -129,7 +132,7 @@
             return;
         }
 
-        Logger.LogInformation("User created a new account with password.");
+        Logger.LogInformation("El usuario ha creado una cuenta nueva con contraseña.");
 
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
@@ -177,20 +180,20 @@
 
     private sealed class InputModel
     {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
+        [Required(ErrorMessage = "El correo electrónico es obligatorio.")]
+        [EmailAddress(ErrorMessage = "El formato del correo electrónico no es válido.")]
+        [Display(Name = "Correo electrónico")]
         public string Email { get; set; } = "";
 
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        [StringLength(100, ErrorMessage = "La {0} debe tener al menos {2} y un máximo de {1} caracteres.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Contraseña")]
         public string Password { get; set; } = "";
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Display(Name = "Confirmar contraseña")]
+        [Compare("Password", ErrorMessage = "La contraseña y la confirmación no coinciden.")]
         public string ConfirmPassword { get; set; } = "";
     }
 }

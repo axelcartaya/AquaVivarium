@@ -4,32 +4,36 @@
 
 @inject SignInManager<ApplicationUser> SignInManager
 
-<ul class="nav nav-pills flex-column">
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage" Match="NavLinkMatch.All">Profile</NavLink>
-    </li>
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/Email">Email</NavLink>
-    </li>
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/ChangePassword">Password</NavLink>
-    </li>
-    @if (hasExternalLogins)
-    {
-        <li class="nav-item">
-            <NavLink class="nav-link" href="Account/Manage/ExternalLogins">External logins</NavLink>
-        </li>
-    }
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/TwoFactorAuthentication">Two-factor authentication</NavLink>
-    </li>
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/Passkeys">Passkeys</NavLink>
-    </li>
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/PersonalData">Personal data</NavLink>
-    </li>
-</ul>
+<MudPaper Elevation="2" Class="py-2" Style="border-radius: 12px;">
+    <MudNavMenu Color="Color.Primary">
+        <MudNavLink Href="Account/Manage" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Person">
+            Perfil
+        </MudNavLink>
+
+        <MudNavLink Href="Account/Manage/Email" Icon="@Icons.Material.Outlined.Email">
+            Email
+        </MudNavLink>
+
+        <MudNavLink Href="Account/Manage/ChangePassword" Icon="@Icons.Material.Outlined.Lock">
+            Contraseña
+        </MudNavLink>
+
+        @if (hasExternalLogins)
+        {
+            <MudNavLink Href="Account/Manage/ExternalLogins" Icon="@Icons.Material.Outlined.Link">
+                Logins externos
+            </MudNavLink>
+        }
+
+        <MudNavLink Href="Account/Manage/TwoFactorAuthentication" Icon="@Icons.Material.Outlined.Security">
+            Autenticación 2FA
+        </MudNavLink>
+
+        <MudNavLink Href="Account/Manage/PersonalData" Icon="@Icons.Material.Outlined.FolderShared">
+            Datos personales
+        </MudNavLink>
+    </MudNavMenu>
+</MudPaper>
 
 @code {
     private bool hasExternalLogins;
