@@ -1,0 +1,68 @@
+﻿@inject NavigationManager Nav
+
+<AuthorizeView Context="authState">
+    <Authorized>
+        <div class="contenedor-avatar-av">
+            <MudAvatar Color="Color.Primary"
+                       Size="Size.Medium"
+                       Elevation="2"
+                       Class="avatar-av"
+                       @onclick="ToggleMenu">
+                @(ObtenerInicial(authState.User.Identity?.Name))
+            </MudAvatar>
+
+            @if (_menuAbierto)
+            {
+                <div class="menu-flotante-av">
+                    <a href="/Account/Manage" class="item-flotante-av" @onclick="CerrarMenu">
+                        <MudIcon Icon="@Icons.Material.Outlined.Person" Size="Size.Small" Class="mr-3" />
+                        Mi Cuenta
+                    </a>
+
+                    <form action="Account/Logout" method="post" class="m-0 form-logout-av">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="@Nav.ToBaseRelativePath(Nav.Uri)" />
+
+                        <button type="submit" class="item-flotante-av btn-logout-av">
+                            <MudIcon Icon="@Icons.Material.Outlined.Logout" Size="Size.Small" Color="Color.Error" Class="mr-3" />
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="cerrar-menu-av" @onclick="CerrarMenu"></div>
+            }
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <div class="d-flex align-center gap-1 ml-1 ml-md-4">
+            <MudButton Href="/Account/Login" Variant="Variant.Text" Class="btn-entrar-av" Size="Size.Small">
+                Entrar
+            </MudButton>
+            <MudButton Href="/Account/Register" Variant="Variant.Outlined" Color="Color.Primary" Class="d-none d-sm-flex btn-registro-av" Size="Size.Small">
+                Registro
+            </MudButton>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private bool _menuAbierto = false;
+
+    private void ToggleMenu()
+    {
+        _menuAbierto = !_menuAbierto;
+    }
+
+    private void CerrarMenu()
+    {
+        _menuAbierto = false;
+    }
+
+    private string ObtenerInicial(string? nombreUsuario)
+    {
+        if (string.IsNullOrWhiteSpace(nombreUsuario)) return "U";
+        return nombreUsuario.Substring(0, 1).ToUpper();
+    }
+}

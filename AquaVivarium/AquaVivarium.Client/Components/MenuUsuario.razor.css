@@ -1,0 +1,76 @@
+﻿.contenedor-avatar-av {
+    position: relative;
+}
+
+::deep .avatar-av {
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    position: relative;
+    z-index: 101;
+}
+
+.menu-flotante-av {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background-color: white;
+    min-width: 200px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.cerrar-menu-av {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    cursor: default;
+}
+
+.item-flotante-av {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #2D3436;
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.item-flotante-av:hover {
+    background-color: #f5f5f5;
+}
+
+.form-logout-av {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.btn-logout-av {
+    background: transparent;
+    border: none;
+    text-align: left;
+    color: var(--mud-palette-error);
+    width: 100%;
+}
+
+.btn-entrar-av {
+    color: #2D3436;
+    font-weight: 600;
+}
+
+.btn-registro-av {
+    font-weight: 600;
+    border-radius: 20px;
+}
