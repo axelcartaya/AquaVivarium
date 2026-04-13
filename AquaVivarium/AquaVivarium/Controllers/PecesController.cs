@@ -1,4 +1,6 @@
 ﻿using Domain.Interfaces.Services;
+using Domain.Models;
+using Domain.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AquaVivarium.Controllers
@@ -35,13 +37,39 @@ namespace AquaVivarium.Controllers
         }
 
         [HttpGet("paginados")]
-        public async Task<ActionResult> GetPaginados(int page = 1, int pageSize = 44)
+        public async Task<IActionResult> GetPecesPaginados([FromQuery] int page = 1, [FromQuery] int pageSize = 44)
         {
             var (peces, total) = await _pezService.GetPecesPaginadosAsync(page, pageSize);
 
-            return Ok(new { Peces = peces, Total = total });
+            var respuesta = new ResultadoPaginadoDto<Pez>
+            {
+                Items = peces,
+                TotalCount = total
+            };
+
+            return Ok(respuesta);
         }
 
+        [HttpPost("filtrar")]
+        public async Task<IActionResult> GetPecesFiltrados([FromBody] FiltroPezDto filtro, [FromQuery] int page = 1, [FromQuery] int pageSize = 44)
+        {
+            try
+            {
+                var (peces, totalCount) = await _pezService.GetPecesFiltradosAsync(filtro, page, pageSize);
+
+                var respuesta = new ResultadoPaginadoDto<Pez>
+                {
+                    Items = peces,
+                    TotalCount = totalCount
+                };
+
+                return Ok(respuesta);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Error interno al filtrar los peces.");
+            }
+        }
 
     }
 }

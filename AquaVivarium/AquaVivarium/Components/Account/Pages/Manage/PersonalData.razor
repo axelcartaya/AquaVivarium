@@ -7,26 +7,50 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Personal Data</PageTitle>
+<PageTitle>Datos personales</PageTitle>
+
+<MudText Typo="Typo.h5" Style="font-weight: 700; color: #2D3436;" Class="mb-4">Datos personales</MudText>
 
 <StatusMessage />
-<h3>Personal Data</h3>
 
-<div class="row">
-    <div class="col-md-6">
-        <p>Your account contains personal data that you have given us. This page allows you to download or delete that data.</p>
-        <p>
-            <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-        </p>
-        <form action="Account/Manage/DownloadPersonalData" method="post">
-            <AntiforgeryToken />
-            <button class="btn btn-primary" type="submit">Download</button>
-        </form>
-        <p>
-            <a href="Account/Manage/DeletePersonalData" class="btn btn-danger">Delete</a>
-        </p>
-    </div>
-</div>
+<MudGrid>
+    <MudItem xs="12" md="8" lg="6">
+
+        <MudText Typo="Typo.body1" Class="mb-4" Style="color: #636e72;">
+            Tu cuenta contiene información personal que nos has proporcionado. Esta página te permite descargar una copia de tus datos o eliminarlos por completo de nuestro sistema.
+        </MudText>
+
+        <MudAlert Severity="Severity.Warning" Class="mb-6" Style="border-radius: 8px;">
+            <strong>¡Atención!</strong> Eliminar estos datos borrará permanentemente tu cuenta, y esta acción no se puede deshacer.
+        </MudAlert>
+
+        <div class="d-flex flex-column gap-4">
+            <form action="Account/Manage/DownloadPersonalData" method="post" class="m-0 w-100">
+                <AntiforgeryToken />
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Size="Size.Large"
+                           FullWidth="true"
+                           StartIcon="@Icons.Material.Outlined.Download"
+                           Style="font-weight: 600; border-radius: 8px;">
+                    Descargar mis datos
+                </MudButton>
+            </form>
+
+            <MudButton Href="Account/Manage/DeletePersonalData"
+                       Variant="Variant.Outlined"
+                       Color="Color.Error"
+                       Size="Size.Large"
+                       FullWidth="true"
+                       StartIcon="@Icons.Material.Outlined.DeleteForever"
+                       Style="font-weight: 600; border-radius: 8px; border-width: 2px;">
+                Eliminar cuenta
+            </MudButton>
+        </div>
+
+    </MudItem>
+</MudGrid>
 
 @code {
     [CascadingParameter]
@@ -34,7 +58,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var user  = await UserManager.GetUserAsync(HttpContext.User);
+        var user = await UserManager.GetUserAsync(HttpContext.User);
         if (user is null)
         {
             RedirectManager.RedirectToInvalidUser(UserManager, HttpContext);

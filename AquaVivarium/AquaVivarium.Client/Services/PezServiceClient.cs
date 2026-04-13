@@ -1,5 +1,7 @@
 ﻿using Domain.Interfaces.Services;
 using Domain.Models;
+using Domain.Models.DTOs;
+using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace AquaVivarium.Client.Services
@@ -25,18 +27,26 @@ namespace AquaVivarium.Client.Services
         }
         public async Task<(IEnumerable<Pez> Peces, int Total)> GetPecesPaginadosAsync(int page, int pageSize)
         {
-            var url = $"api/peces/paginados?page={page}&tamaño={pageSize}";
-            var resultado = await _http.GetFromJsonAsync<PaginacionHelper>(url);
-            if (resultado == null) return (Enumerable.Empty<Pez>(), 0);
+            var url = $"api/peces/paginados?page={page}&pageSize={pageSize}";
+            var resultado = await _http.GetFromJsonAsync<ResultadoPaginadoDto<Pez>>(url);
 
-            return (resultado.Peces, resultado.Total);
+            if (resultado == null)
+                return (Enumerable.Empty<Pez>(), 0);
+            return (resultado.Items, resultado.TotalCount);
         }
 
-        // Clase de apoyo 
-        private class PaginacionHelper
+        public async Task<(IEnumerable<Pez> Peces, int TotalCount)> GetPecesFiltradosAsync(FiltroPezDto filtro, int page, int pageSize)
         {
-            public List<Pez> Peces { get; set; } = new();
-            public int Total { get; set; }
+            var response = await _http.PostAsJsonAsync($"api/peces/filtrar?page={page}&pageSize={pageSize}", filtro);
+
+            response.EnsureSuccessStatusCode();
+
+            var resultado = await response.Content.ReadFromJsonAsync<ResultadoPaginadoDto<Pez>>();
+
+            if (resultado == null) return (new List<Pez>(), 0);
+
+            return (resultado.Items, resultado.TotalCount);
         }
+
     }
 }

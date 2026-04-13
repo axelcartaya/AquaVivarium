@@ -1,17 +1,25 @@
 ﻿@inherits LayoutComponentBase
 @layout AquaVivarium.Client.Layout.MainLayout
 
-<h1>Manage your account</h1>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8 mb-16">
 
-<div>
-    <h2>Change your account settings</h2>
-    <hr />
-    <div class="row">
-        <div class="col-lg-3">
+    <MudText Typo="Typo.h4" Style="font-weight: 800; color: #2D3436;" Class="mb-2">Mi Cuenta</MudText>
+    <MudText Typo="Typo.body1" Class="mb-6 text-muted">Gestiona la configuración y privacidad de tu perfil.</MudText>
+
+    <MudDivider Class="mb-6" />
+
+    <MudGrid>
+        @* columna izquierda *@
+        <MudItem xs="12" md="4" lg="3">
             <ManageNavMenu />
-        </div>
-        <div class="col-lg-9">
-            @Body
-        </div>
-    </div>
-</div>
+        </MudItem>
+
+        @* columna derecha *@
+        <MudItem xs="12" md="8" lg="9">
+            <MudPaper Elevation="2" Class="pa-6 pa-md-8" Style="border-radius: 12px;">
+                @Body
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+</MudContainer>
