@@ -4,6 +4,7 @@ using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(AquaVivariumContext))]
-    partial class AquaVivariumContextModelSnapshot : ModelSnapshot
+    [Migration("20260414135924_AddSistemaGuias")]
+    partial class AddSistemaGuias
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,6 +62,8 @@ namespace Data.Migrations
                         .HasName("PK__Acuarios__3214EC0767DBFA4E");
 
                     b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("EstiloId");
 
                     b.ToTable("Acuarios");
                 });
@@ -178,8 +183,7 @@ namespace Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("Id")
-                        .HasName("PK__EstilosA__3214EC073E29BF9B");
+                    b.HasKey("Id");
 
                     b.ToTable("CategoriasGuia");
                 });
@@ -344,6 +348,56 @@ namespace Data.Migrations
                     b.HasIndex("ConsultaId");
 
                     b.ToTable("EspecieRespuestas");
+                });
+
+            modelBuilder.Entity("Domain.Models.EstilosAquascaping", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__EstilosA__3214EC073E29BF9B");
+
+                    b.ToTable("EstilosAquascaping");
+                });
+
+            modelBuilder.Entity("Domain.Models.EstilosAquascapingImagen", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AltText")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("EstiloId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__EstiloAq__3214EC07ADBD1721");
+
+                    b.HasIndex("EstiloId");
+
+                    b.ToTable("EstilosAquascapingImagenes");
                 });
 
             modelBuilder.Entity("Domain.Models.Guia", b =>
@@ -617,6 +671,14 @@ namespace Data.Migrations
                     b.HasOne("Domain.Models.ApplicationUser", null)
                         .WithMany("Acuarios")
                         .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("Domain.Models.EstilosAquascaping", "Estilo")
+                        .WithMany("Acuarios")
+                        .HasForeignKey("EstiloId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("FK_Acuario_Estilo");
+
+                    b.Navigation("Estilo");
                 });
 
             modelBuilder.Entity("Domain.Models.AcuarioEspecie", b =>
@@ -674,6 +736,18 @@ namespace Data.Migrations
                         .HasConstraintName("FK_Respuestas_Consultas");
 
                     b.Navigation("Consulta");
+                });
+
+            modelBuilder.Entity("Domain.Models.EstilosAquascapingImagen", b =>
+                {
+                    b.HasOne("Domain.Models.EstilosAquascaping", "Estilo")
+                        .WithMany("EstilosAquascapingImagenes")
+                        .HasForeignKey("EstiloId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Estilo_Imagenes");
+
+                    b.Navigation("Estilo");
                 });
 
             modelBuilder.Entity("Domain.Models.Guia", b =>
@@ -855,6 +929,13 @@ namespace Data.Migrations
             modelBuilder.Entity("Domain.Models.EspecieConsulta", b =>
                 {
                     b.Navigation("EspecieRespuesta");
+                });
+
+            modelBuilder.Entity("Domain.Models.EstilosAquascaping", b =>
+                {
+                    b.Navigation("Acuarios");
+
+                    b.Navigation("EstilosAquascapingImagenes");
                 });
 
             modelBuilder.Entity("Domain.Models.Guia", b =>

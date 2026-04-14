@@ -30,15 +30,16 @@ public partial class AquaVivariumContext : IdentityDbContext<ApplicationUser>
 
     public virtual DbSet<Especie> Especies { get; set; }
 
-    public virtual DbSet<EstilosAquascaping> EstilosAquascapings { get; set; }
-
-    public virtual DbSet<EstilosAquascapingImagen> EstilosAquascapingImagenes { get; set; }
-
     public virtual DbSet<Pez> Peces { get; set; }
 
     public virtual DbSet<Planta> Plantas { get; set; }
 
-    
+    public virtual DbSet<CategoriaGuia> CategoriasGuia { get; set; }
+
+    public virtual DbSet<Guia> Guias { get; set; }
+
+    public virtual DbSet<ImagenGuia> ImagenesGuia { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -47,9 +48,6 @@ public partial class AquaVivariumContext : IdentityDbContext<ApplicationUser>
         {
             entity.HasKey(e => e.Id).HasName("PK__Acuarios__3214EC0767DBFA4E");
 
-            entity.HasOne(d => d.Estilo).WithMany(p => p.Acuarios)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK_Acuario_Estilo");
         });
 
         modelBuilder.Entity<AcuarioEspecie>(entity =>
@@ -93,16 +91,9 @@ public partial class AquaVivariumContext : IdentityDbContext<ApplicationUser>
             entity.HasKey(e => e.Id).HasName("PK__Especies__3214EC072D8298EA");
         });
 
-        modelBuilder.Entity<EstilosAquascaping>(entity =>
+        modelBuilder.Entity<CategoriaGuia>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__EstilosA__3214EC073E29BF9B");
-        });
-
-        modelBuilder.Entity<EstilosAquascapingImagen>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__EstiloAq__3214EC07ADBD1721");
-
-            entity.HasOne(d => d.Estilo).WithMany(p => p.EstilosAquascapingImagenes).HasConstraintName("FK_Estilo_Imagenes");
         });
 
         modelBuilder.Entity<Pez>(entity =>
