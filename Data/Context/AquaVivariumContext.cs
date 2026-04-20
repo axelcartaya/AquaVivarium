@@ -96,6 +96,7 @@ public partial class AquaVivariumContext : IdentityDbContext<ApplicationUser>
             entity.HasKey(e => e.Id).HasName("PK__EstilosA__3214EC073E29BF9B");
         });
 
+
         modelBuilder.Entity<Pez>(entity =>
         {
             entity.HasKey(e => e.EspecieId).HasName("PK__Peces__9CF6043CF1EA2CB2");
