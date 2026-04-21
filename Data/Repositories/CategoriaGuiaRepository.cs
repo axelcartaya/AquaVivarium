@@ -24,7 +24,8 @@ namespace Data.Repositories
         public async Task<CategoriaGuia?> GetByIdAsync(int id)
         {
             return await _context.CategoriasGuia
-                .FirstOrDefaultAsync(e => e.Id == id);
+                .Include(c => c.Guias) 
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<CategoriaGuia> AddAsync(CategoriaGuia categoriaGuia)

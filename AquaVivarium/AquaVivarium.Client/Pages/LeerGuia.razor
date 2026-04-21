@@ -1,0 +1,87 @@
+﻿@page "/categorias-guias/{CategoriaId:int}/leer/{GuiaId:int}"
+@using AquaVivarium.Client.Components
+@using Domain.Interfaces.Services
+@using Domain.Models
+@inject IGuiaService GuiaService
+@inject NavigationManager NavManager
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+<PageTitle>@(_guia?.Titulo ?? "Cargando...") - AquaVivarium</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8 mb-16">
+    
+    <MudButton OnClick="Volver" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Class="mb-6 pl-0 av-text-muted">
+        Volver a la lista
+    </MudButton>
+
+    @if (_cargando)
+    {
+        <div class="d-flex justify-center my-16">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
+        </div>
+    }
+    else if (_guia == null)
+    {
+        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">No se ha encontrado la guía solicitada.</MudAlert>
+    }
+    else
+    {
+        @* cabecera articulo *@
+        <div class="mb-10">
+            <MudText Typo="Typo.h3" Class="av-text-main mb-4" Style="font-weight: 900; line-height: 1.2;">@_guia.Titulo</MudText>
+            
+            <div class="d-flex align-center av-text-muted mb-6">
+                <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Size="Size.Small" Class="mr-2" />
+                <MudText Typo="Typo.body2">@_guia.FechaPublicacion.ToString("dd 'de' MMMM, yyyy")</MudText>
+            </div>
+
+            @if (!string.IsNullOrEmpty(_guia.ImagenPortadaUrl))
+            {
+                <MudImage Src="@_guia.ImagenPortadaUrl" Alt="@_guia.Titulo" Elevation="0" Class="rounded-lg w-100 mb-8" ObjectFit="ObjectFit.Cover" Style="max-height: 450px;" />
+            }
+        </div>
+
+        @* contenido del html *@
+        <article class="html-content mb-16">
+            @if (!string.IsNullOrWhiteSpace(_guia.ContenidoHtml))
+            {
+                @((MarkupString)_guia.ContenidoHtml)
+            }
+            else
+            {
+                <MudText Typo="Typo.body1" Class="av-text-muted">Este artículo no tiene contenido aún.</MudText>
+            }
+        </article>
+
+    }
+</MudContainer>
+
+@code {
+    [Parameter] public int CategoriaId { get; set; }
+    [Parameter] public int GuiaId { get; set; }
+    
+    private Guia? _guia;
+    private bool _cargando = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _cargando = true;
+        try
+        {
+            _guia = await GuiaService.GetByIdAsync(GuiaId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error cargando la guía: {ex.Message}");
+        }
+        finally
+        {
+            _cargando = false;
+        }
+    }
+
+    private void Volver()
+    {
+        NavManager.NavigateTo($"/categorias-guias/{CategoriaId}");
+    }
+}

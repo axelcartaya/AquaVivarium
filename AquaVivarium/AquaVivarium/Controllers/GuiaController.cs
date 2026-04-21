@@ -97,5 +97,12 @@ namespace AquaVivarium.Controllers
                 return StatusCode(500, $"Error al eliminar el estilo: {ex.Message}");
             }
         }
+
+        [HttpGet("categoria/{categoriaId}")]
+        public async Task<ActionResult<IEnumerable<Guia>>> GetByCategoriaId(int categoriaId)
+        {
+            var guias = await _guiaService.GetByCategoriaIdAsync(categoriaId);
+            return Ok(guias);
+        }
     }
 }

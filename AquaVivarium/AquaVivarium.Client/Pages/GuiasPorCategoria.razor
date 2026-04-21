@@ -1,0 +1,83 @@
+﻿@page "/categorias-guias/{CategoriaId:int}"
+@using AquaVivarium.Client.Components
+@using Domain.Interfaces.Services
+@using Domain.Models
+@inject ICategoriaGuiaService CategoriaService
+@inject IGuiaService GuiaService
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+<PageTitle>@(_categoria?.Nombre ?? "Cargando...") - AquaVivarium</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8 mb-16">
+
+    <MudButton Href="/categorias-guias" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Class="mb-6 pl-0 av-text-muted">
+        Volver a Categorías
+    </MudButton>
+
+    @if (_cargando)
+    {
+        <div class="d-flex justify-center my-16">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
+        </div>
+    }
+    else if (_categoria == null)
+    {
+        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">No se ha encontrado la categoría solicitada.</MudAlert>
+    }
+    else
+    {
+        <div class="mb-10">
+            <MudText Typo="Typo.h3" Class="av-text-main" Style="font-weight: 800;">@_categoria.Nombre</MudText>
+            @if (!string.IsNullOrWhiteSpace(_categoria.DescripcionBreve))
+            {
+                <MudText Typo="Typo.subtitle1" Class="av-text-muted mt-2">@_categoria.DescripcionBreve</MudText>
+            }
+        </div>
+
+        @if (_guias == null || !_guias.Any())
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">Aún no hay artículos publicados en esta categoría.</MudAlert>
+        }
+        else
+        {
+            <MudGrid Spacing="4">
+                @foreach (var guia in _guias.Where(g => g.Activo))
+                {
+                    <MudItem xs="12" sm="6" md="4" lg="3">
+                        <GuiaCard CategoriaId="@CategoriaId"
+                                  GuiaId="@guia.Id"
+                                  Titulo="@guia.Titulo"
+                                  ImagenPortadaUrl="@guia.ImagenPortadaUrl" />
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+    }
+</MudContainer>
+
+@code {
+    [Parameter] public int CategoriaId { get; set; }
+    
+    private CategoriaGuia? _categoria;
+    private IEnumerable<Guia>? _guias;
+    private bool _cargando = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _cargando = true;
+        
+        try
+        {
+            _categoria = await CategoriaService.GetByIdAsync(CategoriaId);
+            _guias = await GuiaService.GetByCategoriaIdAsync(CategoriaId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error cargando datos: {ex.Message}");
+        }
+        finally
+        {
+            _cargando = false;
+        }
+    }
+}

@@ -18,6 +18,9 @@ namespace Domain.Models
         [StringLength(100)]
         public string Titulo { get; set; } = null!;
 
+        [StringLength(255)]
+        public string? ImagenPortadaUrl { get; set; }
+
         public string? ContenidoHtml { get; set; }
 
         public DateTime FechaPublicacion { get; set; } = DateTime.UtcNow;

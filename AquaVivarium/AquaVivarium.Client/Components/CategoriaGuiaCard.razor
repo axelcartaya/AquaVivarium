@@ -1,0 +1,35 @@
+﻿@inject NavigationManager NavManager
+
+<MudCard Elevation="0" Class="rounded-lg outline-card hover-card h-100 d-flex flex-column" @onclick="NavegarACategoria">
+    @if (!string.IsNullOrEmpty(ImagenPortadaUrl))
+    {
+        <MudCardMedia Image="@ImagenPortadaUrl" Height="160" />
+    }
+    else
+    {
+        <div class="fallback-img d-flex justify-center align-center">
+             <MudText Typo="Typo.h2" Style="font-weight: 900; opacity: 0.15;">
+                 @(string.IsNullOrWhiteSpace(Nombre) ? "" : Nombre.Substring(0, 1).ToUpper())
+             </MudText>
+        </div>
+    }
+    
+    <MudCardContent Class="flex-grow-1">
+        <MudText Typo="Typo.h5" Style="font-weight: 700;" Class="av-text-main mb-2">@Nombre</MudText>
+        <MudText Typo="Typo.body2" Class="av-text-muted">
+            @DescripcionBreve
+        </MudText>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    [Parameter] public string Nombre { get; set; } = string.Empty;
+    [Parameter] public string? DescripcionBreve { get; set; }
+    [Parameter] public string? ImagenPortadaUrl { get; set; }
+
+    private void NavegarACategoria()
+    {
+        NavManager.NavigateTo($"/guias/{Id}");
+    }
+}

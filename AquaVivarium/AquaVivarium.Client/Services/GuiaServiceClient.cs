@@ -59,5 +59,11 @@ namespace AquaVivarium.Client.Services
             var response = await _httpClient.DeleteAsync($"{BaseUrl}/{id}");
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task<IEnumerable<Guia>> GetByCategoriaIdAsync(int categoriaId)
+        {
+            var resultados = await _httpClient.GetFromJsonAsync<IEnumerable<Guia>>($"{BaseUrl}/categoria/{categoriaId}");
+            return resultados ?? new List<Guia>();
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace Domain.Interfaces.Repositories
         Task<Guia> AddAsync(Guia estilo);
         Task UpdateAsync(Guia estilo);
         Task DeleteAsync(int id);
+        Task<IEnumerable<Guia>> GetByCategoriaIdAsync(int categoriaId);
     }
 }

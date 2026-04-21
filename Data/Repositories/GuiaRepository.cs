@@ -54,5 +54,14 @@ namespace Data.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+      
+        public async Task<IEnumerable<Guia>> GetByCategoriaIdAsync(int categoriaId)
+        {
+            return await _context.Guias
+                .Include(g => g.Imagenes) 
+                .Where(g => g.CategoriaGuiaId == categoriaId)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }
