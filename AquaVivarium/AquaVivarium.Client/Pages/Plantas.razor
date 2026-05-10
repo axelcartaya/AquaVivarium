@@ -1,50 +1,47 @@
-﻿@page "/peces"
+﻿@page "/plantas"
 @using AquaVivarium.Client.Components
 @using Domain.Interfaces.Services
 @using Domain.Models
 @using Domain.Models.DTOs
-@inject IPezService PezService
+@inject IPlantaService PlantaService
 @inject IJSRuntime JS
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
-    <MudText Typo="Typo.h3" Class="av-text-main mb-4" Style="font-weight: 800;"> Galería de Peces </MudText>
+    <MudText Typo="Typo.h3" Class="av-text-main mb-4" Style="font-weight: 800;"> Galería de Plantas </MudText>
 
-    @* filtros *@
-    <FiltroPez Filtro="_filtro" OnBuscar="AplicarFiltros" OnLimpiar="LimpiarFiltros" />
+    <FiltroPlanta Filtro="_filtro" OnBuscar="AplicarFiltros" OnLimpiar="LimpiarFiltros" />
 
-    @if (_peces == null)
+    @if (_plantas == null)
     {
-        @* Estado de carga *@
         <div class="d-flex justify-center align-center" style="height: 400px;">
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
         </div>
     }
-    else if (!_peces.Any())
+    else if (!_plantas.Any())
     {
         <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mt-4">
-            No se encontraron peces con los filtros especificados.
+            No se encontraron plantas con los filtros especificados.
         </MudAlert>
     }
     else
     {
-        @* Renderizado del Grid *@
         <MudGrid>
-            @foreach (var pez in _peces)
+            @foreach (var planta in _plantas)
             {
-                if (pez?.Especie != null)
+                if (planta?.Especie != null)
                 {
                     <MudItem xs="12" sm="6" md="4" lg="3">
-                        <EspecieCard EspecieId="@pez.Especie.Id"
-                                 Nombre="@pez.Especie.Nombre"
-                                 NombreCientifico="@pez.Especie.NombreCientifico"
-                                 Imagenes="@pez.Especie.EspecieImagenes.ToList()" />
+                        <EspecieCard EspecieId="@planta.Especie.Id"
+                                     Nombre="@planta.Especie.Nombre"
+                                     NombreCientifico="@planta.Especie.NombreCientifico"
+                                     Imagenes="@planta.Especie.EspecieImagenes.ToList()"
+                                     RutaBase="plantas" /> 
                     </MudItem>
                 }
             }
         </MudGrid>
 
-        @* Paginación *@
         @if (_totalPaginas > 1)
         {
             <div class="d-flex justify-center mt-10 mb-10">
@@ -59,8 +56,8 @@
 </MudContainer>
 
 @code {
-    private List<Pez>? _peces;
-    private FiltroPezDto _filtro = new();
+    private List<Planta>? _plantas;
+    private FiltroPlantaDto _filtro = new();
     private int _totalItems;
     private int _pageSize = 44;
     private int _currentPage = 1;
@@ -87,22 +84,21 @@
 
     private async Task LimpiarFiltros()
     {
-        _filtro = new FiltroPezDto();
+        _filtro = new FiltroPlantaDto();
         _currentPage = 1;
         await LoadData(1);
     }
 
     private async Task LoadData(int page)
     {
-        _peces = null;
+        _plantas = null;
         StateHasChanged();
 
-        var (peces, total) = await PezService.GetPecesFiltradosAsync(_filtro, page, _pageSize);
+        var (plantas, total) = await PlantaService.GetPlantasFiltradasAsync(_filtro, page, _pageSize);
 
-        _peces = peces.ToList();
+        _plantas = plantas.ToList();
         _totalItems = total;
 
-        Console.WriteLine($"Cargando página: {page} - Total Items: {total}");
         StateHasChanged();
     }
 }

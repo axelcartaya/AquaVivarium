@@ -1,6 +1,4 @@
-﻿@using Domain.Interfaces.Services
-@using Domain.Models
-@inject IEspecieService EspecieService 
+﻿@using Domain.Models
 @inject NavigationManager NavigationManager
 
 <div class="av-card-float" @onclick="VerDetalles">
@@ -19,14 +17,14 @@
         }
         else
         {
-          <p>Not found</p>
+            <p>Not found</p>
         }
     </div>
 
     @* Cuerpo tarjeta *@
     <div class="av-card-content">
-        <h3 class="av-fish-name">@Nombre</h3>
-        <p class="av-fish-scientific">@NombreCientifico</p>
+        <h3 class="av-specie-name">@Nombre</h3>
+        <p class="av-specie-scientific">@NombreCientifico</p>
     </div>
 </div>
 
@@ -35,9 +33,10 @@
     [Parameter] public string Nombre { get; set; } = "Especie";
     [Parameter] public string? NombreCientifico { get; set; } = "N/A";
     [Parameter] public List<EspecieImagen> Imagenes { get; set; } = new();
+    [Parameter] public string RutaBase { get; set; } = "peces";
 
     private void VerDetalles()
     {
-        NavigationManager.NavigateTo($"/peces/{EspecieId}");
+        NavigationManager.NavigateTo($"/{RutaBase}/{EspecieId}");
     }
 }

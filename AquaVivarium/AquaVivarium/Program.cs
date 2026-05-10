@@ -61,11 +61,13 @@ builder.Services.AddMudServices();
 builder.Services.AddScoped<IPezRepository, PezRepository>();
 builder.Services.AddScoped<IEspecieRepository, EspecieRepository>();
 builder.Services.AddScoped<ICategoriaGuiaRepository,  CategoriaGuiaRepository>();
+builder.Services.AddScoped<IPlantaRepository, PlantaRepository>();
 
 //Dependencias Services
 builder.Services.AddScoped<IPezService, PezService>();
 builder.Services.AddScoped<IEspecieService, EspecieService>();
 builder.Services.AddScoped<ICategoriaGuiaService, CategoriaGuiaService>();
+builder.Services.AddScoped<IPlantaService, PlantaService>();
 
 //Dependencias API
 builder.Services.AddControllers();

@@ -20,6 +20,7 @@ builder.Services.AddScoped(sp => new HttpClient
 builder.Services.AddScoped<IPezService, PezServiceClient>();
 builder.Services.AddScoped<IEspecieService, EspecieServiceClient>();
 builder.Services.AddScoped<ICategoriaGuiaService, CategoriaGuiaServiceClient>();
+builder.Services.AddScoped<IPlantaService, PlantaServiceClient>();
 
 await builder.Build().RunAsync();
 
