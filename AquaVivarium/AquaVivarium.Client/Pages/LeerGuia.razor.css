@@ -1,0 +1,42 @@
+﻿.html-content {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--mud-palette-text-primary);
+}
+
+.html-content p {
+    margin-bottom: 1.5rem;
+}
+
+.html-content h2, .html-content h3 {
+    color: var(--mud-palette-text-primary);
+    font-weight: 700;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.html-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+
+}
+
+.html-content ul, .html-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+.html-content li {
+    margin-bottom: 0.5rem;
+}
+
+.hover-zoom {
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.hover-zoom:hover {
+    transform: scale(1.05);
+}

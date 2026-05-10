@@ -1,0 +1,48 @@
+﻿@page "/categorias-guias"
+@using AquaVivarium.Client.Components
+@using Domain.Interfaces.Services
+@using Domain.Models
+@inject ICategoriaGuiaService CategoriaService
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+<PageTitle>Centro de Guías - AquaVivarium</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8 mb-16">
+    <MudText Typo="Typo.h3" Class="av-text-main mb-2" Style="font-weight: 800;">Centro de Guías</MudText>
+    <MudText Typo="Typo.subtitle1" Class="av-text-muted mb-8">Selecciona una categoría para empezar a aprender.</MudText>
+
+    @if (_categorias == null)
+    {
+        <div class="d-flex justify-center my-16">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
+        </div>
+    }
+    else if (!_categorias.Any())
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">Aún no hay categorías publicadas.</MudAlert>
+    }
+    else
+    {
+        <MudGrid Spacing="4">
+            @foreach (var cat in _categorias.Where(c => c.Activo))
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <CategoriaGuiaCard 
+                        Id="@cat.Id" 
+                        Nombre="@cat.Nombre" 
+                        DescripcionBreve="@cat.DescripcionBreve" 
+                        ImagenPortadaUrl="@cat.ImagenPortadaUrl" />
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudContainer>
+
+@code {
+    private IEnumerable<CategoriaGuia>? _categorias;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categorias = await CategoriaService.GetAllAsync();
+    }
+}

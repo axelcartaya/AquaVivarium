@@ -1,0 +1,21 @@
+﻿.outline-card {
+    border: 1px solid var(--mud-palette-lines-default);
+    background-color: var(--mud-palette-background);
+}
+
+.hover-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--mud-palette-primary);
+    box-shadow: 0 6px 16px rgba(var(--mud-palette-primary-rgb), 0.1) !important;
+}
+
+.fallback-img {
+    height: 180px;
+    background: var(--mud-palette-background-grey);
+    border-bottom: 1px solid var(--mud-palette-lines-default);
+}

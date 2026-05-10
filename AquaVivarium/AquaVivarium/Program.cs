@@ -60,10 +60,13 @@ builder.Services.AddMudServices();
 //Dependencias Repository
 builder.Services.AddScoped<IPezRepository, PezRepository>();
 builder.Services.AddScoped<IEspecieRepository, EspecieRepository>();
+builder.Services.AddScoped<ICategoriaGuiaRepository,  CategoriaGuiaRepository>();
 
 //Dependencias Services
 builder.Services.AddScoped<IPezService, PezService>();
 builder.Services.AddScoped<IEspecieService, EspecieService>();
+builder.Services.AddScoped<ICategoriaGuiaService, CategoriaGuiaService>();
+
 //Dependencias API
 builder.Services.AddControllers();
 
@@ -71,7 +74,7 @@ builder.Services.AddControllers();
 builder.Services.AddServerSideBlazor()
     .AddHubOptions(options =>
     {
-        options.MaximumReceiveMessageSize = 1024 * 1024; // Lo subimos a 1MB
+        options.MaximumReceiveMessageSize = 1024 * 1024; 
     });
 
 //buscador de emails falso para que el registro funcione sin configurar un servidor SMTP

@@ -28,8 +28,4 @@ public partial class Acuario
 
     [InverseProperty("Acuario")]
     public virtual ICollection<AcuarioEspecie> AcuarioEspecies { get; set; } = new List<AcuarioEspecie>();
-
-    [ForeignKey("EstiloId")]
-    [InverseProperty("Acuarios")]
-    public virtual EstilosAquascaping? Estilo { get; set; }
 }

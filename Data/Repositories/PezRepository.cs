@@ -1,6 +1,7 @@
 ﻿using Data.Context;
 using Domain.Interfaces.Repositories;
 using Domain.Models;
+using Domain.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
@@ -46,8 +47,6 @@ namespace Data.Repositories
 
             if (pez?.Especie?.EspecieConsulta == null) return pez;
 
-
-
             //Traducción de nombre de usuario para obtener su alias y no su GUID en el apartado Comunidad
             var userIds = pez.Especie.EspecieConsulta.Select(c => c.UsuarioId)
                 .Union(pez.Especie.EspecieConsulta.SelectMany(c => c.EspecieRespuesta).Select(r => r.UsuarioId))
@@ -92,5 +91,74 @@ namespace Data.Repositories
 
             return (peces, total);
         }
+
+        public async Task<(IEnumerable<Pez> Peces, int TotalCount)> GetPecesFiltradosAsync(FiltroPezDto filtro, int page, int pageSize)
+        {
+            var query = _context.Peces
+                .Include(p => p.Especie)
+                    .ThenInclude(e => e.EspecieImagenes)
+                .AsQueryable();
+            //filtro de especies
+            if (filtro.PhDesde.HasValue)
+                query = query.Where(p => p.Especie.PhMax >= filtro.PhDesde.Value);
+
+            if (filtro.PhHasta.HasValue)
+                query = query.Where(p => p.Especie.PhMin <= filtro.PhHasta.Value);
+
+            if (filtro.TempDesde.HasValue)
+                query = query.Where(p => p.Especie.TempMax >= filtro.TempDesde.Value);
+
+            if (filtro.TempHasta.HasValue)
+                query = query.Where(p => p.Especie.TempMin <= filtro.TempHasta.Value);
+
+            if (filtro.GhDesde.HasValue)
+                query = query.Where(p => p.Especie.GhMax >= filtro.GhDesde.Value);
+
+            if (filtro.GhHasta.HasValue)
+                query = query.Where(p => p.Especie.GhMin <= filtro.GhHasta.Value);
+
+            if (!string.IsNullOrWhiteSpace(filtro.Dificultad))
+                query = query.Where(p => p.Especie.Dificultad == filtro.Dificultad);
+
+            if(!string.IsNullOrWhiteSpace(filtro.Nombre))
+                query = query.Where(p => p.Especie.Nombre == filtro.Nombre);
+
+            if (!string.IsNullOrWhiteSpace(filtro.Familia))
+                query = query.Where(p => p.Especie.Familia.Contains(filtro.Familia));
+
+            if (!string.IsNullOrWhiteSpace(filtro.Genero))
+                query = query.Where(p => p.Especie.Genero.Contains(filtro.Genero));
+
+            if (!string.IsNullOrWhiteSpace(filtro.Origen))
+                query = query.Where(p => p.Especie.Origen.Contains(filtro.Origen));
+
+            // filtros de peces
+            if (!string.IsNullOrWhiteSpace(filtro.Temperamento))
+                query = query.Where(p => p.Temperamento == filtro.Temperamento);
+
+            if (!string.IsNullOrWhiteSpace(filtro.ZonaNado))
+                query = query.Where(p => p.ZonaNado == filtro.ZonaNado);
+
+            if (filtro.TamanoMaximoCm.HasValue)
+                query = query.Where(p => p.TamanoMaxCm <= filtro.TamanoMaximoCm.Value);
+
+            if (filtro.GregarismoMinimo.HasValue)
+                query = query.Where(p => p.Gregarismo >= filtro.GregarismoMinimo.Value);
+
+            if (!string.IsNullOrWhiteSpace(filtro.Alimentacion))
+                query = query.Where(p => p.Alimentacion == filtro.Alimentacion);
+
+            // paginación
+            var totalCount = await query.CountAsync();
+ 
+            var peces = await query
+                .OrderBy(p => p.Especie.Nombre) 
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (peces, totalCount);
+        }
+
     }
 }

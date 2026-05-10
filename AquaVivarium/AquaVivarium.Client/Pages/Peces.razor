@@ -2,12 +2,17 @@
 @using AquaVivarium.Client.Components
 @using Domain.Interfaces.Services
 @using Domain.Models
+@using Domain.Models.DTOs
 @inject IPezService PezService
 @inject IJSRuntime JS
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
-    <MudText Typo="Typo.h3" Class="av-text-main mb-2 pb-4" Style="font-weight: 800;"> Galería de Peces </MudText>
+    <MudText Typo="Typo.h3" Class="av-text-main mb-4" Style="font-weight: 800;"> Galería de Peces </MudText>
+
+    @* filtros *@
+    <FiltroPez Filtro="_filtro" OnBuscar="AplicarFiltros" OnLimpiar="LimpiarFiltros" />
+
     @if (_peces == null)
     {
         @* Estado de carga *@
@@ -18,7 +23,7 @@
     else if (!_peces.Any())
     {
         <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mt-4">
-            No se encontraron peces en esta sección.
+            No se encontraron peces con los filtros especificados.
         </MudAlert>
     }
     else
@@ -40,22 +45,26 @@
         </MudGrid>
 
         @* Paginación *@
-        <div class="d-flex justify-center mt-10 mb-10">
-            <MudPagination Color="Color.Primary" 
-                   Variant="Variant.Filled"
-                   Count="@_totalPaginas" 
-                   Selected="_currentPage"
-                   SelectedChanged="OnPageChanged" />
-        </div>
+        @if (_totalPaginas > 1)
+        {
+            <div class="d-flex justify-center mt-10 mb-10">
+                <MudPagination Color="Color.Primary"
+                               Variant="Variant.Filled"
+                               Count="@_totalPaginas"
+                               Selected="_currentPage"
+                               SelectedChanged="OnPageChanged" />
+            </div>
+        }
     }
 </MudContainer>
 
 @code {
     private List<Pez>? _peces;
+    private FiltroPezDto _filtro = new();
     private int _totalItems;
-    private int _pageSize = 44; 
+    private int _pageSize = 44;
     private int _currentPage = 1;
-    // Cálculo num páginas
+
     private int _totalPaginas => (int)Math.Ceiling((decimal)_totalItems / _pageSize);
 
     protected override async Task OnInitializedAsync()
@@ -70,14 +79,30 @@
         await JS.InvokeVoidAsync("window.scrollTo", 0, 0);
     }
 
+    private async Task AplicarFiltros()
+    {
+        _currentPage = 1;
+        await LoadData(1);
+    }
+
+    private async Task LimpiarFiltros()
+    {
+        _filtro = new FiltroPezDto();
+        _currentPage = 1;
+        await LoadData(1);
+    }
+
     private async Task LoadData(int page)
     {
-        _peces = null;        
-        var (peces, total) = await PezService.GetPecesPaginadosAsync(page, _pageSize);
+        _peces = null;
+        StateHasChanged();
+
+        var (peces, total) = await PezService.GetPecesFiltradosAsync(_filtro, page, _pageSize);
+
         _peces = peces.ToList();
         _totalItems = total;
 
-        Console.WriteLine($"Cargando página: {page}");
+        Console.WriteLine($"Cargando página: {page} - Total Items: {total}");
         StateHasChanged();
     }
 }
