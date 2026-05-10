@@ -19,6 +19,9 @@ public partial class EspecieImagen
     [StringLength(100)]
     public string? AltText { get; set; }
 
+    [StringLength(100)]
+    public string? DerechosAutor { get; set; }
+
     [ForeignKey("EspecieId")]
     [InverseProperty("EspecieImagenes")]
     public virtual Especie Especie { get; set; } = null!;

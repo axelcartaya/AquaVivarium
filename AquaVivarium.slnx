@@ -3,4 +3,5 @@
   <Project Path="AquaVivarium/AquaVivarium/AquaVivarium.csproj" />
   <Project Path="Data/Data.csproj" />
   <Project Path="Domain/Domain.csproj" />
+  <Project Path="Scraper/Scraper.csproj" Id="6d9661ad-09b8-4454-96cc-a08bb3cd91cf" />
 </Solution>

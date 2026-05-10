@@ -17,7 +17,10 @@ public partial class Planta
     public bool? NecesitaCo2 { get; set; }
 
     [StringLength(50)]
-    public string? PlanoAcuario { get; set; }
+    public string? Crecimiento { get; set; }
+
+    [StringLength(50)]
+    public string? Altura { get; set; }
 
     [ForeignKey("EspecieId")]
     [InverseProperty("Planta")]
