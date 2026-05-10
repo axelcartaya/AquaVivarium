@@ -98,55 +98,22 @@ namespace Data.Repositories
                 .Include(p => p.Especie)
                     .ThenInclude(e => e.EspecieImagenes)
                 .AsQueryable();
+
             //filtro de especies
-            if (filtro.PhDesde.HasValue)
-                query = query.Where(p => p.Especie.PhMax >= filtro.PhDesde.Value);
-
-            if (filtro.PhHasta.HasValue)
-                query = query.Where(p => p.Especie.PhMin <= filtro.PhHasta.Value);
-
-            if (filtro.TempDesde.HasValue)
-                query = query.Where(p => p.Especie.TempMax >= filtro.TempDesde.Value);
-
-            if (filtro.TempHasta.HasValue)
-                query = query.Where(p => p.Especie.TempMin <= filtro.TempHasta.Value);
-
-            if (filtro.GhDesde.HasValue)
-                query = query.Where(p => p.Especie.GhMax >= filtro.GhDesde.Value);
-
-            if (filtro.GhHasta.HasValue)
-                query = query.Where(p => p.Especie.GhMin <= filtro.GhHasta.Value);
-
-            if (!string.IsNullOrWhiteSpace(filtro.Dificultad))
-                query = query.Where(p => p.Especie.Dificultad == filtro.Dificultad);
-
-            if(!string.IsNullOrWhiteSpace(filtro.Nombre))
-                query = query.Where(p => p.Especie.Nombre == filtro.Nombre);
-
-            if (!string.IsNullOrWhiteSpace(filtro.Familia))
-                query = query.Where(p => p.Especie.Familia.Contains(filtro.Familia));
-
-            if (!string.IsNullOrWhiteSpace(filtro.Genero))
-                query = query.Where(p => p.Especie.Genero.Contains(filtro.Genero));
-
-            if (!string.IsNullOrWhiteSpace(filtro.Origen))
-                query = query.Where(p => p.Especie.Origen.Contains(filtro.Origen));
+            if (!string.IsNullOrWhiteSpace(filtro.Nombre))query = query.Where(p => p.Especie.Nombre.Contains(filtro.Nombre));
+            if (!string.IsNullOrWhiteSpace(filtro.Familia))query = query.Where(p => p.Especie.Familia.Contains(filtro.Familia));
+            if (!string.IsNullOrWhiteSpace(filtro.Genero))query = query.Where(p => p.Especie.Genero.Contains(filtro.Genero));
+            if (filtro.PhDesde.HasValue)query = query.Where(p => p.Especie.PhMin >= filtro.PhDesde.Value);
+            if (filtro.PhHasta.HasValue)query = query.Where(p => p.Especie.PhMax <= filtro.PhHasta.Value);
+            if (filtro.TempDesde.HasValue)query = query.Where(p => p.Especie.TempMin >= filtro.TempDesde.Value);
+            if (filtro.TempHasta.HasValue)query = query.Where(p => p.Especie.TempMax <= filtro.TempHasta.Value);
+            if (filtro.GhDesde.HasValue)query = query.Where(p => p.Especie.GhMin >= filtro.GhDesde.Value);
+            if (filtro.GhHasta.HasValue)query = query.Where(p => p.Especie.GhMax <= filtro.GhHasta.Value);
 
             // filtros de peces
-            if (!string.IsNullOrWhiteSpace(filtro.Temperamento))
-                query = query.Where(p => p.Temperamento == filtro.Temperamento);
-
-            if (!string.IsNullOrWhiteSpace(filtro.ZonaNado))
-                query = query.Where(p => p.ZonaNado == filtro.ZonaNado);
-
-            if (filtro.TamanoMaximoCm.HasValue)
-                query = query.Where(p => p.TamanoMaxCm <= filtro.TamanoMaximoCm.Value);
-
-            if (filtro.GregarismoMinimo.HasValue)
-                query = query.Where(p => p.Gregarismo >= filtro.GregarismoMinimo.Value);
-
-            if (!string.IsNullOrWhiteSpace(filtro.Alimentacion))
-                query = query.Where(p => p.Alimentacion == filtro.Alimentacion);
+            if (filtro.TamanoDesde.HasValue)query = query.Where(p => p.TamanoMaxCm >= filtro.TamanoDesde.Value);
+            if (filtro.TamanoHasta.HasValue)query = query.Where(p => p.TamanoMaxCm <= filtro.TamanoHasta.Value);
+            if (!string.IsNullOrWhiteSpace(filtro.Alimentacion))query = query.Where(p => p.Alimentacion == filtro.Alimentacion);
 
             // paginación
             var totalCount = await query.CountAsync();

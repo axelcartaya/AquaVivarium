@@ -7,5 +7,7 @@
         public string? ZonaNado { get; set; }
         public int? GregarismoMinimo { get; set; }
         public string? Alimentacion { get; set; }
+        public decimal? TamanoDesde { get; set; }
+        public decimal? TamanoHasta { get; set; }
     }
 }

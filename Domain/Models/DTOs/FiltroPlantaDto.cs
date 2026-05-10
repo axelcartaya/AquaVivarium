@@ -8,7 +8,6 @@ namespace Domain.Models.DTOs
     {
         public string? Iluminacion { get; set; }
         public bool? NecesitaCo2 { get; set; }
-        public string? Altura { get; set; }
         public string? Crecimiento { get; set; }
     }
 }
