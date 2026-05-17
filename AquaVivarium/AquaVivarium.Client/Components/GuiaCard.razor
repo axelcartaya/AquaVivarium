@@ -1,8 +1,13 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavManager
 
-<MudCard Elevation="1" Class="rounded-lg h-100 d-flex flex-column" Style="cursor: pointer; overflow: hidden;" @onclick="NavegarAGuia">
-    
+<MudCard Elevation="@_elevation"
+         Class="rounded-lg h-100 d-flex flex-column"
+         Style="@($"cursor: pointer; overflow: hidden; background-color: #ffffff; transition: all 0.3s ease-out; transform: translateY({_elevacionVertical}px);")"
+         @onclick="NavegarAGuia"
+         @onmouseenter="ActivarHover"
+         @onmouseleave="DesactivarHover">
+
     <div style="position: relative;">
         @if (!string.IsNullOrEmpty(ImagenPortadaUrl))
         {
@@ -23,21 +28,13 @@
                                        Color="Color.Info"
                                        Variant="Variant.Filled"
                                        Size="Size.Small"
-                                       Class="mr-1"
                                        Href="@($"/admin/guias/editar/{GuiaId}")" />
-                    </MudTooltip>
-                    <MudTooltip Text="Eliminar Guía">
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                       Color="Color.Error"
-                                       Variant="Variant.Filled"
-                                       Size="Size.Small"
-                                       OnClick="ConfirmarEliminacion" />
                     </MudTooltip>
                 </div>
             </Authorized>
         </AuthorizeView>
     </div>
-    
+
     <MudCardContent Class="flex-grow-1 pa-4">
         <MudText Typo="Typo.h6" Style="font-weight: 700; line-height: 1.2;">
             @Titulo
@@ -50,15 +47,20 @@
     [Parameter] public int GuiaId { get; set; }
     [Parameter] public string Titulo { get; set; } = string.Empty;
     [Parameter] public string? ImagenPortadaUrl { get; set; }
-    
-    [Parameter] public EventCallback<int> OnEliminar { get; set; }
 
-    private async Task ConfirmarEliminacion()
+    private int _elevation = 1;
+    private int _elevacionVertical = 0;
+
+    private void ActivarHover()
     {
-        if (OnEliminar.HasDelegate)
-        {
-            await OnEliminar.InvokeAsync(GuiaId);
-        }
+        _elevation = 8;
+        _elevacionVertical = -6;
+    }
+
+    private void DesactivarHover()
+    {
+        _elevation = 1;
+        _elevacionVertical = 0;
     }
 
     private void NavegarAGuia()

@@ -47,10 +47,10 @@ namespace Data.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            var guia = await _context.CategoriasGuia.FindAsync(id);
+            var guia = await _context.Guias.FindAsync(id);
             if (guia != null)
             {
-                _context.CategoriasGuia.Remove(guia);
+                _context.Guias.Remove(guia);
                 await _context.SaveChangesAsync();
             }
         }

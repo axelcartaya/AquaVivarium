@@ -60,8 +60,7 @@
                         <GuiaCard CategoriaId="@CategoriaId"
                                   GuiaId="@guia.Id"
                                   Titulo="@guia.Titulo"
-                                  ImagenPortadaUrl="@guia.ImagenPortadaUrl"
-                                  OnEliminar="ProcesarEliminacion" />
+                                  ImagenPortadaUrl="@guia.ImagenPortadaUrl"/>
                     </MudItem>
                 }
             </MudGrid>
@@ -98,33 +97,6 @@
         finally
         {
             _cargando = false;
-        }
-    }
-
-    private async Task ProcesarEliminacion(int guiaId)
-    {
-        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        
-        bool? result = await DialogService.ShowMessageBoxAsync(
-            "Eliminar Guía",
-            "¿Estás seguro de que deseas eliminar esta guía? Esta acción no se puede deshacer.",
-            yesText: "Eliminar",
-            cancelText: "Cancelar",
-            options: options);
-
-        if (result == true)
-        {
-            try
-            {
-                await GuiaService.DeleteAsync(guiaId);
-                Snackbar.Add("Guía eliminada correctamente", Severity.Success);
-                await CargarDatos();
-                StateHasChanged();
-            }
-            catch (Exception ex)
-            {
-                Snackbar.Add($"No se pudo eliminar: {ex.Message}", Severity.Error);
-            }
         }
     }
 }

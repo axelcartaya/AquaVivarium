@@ -7,7 +7,7 @@ namespace AquaVivarium.Client.Services
     public class GuiaServiceClient : IGuiaService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "api/EstilosAquascaping";
+        private const string BaseUrl = "api/Guia";
 
         public GuiaServiceClient(HttpClient httpClient)
         {

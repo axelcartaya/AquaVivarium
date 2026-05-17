@@ -1,0 +1,306 @@
+﻿@page "/admin/guias/nueva/{CategoriaId:int}"
+@page "/admin/guias/editar/{Id:int}"
+@using Domain.Models
+@using Domain.Interfaces.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Hosting
+@using System.IO
+@using SixLabors.ImageSharp
+@using SixLabors.ImageSharp.Processing
+@attribute [Authorize(Roles = "Admin")]
+@inject IGuiaService GuiaService
+@inject ICategoriaGuiaService CategoriaService
+@inject NavigationManager NavManager
+@inject ISnackbar Snackbar
+@inject IWebHostEnvironment Env
+@inject IDialogService DialogService
+@rendermode InteractiveServer
+
+<PageTitle>@_tituloPagina - Admin</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8 mb-16">
+    @* Enlace para volver a la lista de guías de esta categoría específica *@
+    <MudButton OnClick="VolverALista" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Class="mb-4 pl-0 av-text-muted">
+        Volver a la Categoría @(_categoria?.Nombre != null ? $"({_categoria.Nombre})" : "")
+    </MudButton>
+
+    <MudPaper Class="pa-8 mt-4" Elevation="3">
+        <MudText Typo="Typo.h4" Class="mb-2" Style="font-weight: 800;">@_tituloPagina</MudText>
+        <MudText Typo="Typo.subtitle2" Class="av-text-muted mb-6">
+            @_subtituloPagina
+        </MudText>
+
+        <EditForm Model="@_guia" OnValidSubmit="GuardarGuia">
+            <DataAnnotationsValidator />
+            
+            <MudGrid>
+                @* Título de la Guía *@
+                <MudItem xs="12">
+                    <MudTextField Label="Título de la Guía" 
+                                  @bind-Value="_guia.Titulo" 
+                                  For="@(() => _guia.Titulo)"
+                                  Variant="Variant.Outlined" 
+                                  Required="true" />
+                </MudItem>
+
+                @* Sistema de Pestañas: Editor vs Vista Previa *@
+                <MudItem xs="12">
+                    <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true" ApplyEffectsToContainer="true" Class="mt-2">
+                        
+                        @* Pestaña de Escritura *@
+                        <MudTabPanel Text="Editor HTML" Icon="@Icons.Material.Filled.Code">
+                            <MudTextField Label="Contenido del Artículo (Soporta etiquetas HTML)" 
+                                          @bind-Value="_guia.ContenidoHtml" 
+                                          For="@(() => _guia.ContenidoHtml)"
+                                          Variant="Variant.Outlined" 
+                                          Lines="15" 
+                                          Class="mt-4"
+                                          Placeholder="Puedes usar <p>, <h3>, <strong>, <ul>, <li> para dar formato al texto de la guía..." />
+                        </MudTabPanel>
+                        
+                        @* Pestaña de Vista Previa *@
+                        <MudTabPanel Text="Vista Previa" Icon="@Icons.Material.Filled.Visibility">
+                            <div class="pa-6 rounded-lg mt-4 border" style="background-color: #ffffff; min-height: 335px; border: 1px solid #e0e0e0;">
+                                @if (!string.IsNullOrWhiteSpace(_guia.ContenidoHtml))
+                                {
+                                    <article class="html-content">
+                                        @((MarkupString)_guia.ContenidoHtml)
+                                    </article>
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.body1" Class="av-text-muted区域 d-flex align-center justify-center" Style="height: 250px;">
+                                        El contenido que escribas en la pestaña del editor se previsualizará aquí de forma inmediata.
+                                    </MudText>
+                                }
+                            </div>
+                        </MudTabPanel>
+                    </MudTabs>
+                </MudItem>
+
+                @* Imagen de Portada *@
+                <MudItem xs="12" Class="mt-4">
+                    <MudText Typo="Typo.subtitle2" Class="mb-2">Imagen de Portada del Artículo</MudText>
+                    
+                    @if (Id.HasValue && !string.IsNullOrEmpty(_guia.ImagenPortadaUrl) && _archivoPortada == null)
+                    {
+                        <div class="mb-4">
+                            <MudText Typo="Typo.caption" Color="MudBlazor.Color.Secondary">Imagen actual:</MudText>
+                            <br />
+                            <MudImage Src="@_guia.ImagenPortadaUrl" Height="120" ObjectFit="ObjectFit.Cover" Elevation="2" Class="rounded-lg mt-1" />
+                        </div>
+                    }
+
+                    <InputFile id="guiaFileInput" OnChange="CapturarArchivo" accept=".jpg,.jpeg,.png,.webp" style="display: none;" />
+                    
+                    <MudButton HtmlTag="label"
+                               for="guiaFileInput"
+                               Variant="Variant.Outlined"
+                               Color="MudBlazor.Color.Primary"
+                               StartIcon="@Icons.Material.Filled.AddPhotoAlternate">
+                        @(Id.HasValue ? "Cambiar Imagen de Portada" : "Subir Imagen de Portada (JPG, PNG, WEBP)")
+                    </MudButton>
+
+                    @if (_archivoPortada != null)
+                    {
+                        <MudText Typo="Typo.body2" Color="MudBlazor.Color.Success" Class="mt-2">
+                            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="MudBlazor.Size.Small" Class="mr-1" />
+                            @_archivoPortada.Name (@(_archivoPortada.Size / 1024) KB) - <i>Se convertirá automáticamente a WEBP</i>
+                        </MudText>
+                    }
+                </MudItem>
+
+                @* Estado Activo *@
+                <MudItem xs="12" Class="d-flex align-center">
+                    <MudSwitch @bind-Value="_guia.Activo" Color="MudBlazor.Color.Primary" Label="Publicar artículo inmediatamente (Guía Activa)" />
+                </MudItem>
+
+                @* Botones de Acción *@
+                <MudItem xs="12" Class="d-flex justify-space-between mt-4">
+                    @if (Id.HasValue)
+                    {
+                        <MudButton ButtonType="ButtonType.Button"
+                                   Variant="Variant.Outlined" 
+                                   Color="MudBlazor.Color.Error" 
+                                   StartIcon="@Icons.Material.Filled.Delete"
+                                   OnClick="@ConfirmarEliminacion"
+                                   Disabled="@_procesando">
+                            Eliminar Guía
+                        </MudButton>
+                    }
+                    else
+                    {
+                        <div></div>
+                    }
+
+                    <MudButton ButtonType="ButtonType.Submit" 
+                               Variant="Variant.Filled" 
+                               Color="MudBlazor.Color.Primary"
+                               Size="MudBlazor.Size.Large"
+                               Disabled="@_procesando">
+                        @if (_procesando)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="MudBlazor.Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Guardando artículo...</MudText>
+                        }
+                        else
+                        {
+                            <MudText>@_textoBoton</MudText>
+                        }
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+    </MudPaper>
+
+    @* Proveedor local de diálogos para garantizar que funcione en InteractiveServer *@
+    <MudDialogProvider />
+</MudContainer>
+
+@code {
+    [Parameter] public int? CategoriaId { get; set; } // Viene desde la URL al crear
+    [Parameter] public int? Id { get; set; }          // Viene desde la URL al editar
+
+    private Guia _guia = new() { FechaPublicacion = DateTime.Now, Activo = true };
+    private CategoriaGuia? _categoria;
+    private bool _procesando = false;
+    private IBrowserFile? _archivoPortada;
+
+    private string _tituloPagina => Id.HasValue ? "Editar Guía Informativa" : "Redactar Nueva Guía";
+    private string _subtituloPagina => Id.HasValue ? $"Modificando el artículo: {_guia.Titulo}" : "Escribe un nuevo artículo educativo para la comunidad.";
+    private string _textoBoton => Id.HasValue ? "Guardar Cambios" : "Publicar Guía";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue)
+        {
+            // MODO EDICIÓN: Recuperar la guía existente
+            var guiaExistente = await GuiaService.GetByIdAsync(Id.Value);
+            if (guiaExistente != null)
+            {
+                _guia = guiaExistente;
+                // Obtenemos los datos de la categoría para mejorar las migas de pan/navegación
+                _categoria = await CategoriaService.GetByIdAsync(_guia.CategoriaGuiaId);
+            }
+            else
+            {
+                Snackbar.Add("No se encontró la guía solicitada.", Severity.Error);
+                NavManager.NavigateTo("/categorias-guias");
+            }
+        }
+        else if (CategoriaId.HasValue)
+        {
+            // MODO CREACIÓN: Vincular la nueva guía a la categoría actual de la URL
+            _guia.CategoriaGuiaId = CategoriaId.Value;
+            _categoria = await CategoriaService.GetByIdAsync(CategoriaId.Value);
+            
+            if (_categoria == null)
+            {
+                Snackbar.Add("La categoría especificada no es válida.", Severity.Error);
+                NavManager.NavigateTo("/categorias-guias");
+            }
+        }
+    }
+
+    private void CapturarArchivo(InputFileChangeEventArgs e)
+    {
+        _archivoPortada = e.File;
+    }
+
+    private async Task GuardarGuia()
+    {
+        _procesando = true;
+        try
+        {
+            // Procesamiento y optimización de imagen de la guía
+            if (_archivoPortada != null)
+            {
+                var nombreArchivoUnico = $"{Guid.NewGuid()}.webp";
+                var rutaCarpetaDestino = Path.Combine(Env.WebRootPath, "images", "guias");
+                Directory.CreateDirectory(rutaCarpetaDestino);
+                var rutaFisicaCompleta = Path.Combine(rutaCarpetaDestino, nombreArchivoUnico);
+
+                try
+                {
+                    using var stream = _archivoPortada.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
+                    using var image = await Image.LoadAsync(stream);
+                    
+                    // Redimensionamos las portadas de los artículos a un tamaño máximo estandarizado (ej: 1000px ancho)
+                    image.Mutate(x => x.Resize(new ResizeOptions { 
+                        Mode = SixLabors.ImageSharp.Processing.ResizeMode.Max, 
+                        Size = new SixLabors.ImageSharp.Size(1000, 1000)
+                    }));
+                    
+                    await image.SaveAsWebpAsync(rutaFisicaCompleta);
+                    _guia.ImagenPortadaUrl = $"/images/guias/{nombreArchivoUnico}";
+                }
+                catch (UnknownImageFormatException)
+                {
+                    Snackbar.Add("El archivo de portada no es una imagen válida.", Severity.Error);
+                    _procesando = false;
+                    return;
+                }
+            }
+
+            // Operación en la base de datos a través del servicio de servidor
+            if (Id.HasValue)
+            {
+                await GuiaService.UpdateAsync(_guia);
+                Snackbar.Add("Guía actualizada con éxito", Severity.Success);
+            }
+            else
+            {
+                await GuiaService.AddAsync(_guia);
+                Snackbar.Add("Guía publicada con éxito", Severity.Success);
+            }
+            
+            VolverALista();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al guardar la guía: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _procesando = false;
+        }
+    }
+
+    private async Task ConfirmarEliminacion()
+    {
+        if (!Id.HasValue) return;
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        
+        bool? result = await DialogService.ShowMessageBoxAsync(
+            "Eliminar Artículo", 
+            "¿Estás completamente seguro de que deseas eliminar esta guía? No se podrá recuperar.", 
+            yesText: "Eliminar permanente", 
+            cancelText: "Cancelar", 
+            options: options);
+
+        if (result == true)
+        {
+            try
+            {
+                _procesando = true;
+                StateHasChanged();
+
+                await GuiaService.DeleteAsync(Id.Value);
+                Snackbar.Add("Guía eliminada del sistema", Severity.Success);
+                VolverALista();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error al eliminar: {ex.Message}", Severity.Error);
+                _procesando = false;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void VolverALista()
+    {
+        NavManager.NavigateTo($"/categorias-guias/{_guia.CategoriaGuiaId}");
+    }
+}

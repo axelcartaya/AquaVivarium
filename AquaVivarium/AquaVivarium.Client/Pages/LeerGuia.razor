@@ -35,10 +35,6 @@
                 <MudText Typo="Typo.body2">@_guia.FechaPublicacion.ToString("dd 'de' MMMM, yyyy")</MudText>
             </div>
 
-            @if (!string.IsNullOrEmpty(_guia.ImagenPortadaUrl))
-            {
-                <MudImage Src="@_guia.ImagenPortadaUrl" Alt="@_guia.Titulo" Elevation="0" Class="rounded-lg w-100 mb-8" ObjectFit="ObjectFit.Cover" Style="max-height: 450px;" />
-            }
         </div>
 
         @* contenido del html *@
