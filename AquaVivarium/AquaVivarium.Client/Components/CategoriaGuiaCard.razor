@@ -1,22 +1,49 @@
-﻿@inject NavigationManager NavManager
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavManager
 
-<MudCard Elevation="0" Class="rounded-lg outline-card hover-card h-100 d-flex flex-column" @onclick="NavegarACategoria">
-    @if (!string.IsNullOrEmpty(ImagenPortadaUrl))
-    {
-        <MudCardMedia Image="@ImagenPortadaUrl" Height="160" />
-    }
-    else
-    {
-        <div class="fallback-img d-flex justify-center align-center">
-             <MudText Typo="Typo.h2" Style="font-weight: 900; opacity: 0.15;">
-                 @(string.IsNullOrWhiteSpace(Nombre) ? "" : Nombre.Substring(0, 1).ToUpper())
-             </MudText>
-        </div>
-    }
+<MudCard Elevation="@_elevation"
+         Class="rounded-lg h-100 d-flex flex-column"
+         Style="@($"cursor: pointer; overflow: hidden; background-color: #ffffff; transition: all 0.3s ease-out; transform: translateY({_elevacionVertical}px);")"
+         @onclick="NavegarACategoria"
+         @onmouseenter="ActivarHover"
+         @onmouseleave="DesactivarHover">
     
-    <MudCardContent Class="flex-grow-1">
-        <MudText Typo="Typo.h5" Style="font-weight: 700;" Class="av-text-main mb-2">@Nombre</MudText>
-        <MudText Typo="Typo.body2" Class="av-text-muted">
+    <div style="position: relative;">
+
+        @if (!string.IsNullOrEmpty(ImagenPortadaUrl))
+        {
+            <MudCardMedia Image="@ImagenPortadaUrl" Height="220" Style="object-fit: cover;" />
+        }
+        else
+        {
+            <div class="d-flex justify-center align-center" style="height: 220px; background-color: #f8f9fa; border-bottom: 1px solid #eaeaea;">
+                <MudText Typo="Typo.h1" Style="font-weight: 900; color: #dee2e6;">
+                    @(string.IsNullOrWhiteSpace(Nombre) ? "" : Nombre.Substring(0, 1).ToUpper())
+                </MudText>
+            </div>
+        }
+
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                <div style="position: absolute; top: 12px; right: 12px; z-index: 10;" @onclick:stopPropagation="true">
+                    <MudTooltip Text="Editar Categoría">
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                       Color="Color.Info"
+                                       Variant="Variant.Filled"
+                                       Size="Size.Small"
+                                       Class="mr-2"
+                                       Href="@($"/admin/categorias/editar/{Id}")" />
+                    </MudTooltip>                    
+                </div>
+            </Authorized>
+        </AuthorizeView>
+    </div>
+    
+    <MudCardContent Class="flex-grow-1 pa-6">
+        <MudText Typo="Typo.h5" Style="font-weight: 800; color: #1a1a1a; line-height: 1.2;" Class="mb-3">
+            @Nombre
+        </MudText>
+        <MudText Typo="Typo.body2" Style="color: #666; line-height: 1.6;">
             @DescripcionBreve
         </MudText>
     </MudCardContent>
@@ -27,9 +54,33 @@
     [Parameter] public string Nombre { get; set; } = string.Empty;
     [Parameter] public string? DescripcionBreve { get; set; }
     [Parameter] public string? ImagenPortadaUrl { get; set; }
+    [Parameter] public EventCallback<int> OnEliminar { get; set; }
+
+    private int _elevation = 1;
+    private int _elevacionVertical = 0;
+
+    private async Task ConfirmarEliminacion()
+    {
+        if (OnEliminar.HasDelegate)
+        {
+            await OnEliminar.InvokeAsync(Id);
+        }
+    }
+
+    private void ActivarHover()
+    {
+        _elevation = 8;
+        _elevacionVertical = -6;
+    }
+
+    private void DesactivarHover()
+    {
+        _elevation = 1;
+        _elevacionVertical = 0;
+    }
 
     private void NavegarACategoria()
     {
-        NavManager.NavigateTo($"/guias/{Id}");
+        NavManager.NavigateTo($"/categorias-guias/{Id}");
     }
 }

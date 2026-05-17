@@ -60,7 +60,7 @@ namespace Data.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Acuarios");
+                    b.ToTable("Acuarios", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.AcuarioEspecie", b =>
@@ -81,7 +81,7 @@ namespace Data.Migrations
 
                     b.HasIndex("EspecieId");
 
-                    b.ToTable("AcuarioEspecies");
+                    b.ToTable("AcuarioEspecies", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.ApplicationUser", b =>
@@ -181,7 +181,7 @@ namespace Data.Migrations
                     b.HasKey("Id")
                         .HasName("PK__EstilosA__3214EC073E29BF9B");
 
-                    b.ToTable("CategoriasGuia");
+                    b.ToTable("CategoriasGuia", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.Especie", b =>
@@ -245,7 +245,7 @@ namespace Data.Migrations
                     b.HasKey("Id")
                         .HasName("PK__Especies__3214EC072D8298EA");
 
-                    b.ToTable("Especies");
+                    b.ToTable("Especies", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.EspecieConsulta", b =>
@@ -282,7 +282,7 @@ namespace Data.Migrations
 
                     b.HasIndex("EspecieId");
 
-                    b.ToTable("EspecieConsultas");
+                    b.ToTable("EspecieConsultas", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.EspecieImagen", b =>
@@ -294,10 +294,6 @@ namespace Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AltText")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("DerechosAutor")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -314,7 +310,7 @@ namespace Data.Migrations
 
                     b.HasIndex("EspecieId");
 
-                    b.ToTable("EspecieImagenes");
+                    b.ToTable("EspecieImagenes", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.EspecieRespuesta", b =>
@@ -347,7 +343,7 @@ namespace Data.Migrations
 
                     b.HasIndex("ConsultaId");
 
-                    b.ToTable("EspecieRespuestas");
+                    b.ToTable("EspecieRespuestas", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.Guia", b =>
@@ -383,7 +379,7 @@ namespace Data.Migrations
 
                     b.HasIndex("CategoriaGuiaId");
 
-                    b.ToTable("Guias");
+                    b.ToTable("Guias", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.ImagenGuia", b =>
@@ -410,7 +406,7 @@ namespace Data.Migrations
 
                     b.HasIndex("GuiaId");
 
-                    b.ToTable("ImagenesGuia");
+                    b.ToTable("ImagenesGuia", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.Pez", b =>
@@ -439,21 +435,13 @@ namespace Data.Migrations
                     b.HasKey("EspecieId")
                         .HasName("PK__Peces__9CF6043CF1EA2CB2");
 
-                    b.ToTable("Peces");
+                    b.ToTable("Peces", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.Planta", b =>
                 {
                     b.Property<int>("EspecieId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Altura")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Crecimiento")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Iluminacion")
                         .HasMaxLength(20)
@@ -464,10 +452,14 @@ namespace Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<string>("PlanoAcuario")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.HasKey("EspecieId")
                         .HasName("PK__Plantas__9CF6043CC082378B");
 
-                    b.ToTable("Plantas");
+                    b.ToTable("Plantas", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -798,7 +790,7 @@ namespace Data.Migrations
 
                             b1.HasKey("IdentityUserPasskeyCredentialId");
 
-                            b1.ToTable("AspNetUserPasskeys");
+                            b1.ToTable("AspNetUserPasskeys", (string)null);
 
                             b1
                                 .ToJson("Data")

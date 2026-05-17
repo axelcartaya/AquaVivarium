@@ -3,6 +3,7 @@
 @using Domain.Interfaces.Services
 @using Domain.Models
 @inject ICategoriaGuiaService CategoriaService
+@inject ISnackbar Snackbar
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
 <PageTitle>Centro de Guías - AquaVivarium</PageTitle>
@@ -10,6 +11,18 @@
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8 mb-16">
     <MudText Typo="Typo.h3" Class="av-text-main mb-2" Style="font-weight: 800;">Centro de Guías</MudText>
     <MudText Typo="Typo.subtitle1" Class="av-text-muted mb-8">Selecciona una categoría para empezar a aprender.</MudText>
+
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       Href="/admin/categorias/nueva"
+                       Class="mb-8">
+                Nueva Categoría
+            </MudButton>
+        </Authorized>
+    </AuthorizeView>
 
     @if (_categorias == null)
     {
@@ -27,21 +40,26 @@
             @foreach (var cat in _categorias.Where(c => c.Activo))
             {
                 <MudItem xs="12" sm="6" md="4">
-                    <CategoriaGuiaCard 
-                        Id="@cat.Id" 
-                        Nombre="@cat.Nombre" 
-                        DescripcionBreve="@cat.DescripcionBreve" 
-                        ImagenPortadaUrl="@cat.ImagenPortadaUrl" />
+   
+                    <CategoriaGuiaCard Id="@cat.Id"
+                                       Nombre="@cat.Nombre"
+                                       DescripcionBreve="@cat.DescripcionBreve"
+                                       ImagenPortadaUrl="@cat.ImagenPortadaUrl" />
                 </MudItem>
             }
         </MudGrid>
     }
 </MudContainer>
-
+  
 @code {
     private IEnumerable<CategoriaGuia>? _categorias;
 
     protected override async Task OnInitializedAsync()
+    {
+        await CargarCategorias();
+    }
+
+    private async Task CargarCategorias()
     {
         _categorias = await CategoriaService.GetAllAsync();
     }

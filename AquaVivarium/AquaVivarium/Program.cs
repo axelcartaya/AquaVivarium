@@ -61,13 +61,19 @@ builder.Services.AddMudServices();
 builder.Services.AddScoped<IPezRepository, PezRepository>();
 builder.Services.AddScoped<IEspecieRepository, EspecieRepository>();
 builder.Services.AddScoped<ICategoriaGuiaRepository,  CategoriaGuiaRepository>();
+builder.Services.AddScoped<IGuiaRepository, GuiaRepository>();
 builder.Services.AddScoped<IPlantaRepository, PlantaRepository>();
 
 //Dependencias Services
 builder.Services.AddScoped<IPezService, PezService>();
 builder.Services.AddScoped<IEspecieService, EspecieService>();
 builder.Services.AddScoped<ICategoriaGuiaService, CategoriaGuiaService>();
+builder.Services.AddScoped<IGuiaService, GuiaService>();
 builder.Services.AddScoped<IPlantaService, PlantaService>();
+
+// Swwagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 //Dependencias API
 builder.Services.AddControllers();
@@ -92,11 +98,56 @@ builder.Services.AddControllers()
 
 var app = builder.Build();
 
+// Asignar rol Admin al usuario registrado con el email 
+if (app.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            // Aquí está el cambio clave: usamos ApplicationUser
+            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+
+            if (!await roleManager.RoleExistsAsync("Admin"))
+            {
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+
+            // PON TU CORREO AQUÍ
+            var user = await userManager.FindByEmailAsync("axel@gmail.com");
+
+            if (user != null)
+            {
+                if (!await userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    await userManager.AddToRoleAsync(user, "Admin");
+                    Console.WriteLine("¡Rol Admin asignado con éxito!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No se encontró el usuario con ese correo.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al asignar el rol: {ex.Message}");
+        }
+    }
+}
+
 // Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
     app.UseMigrationsEndPoint();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "AquaVivarium API v1");
+    });
 }
 else
 {

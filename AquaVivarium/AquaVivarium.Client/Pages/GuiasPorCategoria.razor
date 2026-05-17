@@ -4,6 +4,8 @@
 @using Domain.Models
 @inject ICategoriaGuiaService CategoriaService
 @inject IGuiaService GuiaService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
 <PageTitle>@(_categoria?.Nombre ?? "Cargando...") - AquaVivarium</PageTitle>
@@ -33,6 +35,17 @@
                 <MudText Typo="Typo.subtitle1" Class="av-text-muted mt-2">@_categoria.DescripcionBreve</MudText>
             }
         </div>
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Add"
+                           Href="@($"/admin/guias/nueva/{CategoriaId}")"
+                           Class="mb-8">
+                    Nueva Guía
+                </MudButton>
+            </Authorized>
+        </AuthorizeView>
 
         @if (_guias == null || !_guias.Any())
         {
@@ -47,12 +60,15 @@
                         <GuiaCard CategoriaId="@CategoriaId"
                                   GuiaId="@guia.Id"
                                   Titulo="@guia.Titulo"
-                                  ImagenPortadaUrl="@guia.ImagenPortadaUrl" />
+                                  ImagenPortadaUrl="@guia.ImagenPortadaUrl"
+                                  OnEliminar="ProcesarEliminacion" />
                     </MudItem>
                 }
             </MudGrid>
         }
     }
+    
+    <MudDialogProvider />
 </MudContainer>
 
 @code {
@@ -64,8 +80,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
         _cargando = true;
-        
         try
         {
             _categoria = await CategoriaService.GetByIdAsync(CategoriaId);
@@ -78,6 +98,33 @@
         finally
         {
             _cargando = false;
+        }
+    }
+
+    private async Task ProcesarEliminacion(int guiaId)
+    {
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        
+        bool? result = await DialogService.ShowMessageBoxAsync(
+            "Eliminar Guía",
+            "¿Estás seguro de que deseas eliminar esta guía? Esta acción no se puede deshacer.",
+            yesText: "Eliminar",
+            cancelText: "Cancelar",
+            options: options);
+
+        if (result == true)
+        {
+            try
+            {
+                await GuiaService.DeleteAsync(guiaId);
+                Snackbar.Add("Guía eliminada correctamente", Severity.Success);
+                await CargarDatos();
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"No se pudo eliminar: {ex.Message}", Severity.Error);
+            }
         }
     }
 }

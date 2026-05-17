@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Data.Repositories
 {
-    internal class GuiaRepository : IGuiaRepository
+    public class GuiaRepository : IGuiaRepository
     {
         private readonly AquaVivariumContext _context;
 

@@ -1,0 +1,242 @@
+﻿@page "/admin/categorias/nueva"
+@page "/admin/categorias/editar/{Id:int}"
+@using Domain.Models
+@using Domain.Interfaces.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Hosting
+@using System.IO
+@using SixLabors.ImageSharp
+@using SixLabors.ImageSharp.Processing
+@attribute [Authorize(Roles = "Admin")]
+@inject ICategoriaGuiaService CategoriaService
+@inject NavigationManager NavManager
+@inject ISnackbar Snackbar
+@inject IWebHostEnvironment Env
+@inject IDialogService DialogService
+@rendermode InteractiveServer
+
+<PageTitle>@_tituloPagina - Admin</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8 mb-16">
+    <MudLink Href="/categorias-guias" Color="MudBlazor.Color.Default" Underline="Underline.None" Class="mb-4 d-inline-block">
+        <MudText Typo="Typo.body2" Class="av-text-muted">
+            <MudIcon Icon="@Icons.Material.Filled.ArrowBack" Size="MudBlazor.Size.Small" /> Volver al Centro de Guías
+        </MudText>
+    </MudLink>
+
+    <MudPaper Class="pa-8 mt-4" Elevation="3">
+        <MudText Typo="Typo.h4" Class="mb-6" Style="font-weight: 800;">@_tituloPagina</MudText>
+
+        <EditForm Model="@_categoria" OnValidSubmit="GuardarCategoria">
+            <DataAnnotationsValidator />
+            
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudTextField Label="Nombre de la Categoría" 
+                                  @bind-Value="_categoria.Nombre" 
+                                  For="@(() => _categoria.Nombre)"
+                                  Variant="Variant.Outlined" 
+                                  Required="true" />
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudTextField Label="Descripción Breve" 
+                                  @bind-Value="_categoria.DescripcionBreve" 
+                                  For="@(() => _categoria.DescripcionBreve)"
+                                  Variant="Variant.Outlined" 
+                                  Lines="3" />
+                </MudItem>
+
+                <MudItem xs="12" Class="mt-2">
+                    <MudText Typo="Typo.subtitle2" Class="mb-2">Imagen de Portada</MudText>
+                    
+                    @if (Id.HasValue && !string.IsNullOrEmpty(_categoria.ImagenPortadaUrl) && _archivoPortada == null)
+                    {
+                        <div class="mb-4">
+                            <MudText Typo="Typo.caption" Color="MudBlazor.Color.Secondary">Imagen actual:</MudText>
+                            <br />
+                            <MudImage Src="@_categoria.ImagenPortadaUrl" Height="100" ObjectFit="ObjectFit.Cover" Elevation="2" Class="rounded-lg mt-1" />
+                        </div>
+                    }
+
+                    <InputFile id="fileInput" OnChange="CapturarArchivo" accept=".jpg,.jpeg,.png,.webp" style="display: none;" />
+                    
+                    <MudButton HtmlTag="label"
+                               for="fileInput"
+                               Variant="Variant.Outlined"
+                               Color="MudBlazor.Color.Primary"
+                               StartIcon="@Icons.Material.Filled.AddPhotoAlternate">
+                        @(Id.HasValue ? "Cambiar Imagen" : "Subir Imagen (JPG, PNG, WEBP)")
+                    </MudButton>
+
+                    @if (_archivoPortada != null)
+                    {
+                        <MudText Typo="Typo.body2" Color="MudBlazor.Color.Success" Class="mt-2">
+                            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="MudBlazor.Size.Small" Class="mr-1" />
+                            @_archivoPortada.Name (@(_archivoPortada.Size / 1024) KB) - <i>Se convertirá a WEBP</i>
+                        </MudText>
+                    }
+                </MudItem>
+
+                <MudItem xs="12" Class="d-flex align-center">
+                    <MudSwitch @bind-Value="_categoria.Activo" Color="MudBlazor.Color.Primary" Label="Categoría Activa" />
+                </MudItem>
+
+                <MudItem xs="12" Class="d-flex justify-space-between mt-4">
+                    
+                    @if (Id.HasValue)
+                    {
+                        <MudButton ButtonType="ButtonType.Button"
+                                   Variant="Variant.Outlined" 
+                                   Color="MudBlazor.Color.Error" 
+                                   StartIcon="@Icons.Material.Filled.Delete"
+                                   OnClick="@ConfirmarEliminacion"
+                                   Disabled="@_procesando">
+                            Eliminar
+                        </MudButton>
+                    }
+                    else
+                    {
+                        <div></div>
+                    }
+
+                    <MudButton ButtonType="ButtonType.Submit" 
+                               Variant="Variant.Filled" 
+                               Color="MudBlazor.Color.Primary"
+                               Size="MudBlazor.Size.Large"
+                               Disabled="@_procesando">
+                        @if (_procesando)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="MudBlazor.Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Guardando...</MudText>
+                        }
+                        else
+                        {
+                            <MudText>@_textoBoton</MudText>
+                        }
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+    </MudPaper>
+    <MudDialogProvider />
+</MudContainer>
+
+@code {
+    [Parameter] public int? Id { get; set; } 
+    private CategoriaGuia _categoria = new();
+    private bool _procesando = false;
+    private IBrowserFile? _archivoPortada;    
+    
+    private string _tituloPagina => Id.HasValue ? "Editar Categoría" : "Crear Nueva Categoría";
+    private string _textoBoton => Id.HasValue ? "Guardar Cambios" : "Guardar Categoría";
+
+    protected override async Task OnInitializedAsync()
+    {        
+        if (Id.HasValue)
+        {
+            var categoriaExistente = await CategoriaService.GetByIdAsync(Id.Value);
+            if (categoriaExistente != null)
+            {
+                _categoria = categoriaExistente;
+            }
+            else
+            {
+                Snackbar.Add("No se encontró la categoría a editar.", Severity.Error);
+                NavManager.NavigateTo("/categorias-guias");
+            }
+        }
+    }
+
+    private void CapturarArchivo(InputFileChangeEventArgs e)
+    {
+        _archivoPortada = e.File;
+    }
+
+    private async Task GuardarCategoria()
+    {
+        _procesando = true;
+        try
+        {            
+            if (_archivoPortada != null)
+            {
+                var nombreArchivoUnico = $"{Guid.NewGuid()}.webp";
+                var rutaCarpetaDestino = Path.Combine(Env.WebRootPath, "images", "categoriasGuias");
+                Directory.CreateDirectory(rutaCarpetaDestino);
+                var rutaFisicaCompleta = Path.Combine(rutaCarpetaDestino, nombreArchivoUnico);
+
+                try
+                {
+                    using var stream = _archivoPortada.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
+                    using var image = await Image.LoadAsync(stream);
+                    
+                    image.Mutate(x => x.Resize(new ResizeOptions { Mode = SixLabors.ImageSharp.Processing.ResizeMode.Max, Size = new SixLabors.ImageSharp.Size(800, 800) }));
+                    
+                    await image.SaveAsWebpAsync(rutaFisicaCompleta);
+                    _categoria.ImagenPortadaUrl = $"/images/categoriasGuias/{nombreArchivoUnico}";
+                }
+                catch (UnknownImageFormatException)
+                {
+                    Snackbar.Add("El archivo no es una imagen válida o está corrupto.", Severity.Error);
+                    _procesando = false;
+                    return;
+                }
+            }            
+            
+            if (Id.HasValue)
+            {
+                await CategoriaService.UpdateAsync(_categoria);
+                Snackbar.Add("Categoría actualizada con éxito", Severity.Success);
+            }
+            else
+            {
+                await CategoriaService.AddAsync(_categoria);
+                Snackbar.Add("Categoría creada con éxito", Severity.Success);
+            }
+            
+            NavManager.NavigateTo("/categorias-guias");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al guardar: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _procesando = false;
+        }
+    }
+
+    private async Task ConfirmarEliminacion()
+    {
+        if (!Id.HasValue) return;
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        
+        bool? result = await DialogService.ShowMessageBoxAsync(
+            "Eliminar Categoría",
+            "¿Estás seguro de que deseas eliminar esta categoría de forma permanente?",
+            yesText: "Eliminar",
+            cancelText: "Cancelar",
+            options: options);
+
+        if (result == true)
+        {
+            try
+            {
+                _procesando = true;
+                StateHasChanged();
+
+                await CategoriaService.DeleteAsync(Id.Value);
+                Snackbar.Add("Categoría eliminada correctamente", Severity.Success);
+                NavManager.NavigateTo("/categorias-guias");
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"No se pudo eliminar: {ex.Message}", Severity.Error);
+                _procesando = false;
+                StateHasChanged();
+            }
+        }
+    }
+    }
+}
