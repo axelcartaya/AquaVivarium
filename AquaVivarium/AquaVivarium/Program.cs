@@ -63,6 +63,7 @@ builder.Services.AddScoped<IEspecieRepository, EspecieRepository>();
 builder.Services.AddScoped<ICategoriaGuiaRepository,  CategoriaGuiaRepository>();
 builder.Services.AddScoped<IGuiaRepository, GuiaRepository>();
 builder.Services.AddScoped<IPlantaRepository, PlantaRepository>();
+builder.Services.AddScoped<IAcuarioRepository, AcuarioRepository>();
 
 //Dependencias Services
 builder.Services.AddScoped<IPezService, PezService>();
@@ -70,13 +71,18 @@ builder.Services.AddScoped<IEspecieService, EspecieService>();
 builder.Services.AddScoped<ICategoriaGuiaService, CategoriaGuiaService>();
 builder.Services.AddScoped<IGuiaService, GuiaService>();
 builder.Services.AddScoped<IPlantaService, PlantaService>();
+builder.Services.AddScoped<IAcuarioService, AcuarioService>();
 
 // Swwagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //Dependencias API
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 
 //Aumentar el tamaño máximo de los mensajes que Blazor Server puede recibir para evitar problemas con la carga de imágenes o datos más grandes
 builder.Services.AddServerSideBlazor()

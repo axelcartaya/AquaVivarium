@@ -21,7 +21,8 @@ builder.Services.AddScoped<IPezService, PezServiceClient>();
 builder.Services.AddScoped<IEspecieService, EspecieServiceClient>();
 builder.Services.AddScoped<ICategoriaGuiaService, CategoriaGuiaServiceClient>();
 builder.Services.AddScoped<IPlantaService, PlantaServiceClient>();
-builder.Services.AddScoped<IGuiaService, GuiaServiceClient>(); 
+builder.Services.AddScoped<IGuiaService, GuiaServiceClient>();
+builder.Services.AddScoped<IAcuarioService, AcuarioServiceClient>();
 
 await builder.Build().RunAsync();
 
