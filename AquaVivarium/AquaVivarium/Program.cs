@@ -72,6 +72,8 @@ builder.Services.AddScoped<ICategoriaGuiaService, CategoriaGuiaService>();
 builder.Services.AddScoped<IGuiaService, GuiaService>();
 builder.Services.AddScoped<IPlantaService, PlantaService>();
 builder.Services.AddScoped<IAcuarioService, AcuarioService>();
+builder.Services.AddScoped<IAcuarioIAService, AcuarioIAService>();
+builder.Services.AddHttpClient<IAcuarioIAService, AcuarioIAService>();
 
 // Swwagger
 builder.Services.AddEndpointsApiExplorer();

@@ -62,5 +62,21 @@ namespace AquaVivarium.Controllers
 
             return Ok(await _especieService.BuscarEspeciesAsync(nombreEspecie));
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Especie>> GetById(int id)
+        {
+            try
+            {
+                var especie = await _especieService.GetByIdAsync(id);
+                if (especie == null) return NotFound();
+
+                return Ok(especie);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno: {ex.Message}");
+            }
+        }
     }
 }

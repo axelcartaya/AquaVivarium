@@ -1,5 +1,6 @@
 ﻿using Domain.Interfaces.Services;
 using Domain.Models;
+using Domain.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AquaVivarium.Controllers
@@ -9,10 +10,12 @@ namespace AquaVivarium.Controllers
     public class AcuarioController : ControllerBase
     {
         private readonly IAcuarioService _acuarioService;
+        private readonly IAcuarioIAService _acuarioIAService;
 
-        public AcuarioController(IAcuarioService acuarioService)
+        public AcuarioController(IAcuarioService acuarioService, IAcuarioIAService acuarioIAService)
         {
             _acuarioService = acuarioService;
+            _acuarioIAService = acuarioIAService;
         }
 
         [HttpGet("usuario/{usuarioId}")]
@@ -90,5 +93,20 @@ namespace AquaVivarium.Controllers
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
+
+        [HttpPost("analizar-ia")]
+        public async Task<ActionResult<string>> GenerarAnalisisIA([FromBody] AcuarioIADto acuario)
+        {
+            try
+            {
+                var resultado = await _acuarioIAService.GenerarAnalisisIAAsync(acuario);
+                return Ok(new { Analisis = resultado });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error en el análisis: " + ex.Message);
+            }
+        }
+
     }
 }

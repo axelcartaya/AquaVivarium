@@ -10,6 +10,7 @@ namespace Domain.Interfaces.Repositories
     {
         Task<IEnumerable<Especie>> GetAllAsync();
         Task AddAsync(Especie especie);
+        Task<Especie?> GetByIdAsync(int id);
         Task AddImagenAsync(EspecieImagen imagen);
         Task<List<EspecieImagen>> GetImagenesByEspecieIdAsync(int especieId);
         Task AddConsultaAsync(EspecieConsulta consulta);

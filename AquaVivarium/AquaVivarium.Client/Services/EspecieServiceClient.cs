@@ -34,6 +34,17 @@ namespace AquaVivarium.Client.Services
                 return new List<EspecieBusquedaDto>();
             }
         }
+        public async Task<Especie?> GetByIdAsync(int id)
+        {
+            try
+            {
+                return await _http.GetFromJsonAsync<Especie>($"api/especie/{id}");
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }
 

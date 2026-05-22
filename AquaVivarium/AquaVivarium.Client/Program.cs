@@ -23,6 +23,7 @@ builder.Services.AddScoped<ICategoriaGuiaService, CategoriaGuiaServiceClient>();
 builder.Services.AddScoped<IPlantaService, PlantaServiceClient>();
 builder.Services.AddScoped<IGuiaService, GuiaServiceClient>();
 builder.Services.AddScoped<IAcuarioService, AcuarioServiceClient>();
+builder.Services.AddScoped<IAcuarioIAService, AcuarioIAServiceClient>();
 
 await builder.Build().RunAsync();
 

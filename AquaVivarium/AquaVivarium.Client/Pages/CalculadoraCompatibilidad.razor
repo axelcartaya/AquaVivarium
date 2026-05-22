@@ -1,0 +1,559 @@
+﻿@page "/calculadora"
+@page "/calculadora/{Id:int}"
+
+@using Domain.Models
+@using Domain.Models.DTOs
+@using Domain.Interfaces.Services
+
+@inject IAcuarioService AcuarioService
+@inject IEspecieService EspecieService
+@inject IAcuarioIAService AcuarioIAService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavManager
+
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Calculadora - AquaVivarium</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-8 mb-16">
+    @* cabecera *@
+    <div class="d-flex flex-column flex-md-row justify-space-between align-start align-md-center mb-8" style="gap: 16px;">
+        <div class="pr-md-4">
+            <MudText Typo="Typo.h4" Style="font-weight: 800;" Class="av-text-main mb-1">Calculadora de Compatibilidad</MudText>
+            <MudText Typo="Typo.subtitle1" Class="av-text-muted">Diseña tu entorno ideal y comprueba la convivencia de tus especies en tiempo real.</MudText>
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row w-100 justify-end" style="gap: 12px; max-width: fit-content;">
+            <AuthorizeView>
+                <Authorized>
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Secondary"
+                               StartIcon="@Icons.Material.Filled.FolderSpecial"
+                               Href="/mis-acuarios"
+                               Size="Size.Large">
+                        Mis Acuarios
+                    </MudButton>
+
+                    @if (_idAcuarioGuardado.HasValue)
+                    {
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Info"
+                                   StartIcon="@Icons.Material.Filled.Save"
+                                   OnClick="GuardarAcuario"
+                                   Disabled="_guardando"
+                                   Size="Size.Large">
+                            @(_guardando ? "Guardando..." : "Actualizar Acuario")
+                        </MudButton>
+                    }
+                    else
+                    {
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   OnClick="GuardarAcuario"
+                                   Disabled="_guardando"
+                                   Size="Size.Large">
+                            @(_guardando ? "Guardando..." : "Guardar Acuario")
+                        </MudButton>
+                    }
+                </Authorized>
+                <NotAuthorized>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Surface"
+                               StartIcon="@Icons.Material.Filled.Lock"
+                               Href="/login"
+                               Size="Size.Large"
+                               Style="color: #757575;">
+                        Inicia sesión para guardar
+                    </MudButton>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+    </div>
+
+    <MudGrid Spacing="4">
+        @* coulmna izquierda *@
+        <MudItem xs="12" lg="4">
+            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: #ffffff; border: 1px solid #e0e0e0;">
+                <div class="d-flex align-center mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Primary" Class="mr-2" />
+                    <MudText Typo="Typo.h5" Style="font-weight: 700;">Detalles del acuario</MudText>
+                </div>
+
+               <MudGrid Spacing="2">
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="_acuario.Nombre" Label="Nombre del Acuario" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                    </MudItem>
+
+                    <MudItem xs="12">
+                        <MudNumericField @bind-Value="_acuario.Litros" Label="Volumen Total (Litros)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="1" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudNumericField @bind-Value="_acuario.LargoCm" Label="Largo (cm)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" />
+                    </MudItem>
+                    <MudItem xs="4">
+                        <MudNumericField @bind-Value="_acuario.AnchoCm" Label="Ancho (cm)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" />
+                    </MudItem>
+                    <MudItem xs="4">
+                        <MudNumericField @bind-Value="_acuario.AltoCm" Label="Alto (cm)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" />
+                    </MudItem>
+
+                    <MudItem xs="12" Class="mt-4">
+                        <MudText Typo="Typo.body2" Style="font-weight: 600;">pH del Agua: <span style="color:#0288d1;">@_acuario.PhActual</span></MudText>
+                        <MudSlider T="decimal" Value="@(_acuario.PhActual ?? 7.0m)" ValueChanged="@(v => _acuario.PhActual = v)" Min="4.0m" Max="9.0m" Step="0.1m" Color="Color.Info" ValueLabel="false" />
+                    </MudItem>
+
+                    <MudItem xs="12" Class="mt-2">
+                        <MudText Typo="Typo.body2" Style="font-weight: 600;">Temperatura: <span style="color:#d32f2f;">@_acuario.TempActual °C</span></MudText>
+                        <MudSlider T="int" Value="@(_acuario.TempActual ?? 25)" ValueChanged="@(v => _acuario.TempActual = v)" Min="15" Max="35" Step="1" Color="Color.Error" ValueLabel="false" />
+                    </MudItem>
+
+                    <MudItem xs="12" Class="mt-2 mb-4">
+                        <MudText Typo="Typo.body2" Style="font-weight: 600;">Dureza (GH): <span style="color:#7b1fa2;">@_acuario.GhActual °dGH</span></MudText>
+                        <MudSlider T="int" Value="@(_acuario.GhActual ?? 10)" ValueChanged="@(v => _acuario.GhActual = v)" Min="0" Max="30" Step="1" Color="Color.Secondary" ValueLabel="false" />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudSelect T="string" @bind-Value="_acuario.NivelIluminacion" Label="Iluminación" Variant="Variant.Outlined" Margin="Margin.Dense">
+                            <MudSelectItem Value="@("Baja")">Baja</MudSelectItem>
+                            <MudSelectItem Value="@("Media")">Media</MudSelectItem>
+                            <MudSelectItem Value="@("Alta")">Alta</MudSelectItem>
+                        </MudSelect>
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudSelect T="string" @bind-Value="_acuario.FlujoAgua" Label="Flujo" Variant="Variant.Outlined" Margin="Margin.Dense">
+                            <MudSelectItem Value="@("Lento")">Lento</MudSelectItem>
+                            <MudSelectItem Value="@("Moderado")">Moderado</MudSelectItem>
+                            <MudSelectItem Value="@("Fuerte")">Fuerte</MudSelectItem>
+                        </MudSelect>
+                    </MudItem>
+
+                    <MudItem xs="12">
+                        <MudSelect T="string" @bind-Value="_acuario.TipoSustrato" Label="Tipo de Sustrato" Variant="Variant.Outlined" Margin="Margin.Dense">
+                            <MudSelectItem Value="@("Arena")">Arena Fina</MudSelectItem>
+                            <MudSelectItem Value="@("Grava")">Grava Fina</MudSelectItem>
+                            <MudSelectItem Value="@("Nutritivo")">Sustrato Nutritivo</MudSelectItem>
+                            <MudSelectItem Value="@("Inerte")">Sustrato Inerte</MudSelectItem>
+                        </MudSelect>
+                    </MudItem>
+
+                    <MudItem xs="12" Class="d-flex align-center mt-2">
+                        <MudSwitch T="bool?" @bind-Value="_acuario.TieneCo2" Color="Color.Primary" Label="Sistema de inyección de CO2" />
+                    </MudItem>
+                   
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+
+        @* columna derecha *@
+        <MudItem xs="12" lg="8">
+            <MudPaper Class="pa-6 rounded-lg border d-flex flex-column" Elevation="0" Style="background-color: #ffffff; border: 1px solid #e0e0e0; min-height: 100%;">
+                <div class="d-flex align-center mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Primary" Class="mr-2" />
+                    <MudText Typo="Typo.h5" Style="font-weight: 700;">Habitantes del acuario</MudText>
+                </div>
+
+                <MudAutocomplete T="EspecieBusquedaDto"
+                                 Placeholder="Buscar peces, plantas..."
+                                 SearchFunc="@BuscarEnApi"
+                                 ToStringFunc="@(e => e == null ? null : e.Nombre)"
+                                 ValueChanged="@OnEspecieSeleccionada"
+                                 Variant="Variant.Outlined"
+                                 AdornmentIcon="@Icons.Material.Filled.Search"
+                                 AdornmentColor="Color.Primary"
+                                 Clearable="true"
+                                 Class="mb-4">
+                    <ItemTemplate Context="especie">
+                        <div class="d-flex align-center">
+                            @if (!string.IsNullOrWhiteSpace(especie.ImagenUrl))
+                            {
+                                <img src="@especie.ImagenUrl.Trim()" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;" class="mr-3" />
+                            }
+                            else
+                            {
+                                <MudAvatar Color="Color.Primary" Size="Size.Small" Class="mr-3">
+                                    @especie.Nombre.FirstOrDefault()
+                                </MudAvatar>
+                            }
+                            <div>
+                                <MudText Typo="Typo.body2">@especie.Nombre</MudText>
+                                <MudText Typo="Typo.caption" Style="color: gray;">@especie.NombreCientifico</MudText>
+                            </div>
+                        </div>
+                    </ItemTemplate>
+                </MudAutocomplete>
+
+                <div class="flex-grow-1 rounded-lg pa-4" style="background-color: #f8f9fa; border: 1px dashed #dee2e6; min-height: 350px;">
+                    @if (_acuario.AcuarioEspecies == null || !_acuario.AcuarioEspecies.Any())
+                    {
+                        <div class="d-flex flex-column align-center justify-center text-center my-16" style="color: #9e9e9e;">
+                            <MudIcon Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Large" Class="mb-2" />
+                            <MudText Typo="Typo.body1">El acuario está vacío.</MudText>
+                            <MudText Typo="Typo.body2">Usa el buscador de arriba para poblar el ecosistema.</MudText>
+                        </div>
+                    }
+                    else
+                    {
+                        <MudGrid Spacing="3">
+                            <MudItem xs="12" md="6">
+                                <div class="d-flex align-center mb-3" style="border-bottom: 2px solid #0288d1; padding-bottom: 4px;">
+                                    <MudIcon Icon="@Icons.Material.Filled.SetMeal" Color="Color.Info" Class="mr-2" Size="Size.Small" />
+                                    <MudText Typo="Typo.subtitle1" Style="font-weight: 700;">Peces</MudText>
+                                </div>
+
+                                @{
+                                    var peces = _acuario.AcuarioEspecies.Where(ae => ae.Especie.TipoEspecie == "Pez").ToList();
+                                }
+                                @if (!peces.Any())
+                                {
+                                    <MudText Typo="Typo.body2" Style="color: #9e9e9e; font-style: italic;" Class="pa-2">No hay peces añadidos.</MudText>
+                                }
+                                else
+                                {
+                                    <div class="d-flex flex-column gap-2">
+                                        @foreach (var item in peces)
+                                        {
+                                            <MudPaper Class="pa-3 d-flex align-center justify-space-between" Elevation="1">
+                                                <div class="d-flex align-center" style="max-width: 65%;">
+                                                    <div class="rounded-circle mr-3 d-flex align-center justify-center flex-shrink-0" style="width: 36px; height: 36px; background-color: #e3f2fd; overflow:hidden;">
+                                                        @if (item.Especie.EspecieImagenes?.Any() == true)
+                                                        {
+                                                            <img src="@item.Especie.EspecieImagenes.First().Url" style="width:100%; height:100%; object-fit:cover;" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <MudIcon Icon="@Icons.Material.Filled.SetMeal" Color="Color.Primary" Size="Size.Small" />
+                                                        }
+                                                    </div>
+                                                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                        <MudText Typo="Typo.body2" Style="font-weight: 700;">@item.Especie.Nombre</MudText>
+                                                    </div>
+                                                </div>
+
+                                                <div class="d-flex align-center">
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Remove" Size="Size.Small" OnClick="@(() => ModificarCantidad(item, -1))" />
+                                                    <MudText Typo="Typo.body2" Class="mx-1" Style="font-weight: 800;">@item.Cantidad</MudText>
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="@(() => ModificarCantidad(item, 1))" />
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" Class="ml-1" OnClick="@(() => EliminarEspecie(item))" />
+                                                </div>
+                                            </MudPaper>
+                                        }
+                                    </div>
+                                }
+                            </MudItem>
+
+                            <MudItem xs="12" md="6">
+                                <div class="d-flex align-center mb-3" style="border-bottom: 2px solid #2e7d32; padding-bottom: 4px;">
+                                    <MudIcon Icon="@Icons.Material.Filled.Grass" Color="Color.Success" Class="mr-2" Size="Size.Small" />
+                                    <MudText Typo="Typo.subtitle1" Style="font-weight: 700;">Plantas</MudText>
+                                </div>
+
+                                @{
+                                    var plantas = _acuario.AcuarioEspecies.Where(ae => ae.Especie.TipoEspecie == "Planta").ToList();
+                                }
+                                @if (!plantas.Any())
+                                {
+                                    <MudText Typo="Typo.body2" Style="color: #9e9e9e; font-style: italic;" Class="pa-2">No hay plantas añadidas.</MudText>
+                                }
+                                else
+                                {
+                                    <div class="d-flex flex-column gap-2">
+                                        @foreach (var item in plantas)
+                                        {
+                                            <MudPaper Class="pa-3 d-flex align-center justify-space-between" Elevation="1">
+                                                <div class="d-flex align-center" style="max-width: 65%;">
+                                                    <div class="rounded-circle mr-3 d-flex align-center justify-center flex-shrink-0" style="width: 36px; height: 36px; background-color: #e8f5e9; overflow:hidden;">
+                                                        @if (item.Especie.EspecieImagenes?.Any() == true)
+                                                        {
+                                                            <img src="@item.Especie.EspecieImagenes.First().Url" style="width:100%; height:100%; object-fit:cover;" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <MudIcon Icon="@Icons.Material.Filled.Grass" Color="Color.Success" Size="Size.Small" />
+                                                        }
+                                                    </div>
+                                                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                        <MudText Typo="Typo.body2" Style="font-weight: 700;">@item.Especie.Nombre</MudText>
+                                                    </div>
+                                                </div>
+
+                                                <div class="d-flex align-center">
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Remove" Size="Size.Small" OnClick="@(() => ModificarCantidad(item, -1))" />
+                                                    <MudText Typo="Typo.body2" Class="mx-1" Style="font-weight: 800;">@item.Cantidad</MudText>
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="@(() => ModificarCantidad(item, 1))" />
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" Class="ml-1" OnClick="@(() => EliminarEspecie(item))" />
+                                                </div>
+                                            </MudPaper>
+                                        }
+                                    </div>
+                                }
+                            </MudItem>
+                        </MudGrid>
+                    }
+                </div>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+    @* Paneles inferiores *@
+    <MudGrid Spacing="4" Class="mt-2">
+
+        @* sección matematica *@
+        <MudItem xs="12">
+            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: #ffffff; border: 1px solid #e0e0e0; border-left: 6px solid #0288d1;">
+                <MudText Typo="Typo.h5" Style="font-weight: 700;" Class="mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.Analytics" Class="mr-2 ms-n1" Color="Color.Info" />
+                    Análisis de Parámetros del Agua
+                </MudText>
+
+                <div class="d-flex flex-column gap-2">
+                    @{
+                        var alertas = GenerarAlertas();
+                    }
+
+                    @if (!alertas.Any())
+                    {
+                        <div class="d-flex align-center pa-3 rounded" style="background-color: #edf7ed; color: #1e4620; border: 1px solid #c8e6c9;">
+                            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Class="mr-3" />
+                            <MudText Typo="Typo.body1" Style="font-weight: 500;">Todos los parámetros químicos (pH, Temperatura, GH y Litros) son ideales para las especies seleccionadas.</MudText>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var alerta in alertas)
+                        {
+                            var bgColor = alerta.Severidad == Severity.Error ? "#fdeded" : (alerta.Severidad == Severity.Warning ? "#fff4e5" : "#e5f6fd");
+                            var borderColor = alerta.Severidad == Severity.Error ? "#f4c7c7" : (alerta.Severidad == Severity.Warning ? "#ffe0b2" : "#b3e5fc");
+                            var iconColor = alerta.Severidad == Severity.Error ? Color.Error : (alerta.Severidad == Severity.Warning ? Color.Warning : Color.Info);
+                            var textColor = alerta.Severidad == Severity.Error ? "#5f2120" : (alerta.Severidad == Severity.Warning ? "#663c00" : "#014361");
+                            var icon = alerta.Severidad == Severity.Error ? Icons.Material.Filled.Error : (alerta.Severidad == Severity.Warning ? Icons.Material.Filled.Warning : Icons.Material.Filled.Info);
+
+                            <div class="d-flex align-center pa-3 rounded" style="background-color: @bgColor; color: @textColor; border: 1px solid @borderColor;">
+                                <MudIcon Icon="@icon" Color="@iconColor" Class="mr-3" />
+                                <MudText Typo="Typo.body2">@alerta.Mensaje</MudText>
+                            </div>
+                        }
+                    }
+                </div>
+            </MudPaper>
+        </MudItem>
+
+        @* sección IA *@
+        <MudItem xs="12">
+            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: #fafdff; border: 1px solid #b3e5fc; border-left: 6px solid #9c27b0;">
+                <div class="d-flex justify-space-between align-start align-md-center flex-column flex-md-row gap-4">
+                    <div>
+                        <MudText Typo="Typo.h5" Style="font-weight: 700;" Class="purple-text">
+                            <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Class="mr-2 ms-n1" Style="color: #9c27b0;" />
+                            Dictamen de Convivencia Inteligente (IA)
+                        </MudText>
+                        <MudText Typo="Typo.body2" Class="av-text-muted mt-1">Evalúa temperamentos, agresividad inter-especie, competencia alimentaria y distribución de nado.</MudText>
+                    </div>
+                    <MudButton Variant="Variant.Filled"
+                               Style="background-color: #9c27b0; color: white; min-width: 250px;"
+                               Size="Size.Large"
+                               StartIcon="@Icons.Material.Filled.Psychology"
+                               Disabled="!_acuario.AcuarioEspecies.Any()"
+                               OnClick="SolicitarAnalisisIA">
+                        Analizar Comportamiento
+                    </MudButton>
+                </div>
+
+                <div class="mt-6 pa-5 rounded-lg border" style="background-color: #ffffff; min-height: 120px;">
+                    @if (!string.IsNullOrWhiteSpace(_acuario.UltimoAnalisisIA))
+                    {
+                        <MudText Typo="Typo.body1" Style="white-space: pre-line; line-height: 1.6;">
+                            @_acuario.UltimoAnalisisIA
+                        </MudText>
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-column align-center justify-center av-text-muted" style="height: 100%;">
+                            <MudIcon Icon="@Icons.Material.Filled.Forum" Size="Size.Large" Class="mb-2 opacity-50" />
+                            <MudText Typo="Typo.body2">Añade especies y haz clic en el botón superior para generar un dictamen experto.</MudText>
+                        </div>
+                    }
+                </div>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private Acuario _acuario = new()
+    {
+        Nombre = "",
+        Litros = 60,
+        PhActual = 7.0m,
+        TempActual = 25,
+        GhActual = 10,
+        NivelIluminacion = "Media",
+        FlujoAgua = "Moderado",
+        TipoSustrato = "Grava",
+        TieneCo2 = false
+    };
+
+    private int? _idAcuarioGuardado;
+    private bool _guardando = false;
+    private bool _analizando = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.CompletedTask;
+    }
+
+    private async Task GuardarAcuario()
+    {
+        _guardando = true;
+        await Task.Delay(500);
+        _guardando = false;
+    }
+    private async Task<IEnumerable<EspecieBusquedaDto>> BuscarEnApi(string value, CancellationToken token)
+    {
+        if (string.IsNullOrEmpty(value)) return new List<EspecieBusquedaDto>();
+        return await EspecieService.BuscarEspeciesAsync(value);
+    }
+
+    private async Task OnEspecieSeleccionada(EspecieBusquedaDto especieSeleccionada)
+    {
+        if (especieSeleccionada == null) return;
+
+        _acuario.AcuarioEspecies ??= new List<AcuarioEspecie>();
+
+        var existe = _acuario.AcuarioEspecies.FirstOrDefault(ae => ae.EspecieId == especieSeleccionada.Id);
+        if (existe != null)
+        {
+            existe.Cantidad++;
+        }
+        else
+        {
+            try
+            {
+                var especieCompleta = await EspecieService.GetByIdAsync(especieSeleccionada.Id);
+                if (especieCompleta != null)
+                {
+                    _acuario.AcuarioEspecies.Add(new AcuarioEspecie
+                    {
+                        EspecieId = especieCompleta.Id,
+                        Especie = especieCompleta,
+                        Cantidad = 1
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Error al cargar los datos técnicos de la especie.", Severity.Error);
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private void ModificarCantidad(AcuarioEspecie item, int cambio)
+    {
+        item.Cantidad += cambio;
+        if (item.Cantidad <= 0)
+        {
+            _acuario.AcuarioEspecies.Remove(item);
+        }
+        StateHasChanged();
+    }
+
+    private void EliminarEspecie(AcuarioEspecie item)
+    {
+        _acuario.AcuarioEspecies.Remove(item);
+        StateHasChanged();
+    }
+   
+    private class Alerta
+    {
+        public string Mensaje { get; set; } = "";
+        public Severity Severidad { get; set; }
+    }
+
+    private List<Alerta> GenerarAlertas()
+    {
+        var alertas = new List<Alerta>();
+
+        if (_acuario.AcuarioEspecies == null || !_acuario.AcuarioEspecies.Any())
+        {
+            alertas.Add(new Alerta { Mensaje = "El acuario está vacío. Añade especies para comprobar sus parámetros.", Severidad = Severity.Info });
+            return alertas;
+        }
+
+        foreach (var item in _acuario.AcuarioEspecies)
+        {
+            var especie = item.Especie;
+
+            if (especie.TempMin.HasValue && _acuario.TempActual < especie.TempMin.Value)
+                alertas.Add(new Alerta { Mensaje = $"[{especie.Nombre}] La temperatura debe ser de al menos {especie.TempMin}°C.", Severidad = Severity.Error });
+
+            if (especie.TempMax.HasValue && _acuario.TempActual > especie.TempMax.Value)
+                alertas.Add(new Alerta { Mensaje = $"[{especie.Nombre}] La temperatura no debe superar los {especie.TempMax}°C.", Severidad = Severity.Error });
+
+            if (especie.PhMin.HasValue && _acuario.PhActual < especie.PhMin.Value)
+                alertas.Add(new Alerta { Mensaje = $"[{especie.Nombre}] El pH debe ser de al menos {especie.PhMin}.", Severidad = Severity.Error });
+
+            if (especie.PhMax.HasValue && _acuario.PhActual > especie.PhMax.Value)
+                alertas.Add(new Alerta { Mensaje = $"[{especie.Nombre}] El pH no debe superar {especie.PhMax}.", Severidad = Severity.Error });
+
+            if (especie.GhMin.HasValue && _acuario.GhActual < especie.GhMin.Value)
+                alertas.Add(new Alerta { Mensaje = $"[{especie.Nombre}] La dureza (GH) debe ser de al menos {especie.GhMin}.", Severidad = Severity.Warning });
+
+            if (especie.GhMax.HasValue && _acuario.GhActual > especie.GhMax.Value)
+                alertas.Add(new Alerta { Mensaje = $"[{especie.Nombre}] La dureza (GH) no debe superar {especie.GhMax}.", Severidad = Severity.Warning });
+
+            if (especie.TipoEspecie == "Planta" && especie.Planta != null)
+            {
+                var planta = especie.Planta;
+                if (planta.NecesitaCo2 == true && _acuario.TieneCo2 == false)
+                    alertas.Add(new Alerta { Mensaje = $"[{especie.Nombre}] Esta planta es exigente y requiere inyección de CO2 para sobrevivir.", Severidad = Severity.Error });
+            }
+        }
+    
+        return alertas.GroupBy(a => a.Mensaje).Select(g => g.First()).ToList();
+    }
+
+    private async Task SolicitarAnalisisIA()
+    {
+        _analizando = true;
+        _acuario.UltimoAnalisisIA = "Consultando a la IA... esto tomará un par de segundos.";
+        StateHasChanged();
+
+        try
+        {
+            var peticionDto = new AcuarioIADto
+            {
+                Litros = _acuario.Litros,
+                LargoCm = _acuario.LargoCm,
+                AnchoCm = _acuario.AnchoCm,
+                AltoCm = _acuario.AltoCm,
+                PhActual = _acuario.PhActual,
+                TempActual = _acuario.TempActual,
+                GhActual = _acuario.GhActual,
+                TipoSustrato = _acuario.TipoSustrato,
+                Especies = _acuario.AcuarioEspecies.Select(e => new EspecieIaDto
+                {
+                    Nombre = e.Especie.Nombre,
+                    TipoEspecie = e.Especie.TipoEspecie,
+                    Cantidad = e.Cantidad ?? 1
+                }).ToList()
+            };
+
+            var veredicto = await AcuarioIAService.GenerarAnalisisIAAsync(peticionDto);
+            _acuario.UltimoAnalisisIA = veredicto;
+        }
+        catch (Exception)
+        {
+            _acuario.UltimoAnalisisIA = "Ocurrió un error al generar el resumen de la IA. Inténtalo de nuevo más tarde.";
+        }
+        finally
+        {
+            _analizando = false;
+            StateHasChanged();
+        }
+    }
+}

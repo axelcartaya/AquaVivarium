@@ -86,5 +86,13 @@ namespace Data.Repositories
                 .Take(10) 
                 .ToListAsync();
         }
+        public async Task<Especie?> GetByIdAsync(int id)
+        {
+            return await _context.Especies
+                .Include(e => e.Pez)
+                .Include(e => e.Planta)
+                .Include(e => e.EspecieImagenes)
+                .FirstOrDefaultAsync(e => e.Id == id);
+        }
     }
 }

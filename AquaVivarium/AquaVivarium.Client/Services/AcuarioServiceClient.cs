@@ -1,6 +1,8 @@
 ﻿using Domain.Interfaces.Services;
 using Domain.Models;
 using System.Net.Http.Json;
+using System.Text.Json;
+using static System.Net.WebRequestMethods;
 
 namespace AquaVivarium.Client.Services
 {

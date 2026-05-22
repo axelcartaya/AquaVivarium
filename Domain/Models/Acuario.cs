@@ -39,6 +39,7 @@ public partial class Acuario
 
     [StringLength(50)]
     public string? TipoSustrato { get; set; }
+    public string? UltimoAnalisisIA { get; set; }
 
     [InverseProperty("Acuario")]
     public virtual ICollection<AcuarioEspecie> AcuarioEspecies { get; set; } = new List<AcuarioEspecie>();

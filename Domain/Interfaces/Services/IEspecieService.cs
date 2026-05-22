@@ -9,5 +9,6 @@ namespace Domain.Interfaces.Services
         Task AddConsultaAsync(EspecieConsulta consulta);
         Task AddRespuestaAsync(EspecieRespuesta respuesta);
         Task<IEnumerable<EspecieBusquedaDto>> BuscarEspeciesAsync(string nombreEspecie);
+        Task<Especie?> GetByIdAsync(int id);   
     }
 }
