@@ -1,8 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Configuration;
 using Domain.Interfaces.Services;
-using Domain.Models;
 using Domain.Models.DTOs;
 
 namespace AquaVivarium.Services
@@ -12,7 +10,7 @@ namespace AquaVivarium.Services
         private readonly HttpClient _http = http;
         private readonly string _apiKey = config["GeminiApiKey"] ?? throw new ArgumentNullException("GeminiApiKey no configurada");
 
-        public async Task<string> GenerarAnalisisIAAsync(AcuarioIADto acuario)
+        public async Task<string> GenerarAnalisisIAAsync(AcuarioTransferDto acuario)
         {
             var especiesTexto = string.Join(", ", acuario.Especies.Select(e => $"{e.Cantidad}x {e.Nombre} ({e.TipoEspecie})"));
 
@@ -20,7 +18,7 @@ namespace AquaVivarium.Services
                 Actúa como un ictiólogo y paisajista acuático experto. 
                 Analiza la convivencia de este ecosistema:
                 - Tanque: {acuario.Litros}L ({acuario.LargoCm}x{acuario.AnchoCm}x{acuario.AltoCm} cm)
-                - Sustrato: {acuario.TipoSustrato}
+                - Entorno físico: Sustrato {acuario.TipoSustrato}, Iluminación {acuario.NivelIluminacion}, Flujo de agua {acuario.FlujoAgua}
                 - Parámetros: pH {acuario.PhActual}, Temp {acuario.TempActual}°C, GH {acuario.GhActual}
                 - Especies: {especiesTexto}
 

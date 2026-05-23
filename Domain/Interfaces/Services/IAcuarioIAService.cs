@@ -8,6 +8,6 @@ namespace Domain.Interfaces.Services
 {
     public interface IAcuarioIAService
     {
-        Task<string> GenerarAnalisisIAAsync(AcuarioIADto acuario);
+        Task<string> GenerarAnalisisIAAsync(AcuarioTransferDto acuario);
     }
 }

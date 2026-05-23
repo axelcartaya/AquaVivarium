@@ -15,7 +15,7 @@ namespace AquaVivarium.Client.Services
             _httpClient = httpClient;
         }
 
-        public async Task<string> GenerarAnalisisIAAsync(AcuarioIADto acuario)
+        public async Task<string> GenerarAnalisisIAAsync(AcuarioTransferDto acuario)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Acuario/analizar-ia", acuario);
 

@@ -1,5 +1,6 @@
 ﻿using Domain.Interfaces.Services;
 using Domain.Models;
+using Domain.Models.DTOs;
 using System.Net.Http.Json;
 using System.Text.Json;
 using static System.Net.WebRequestMethods;
@@ -25,14 +26,24 @@ namespace AquaVivarium.Client.Services
             return await _httpClient.GetFromJsonAsync<IEnumerable<Acuario>>($"api/Acuario/usuario/{usuarioId}") ?? new List<Acuario>();
         }
 
-        public async Task<Acuario> AddAsync(Acuario acuario)
+        public async Task<Acuario?> AddAsync(Acuario acuario)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/Acuario", acuario);
-            response.EnsureSuccessStatusCode();
+            var response = await _httpClient.PostAsJsonAsync("api/acuario", acuario);
 
-            return await response.Content.ReadFromJsonAsync<Acuario>() ?? acuario;
+            if (response.IsSuccessStatusCode)            
+                return await response.Content.ReadFromJsonAsync<Acuario>();
+            
+            return null;
         }
+        public async Task<Acuario?> AddDesdeDtoAsync(AcuarioTransferDto dto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/acuario", dto);
 
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<Acuario>();
+
+            return null;
+        }
         public async Task UpdateAsync(Acuario acuario)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Acuario/{acuario.Id}", acuario);
@@ -44,5 +55,20 @@ namespace AquaVivarium.Client.Services
             var response = await _httpClient.DeleteAsync($"api/Acuario/{id}");
             response.EnsureSuccessStatusCode();
         }
+        public async Task<List<Acuario>> GetMisAcuariosAsync()
+        {
+            var response = await _httpClient.GetAsync("api/acuario/mis-acuarios");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<Acuario>>() ?? new List<Acuario>();
+            }
+            return new List<Acuario>();
+        }
+        public async Task<bool> UpdateDesdeDtoAsync(int id, AcuarioTransferDto dto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/acuario/{id}", dto);
+            return response.IsSuccessStatusCode;
+        }
+
     }
 }

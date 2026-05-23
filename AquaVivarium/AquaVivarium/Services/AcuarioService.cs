@@ -1,6 +1,7 @@
 ﻿using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Models;
+using Domain.Models.DTOs;
 
 namespace AquaVivarium.Services
 {
@@ -36,6 +37,20 @@ namespace AquaVivarium.Services
         public async Task DeleteAsync(int id)
         {
             await _acuarioRepository.DeleteAsync(id);
+        }
+        public Task<Acuario?> AddDesdeDtoAsync(AcuarioTransferDto dto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Acuario>> GetMisAcuariosAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateDesdeDtoAsync(int id, AcuarioTransferDto dto)
+        {
+            throw new NotImplementedException();
         }
     }
 }

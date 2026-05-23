@@ -43,4 +43,7 @@ public partial class Acuario
 
     [InverseProperty("Acuario")]
     public virtual ICollection<AcuarioEspecie> AcuarioEspecies { get; set; } = new List<AcuarioEspecie>();
+
+    [ForeignKey("UsuarioId")]
+    public virtual ApplicationUser? Usuario { get; set; }
 }

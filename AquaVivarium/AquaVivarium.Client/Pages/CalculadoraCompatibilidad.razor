@@ -10,6 +10,7 @@
 @inject IAcuarioIAService AcuarioIAService
 @inject ISnackbar Snackbar
 @inject NavigationManager NavManager
+@inject IDialogService DialogService
 
 @rendermode InteractiveWebAssembly
 
@@ -26,23 +27,54 @@
         <div class="d-flex flex-column flex-sm-row w-100 justify-end" style="gap: 12px; max-width: fit-content;">
             <AuthorizeView>
                 <Authorized>
-                    <MudButton Variant="Variant.Outlined"
-                               Color="Color.Secondary"
-                               StartIcon="@Icons.Material.Filled.FolderSpecial"
-                               Href="/mis-acuarios"
-                               Size="Size.Large">
-                        Mis Acuarios
-                    </MudButton>
+                    @* menú desplegable *@
+                    <MudMenu Label="Mis Acuarios"
+                             Variant="Variant.Outlined"
+                             Color="Color.Secondary"
+                             StartIcon="@Icons.Material.Filled.FolderSpecial"
+                             EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+                             Size="Size.Large"
+                             MaxHeight="400">
 
+                        <MudMenuItem OnClick="PrepararNuevoAcuario" Icon="@Icons.Material.Filled.Add" IconColor="Color.Info">
+                            <strong>Nuevo Acuario</strong>
+                        </MudMenuItem>
+                        <MudDivider />
+
+                        @if (_listaMisAcuarios != null && _listaMisAcuarios.Any())
+                        {
+                            @foreach (var ac in _listaMisAcuarios)
+                            {
+                                <MudMenuItem OnClick="@(() => CargarAcuarioEnCalculadora(ac))">
+                                    @ac.Nombre (@ac.Litros L)
+                                </MudMenuItem>
+                            }
+                        }
+                        else
+                        {
+                            <MudMenuItem Disabled="true">No tienes acuarios guardados</MudMenuItem>
+                        }
+                    </MudMenu>
+
+                    @* edición *@
                     @if (_idAcuarioGuardado.HasValue)
                     {
+                        <MudTooltip Text="Eliminar este acuario" Color="Color.Error" Placement="Placement.Top">
+                            <MudIconButton Variant="Variant.Filled"
+                                           Color="Color.Error"
+                                           Icon="@Icons.Material.Filled.Delete"
+                                           OnClick="EliminarAcuario"
+                                           Size="Size.Large">
+                            </MudIconButton>
+                        </MudTooltip>
+
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Info"
                                    StartIcon="@Icons.Material.Filled.Save"
                                    OnClick="GuardarAcuario"
                                    Disabled="_guardando"
                                    Size="Size.Large">
-                            @(_guardando ? "Guardando..." : "Actualizar Acuario")
+                            @(_guardando ? "Guardando..." : "Actualizar")
                         </MudButton>
                     }
                     else
@@ -53,7 +85,7 @@
                                    OnClick="GuardarAcuario"
                                    Disabled="_guardando"
                                    Size="Size.Large">
-                            @(_guardando ? "Guardando..." : "Guardar Acuario")
+                            @(_guardando ? "Guardando..." : "Guardar")
                         </MudButton>
                     }
                 </Authorized>
@@ -301,9 +333,9 @@
 
         @* sección matematica *@
         <MudItem xs="12">
-            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: #ffffff; border: 1px solid #e0e0e0; border-left: 6px solid #0288d1;">
+            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: #ffffff; border: 1px solid #e0e0e0; border-left: 6px solid #74B816;">
                 <MudText Typo="Typo.h5" Style="font-weight: 700;" Class="mb-4">
-                    <MudIcon Icon="@Icons.Material.Filled.Analytics" Class="mr-2 ms-n1" Color="Color.Info" />
+                    <MudIcon Icon="@Icons.Material.Filled.Circle" Class="mr-2 ms-n1" Color="Color.Primary" />
                     Análisis de Parámetros del Agua
                 </MudText>
 
@@ -341,17 +373,17 @@
 
         @* sección IA *@
         <MudItem xs="12">
-            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: #fafdff; border: 1px solid #b3e5fc; border-left: 6px solid #9c27b0;">
+            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: #fafdff; border: 1px solid #e0e0e0; border-left: 6px solid #74B816;">
                 <div class="d-flex justify-space-between align-start align-md-center flex-column flex-md-row gap-4">
                     <div>
-                        <MudText Typo="Typo.h5" Style="font-weight: 700;" Class="purple-text">
-                            <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Class="mr-2 ms-n1" Style="color: #9c27b0;" />
-                            Dictamen de Convivencia Inteligente (IA)
+                        <MudText Typo="Typo.h5" Style="font-weight: 700;" Class="mb-4">
+                            <MudIcon Icon="@Icons.Material.Filled.Circle" Class="mr-2 ms-n1" Color="Color.Primary" />
+                            Dictamen de Compatibilidad Inteligente (IA)
                         </MudText>
                         <MudText Typo="Typo.body2" Class="av-text-muted mt-1">Evalúa temperamentos, agresividad inter-especie, competencia alimentaria y distribución de nado.</MudText>
                     </div>
                     <MudButton Variant="Variant.Filled"
-                               Style="background-color: #9c27b0; color: white; min-width: 250px;"
+                               Style="background-color: #74B816; color: white; min-width: 250px;"
                                Size="Size.Large"
                                StartIcon="@Icons.Material.Filled.Psychology"
                                Disabled="!_acuario.AcuarioEspecies.Any()"
@@ -383,7 +415,7 @@
 @code {
     [Parameter] public int? Id { get; set; }
 
-    private Acuario _acuario = new()
+    private Acuario _acuario = new() //valores por defecto
     {
         Nombre = "",
         Litros = 60,
@@ -399,18 +431,65 @@
     private int? _idAcuarioGuardado;
     private bool _guardando = false;
     private bool _analizando = false;
+    private List<Acuario> _listaMisAcuarios = new();
 
     protected override async Task OnInitializedAsync()
     {
         await Task.CompletedTask;
+        await CargarListaAcuarios();
     }
 
     private async Task GuardarAcuario()
     {
         _guardando = true;
-        await Task.Delay(500);
-        _guardando = false;
+        StateHasChanged();
+
+        try
+        {
+            var dtoParaGuardar = GenerarDto();
+
+            if (_idAcuarioGuardado.HasValue)
+            {
+                var exito = await AcuarioService.UpdateDesdeDtoAsync(_idAcuarioGuardado.Value, dtoParaGuardar);
+
+                if (exito)
+                {
+                    Snackbar.Add("¡Cambios guardados con éxito!", Severity.Success);
+                    await CargarListaAcuarios();
+                }
+                else
+                {
+                    Snackbar.Add("No se pudieron actualizar los cambios.", Severity.Warning);
+                }
+            }
+            else
+            {
+                // 2. Enviamos el DTO limpio al servidor, evitando el error 400
+                var resultado = await AcuarioService.AddDesdeDtoAsync(dtoParaGuardar);
+
+                if (resultado != null && resultado.Id > 0)
+                {
+                    _idAcuarioGuardado = resultado.Id;
+                    Snackbar.Add("¡Acuario guardado en tu perfil!", Severity.Success);
+                    await CargarListaAcuarios();
+                }
+                else
+                {
+                    Snackbar.Add("No se pudo guardar el acuario.", Severity.Warning);
+                }
+            }
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Error de conexión al intentar guardar.", Severity.Error);
+        }
+        finally
+        {
+            _guardando = false;
+            StateHasChanged();
+        }
     }
+
     private async Task<IEnumerable<EspecieBusquedaDto>> BuscarEnApi(string value, CancellationToken token)
     {
         if (string.IsNullOrEmpty(value)) return new List<EspecieBusquedaDto>();
@@ -525,23 +604,7 @@
 
         try
         {
-            var peticionDto = new AcuarioIADto
-            {
-                Litros = _acuario.Litros,
-                LargoCm = _acuario.LargoCm,
-                AnchoCm = _acuario.AnchoCm,
-                AltoCm = _acuario.AltoCm,
-                PhActual = _acuario.PhActual,
-                TempActual = _acuario.TempActual,
-                GhActual = _acuario.GhActual,
-                TipoSustrato = _acuario.TipoSustrato,
-                Especies = _acuario.AcuarioEspecies.Select(e => new EspecieIaDto
-                {
-                    Nombre = e.Especie.Nombre,
-                    TipoEspecie = e.Especie.TipoEspecie,
-                    Cantidad = e.Cantidad ?? 1
-                }).ToList()
-            };
+            var peticionDto = GenerarDto();
 
             var veredicto = await AcuarioIAService.GenerarAnalisisIAAsync(peticionDto);
             _acuario.UltimoAnalisisIA = veredicto;
@@ -554,6 +617,105 @@
         {
             _analizando = false;
             StateHasChanged();
+        }
+    }
+
+    private AcuarioTransferDto GenerarDto()
+    {
+        return new AcuarioTransferDto
+        {
+            Nombre = _acuario.Nombre,
+            Litros = _acuario.Litros,
+            LargoCm = _acuario.LargoCm,
+            AnchoCm = _acuario.AnchoCm,
+            AltoCm = _acuario.AltoCm,
+            PhActual = _acuario.PhActual,
+            TempActual = _acuario.TempActual,
+            GhActual = _acuario.GhActual,
+            TipoSustrato = _acuario.TipoSustrato,
+            NivelIluminacion = _acuario.NivelIluminacion,
+            FlujoAgua = _acuario.FlujoAgua,
+            UltimoAnalisisIA = _acuario.UltimoAnalisisIA,
+            TieneCo2 = _acuario.TieneCo2,
+            Especies = _acuario.AcuarioEspecies.Select(e => new EspecieTransferDto
+            {
+                EspecieId = e.EspecieId,
+                Nombre = e.Especie.Nombre,
+                TipoEspecie = e.Especie.TipoEspecie,
+                Cantidad = e.Cantidad ?? 1
+            }).ToList()
+        };
+    }
+    private async Task CargarListaAcuarios()
+    {
+        try
+        {
+            _listaMisAcuarios = await AcuarioService.GetMisAcuariosAsync();
+        }
+        catch (Exception)
+        {
+            _listaMisAcuarios = new List<Acuario>();
+        }
+    }
+    private void CargarAcuarioEnCalculadora(Acuario ac)
+    {
+        if (ac == null) return;
+
+        _idAcuarioGuardado = ac.Id;
+
+        _acuario.Id = ac.Id;
+        _acuario.Nombre = ac.Nombre;
+        _acuario.Litros = ac.Litros;
+        _acuario.LargoCm = ac.LargoCm;
+        _acuario.AnchoCm = ac.AnchoCm;
+        _acuario.AltoCm = ac.AltoCm;
+        _acuario.PhActual = ac.PhActual;
+        _acuario.TempActual = ac.TempActual;
+        _acuario.GhActual = ac.GhActual;
+        _acuario.TipoSustrato = ac.TipoSustrato;
+        _acuario.AcuarioEspecies = ac.AcuarioEspecies ?? new List<AcuarioEspecie>();
+        _acuario.UltimoAnalisisIA = ac.UltimoAnalisisIA;
+
+        Snackbar.Add($"Acuario '{ac.Nombre}' cargado con éxito.", Severity.Info);
+        StateHasChanged();
+    }
+  
+    private void PrepararNuevoAcuario()
+    {
+        _idAcuarioGuardado = null; // al ser null, el vuelve a poner "guardar"
+        _acuario = new Acuario { Nombre = "Nuevo Acuario" };
+        _acuario.AcuarioEspecies = new List<AcuarioEspecie>();
+        _acuario.UltimoAnalisisIA = null;
+
+        Snackbar.Add("Lienzo en blanco listo para crear.", Severity.Info);
+        StateHasChanged();
+    }
+
+  
+    private async Task EliminarAcuario()
+    {
+        if (!_idAcuarioGuardado.HasValue) return;
+
+        bool? confirmado = await DialogService.ShowMessageBoxAsync(
+            "Eliminar Acuario",
+            "¿Estás seguro de que deseas eliminar este acuario? Esta acción no se puede deshacer.",
+            yesText: "Sí, eliminar", cancelText: "Cancelar");
+
+        if (confirmado == true)
+        {
+            try
+            {
+                await AcuarioService.DeleteAsync(_idAcuarioGuardado.Value);
+
+                Snackbar.Add("Acuario eliminado correctamente.", Severity.Error);
+
+                await CargarListaAcuarios();
+                PrepararNuevoAcuario();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Hubo un error al intentar eliminar el acuario.", Severity.Error);
+            }
         }
     }
 }
