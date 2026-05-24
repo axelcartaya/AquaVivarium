@@ -21,3 +21,16 @@
     --av-radius-sm: 8px;
     --av-radius-lg: 16px;
 }
+
+/* Oculta temporalmente la aplicación hasta que el CSS esté cargado */
+body {
+    opacity: 0;
+    animation: fadeIn 0.3s ease-in forwards;
+    animation-delay: 0.1s; 
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}

@@ -418,14 +418,11 @@
 
     private Acuario _acuario = new() //valores por defecto
     {
-        Nombre = "",
+        Nombre = "Mi acuario",
         Litros = 60,
         PhActual = 7.0m,
         TempActual = 25,
         GhActual = 10,
-        NivelIluminacion = "Media",
-        FlujoAgua = "Moderado",
-        TipoSustrato = "Grava",
         TieneCo2 = false
     };
 
@@ -657,7 +654,7 @@
             _listaMisAcuarios = new List<Acuario>();
         }
     }
-    private void CargarAcuarioEnSimulador(Acuario ac)
+    private async Task CargarAcuarioEnSimulador(Acuario ac)
     {
         if (ac == null) return;
 
@@ -672,9 +669,31 @@
         _acuario.PhActual = ac.PhActual;
         _acuario.TempActual = ac.TempActual;
         _acuario.GhActual = ac.GhActual;
+        _acuario.FlujoAgua = ac.FlujoAgua;
+        _acuario.NivelIluminacion = ac.NivelIluminacion;
+        _acuario.TieneCo2 = ac.TieneCo2;
         _acuario.TipoSustrato = ac.TipoSustrato;
         _acuario.AcuarioEspecies = ac.AcuarioEspecies ?? new List<AcuarioEspecie>();
         _acuario.UltimoAnalisisIA = ac.UltimoAnalisisIA;
+
+        _acuario.AcuarioEspecies = new List<AcuarioEspecie>();
+
+        if (ac.AcuarioEspecies != null && ac.AcuarioEspecies.Any())
+        {
+            foreach (var ae in ac.AcuarioEspecies)
+            {
+                var especieCompleta = await EspecieService.GetByIdAsync(ae.EspecieId);
+                if (especieCompleta != null)
+                {
+                    _acuario.AcuarioEspecies.Add(new AcuarioEspecie
+                    {
+                        EspecieId = ae.EspecieId,
+                        Especie = especieCompleta,
+                        Cantidad = ae.Cantidad
+                    });
+                }
+            }
+        }
 
         Snackbar.Add($"Acuario '{ac.Nombre}' cargado con éxito.", Severity.Info);
         StateHasChanged();
