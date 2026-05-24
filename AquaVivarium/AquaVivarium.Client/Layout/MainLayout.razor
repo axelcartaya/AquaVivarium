@@ -14,19 +14,19 @@
     @* Navbar *@
     <AppNavbar />
 
-    @* Contenido Principal *@
-    <MudMainContent Class="pt-16">
-        <MudContainer MaxWidth="MaxWidth.False" Class="mt-10 mb-16">
+    <MudMainContent Class="pt-16 d-flex flex-column" Style="min-height: 100vh;">
+
+        <MudContainer MaxWidth="MaxWidth.False" Class="mt-10 mb-16 flex-grow-1">
             @Body
         </MudContainer>
-    </MudMainContent>
 
-    @* Footer *@
-    <footer class="py-10 border-top bg-white d-flex justify-center align-center">
-        <MudText Typo="Typo.caption" Style="color: var(--av-text-muted); letter-spacing: 2px;">
-            DESIGNED FOR NATURE — AQUA•VIVARIUM 2026
-        </MudText>
-    </footer>
+        <footer class="py-10 border-top bg-white d-flex justify-center align-center">
+            <MudText Typo="Typo.caption" Style="color: var(--av-text-muted); letter-spacing: 2px;">
+                ECOSISTEMAS EN EQUILIBRIO — AQUA•VIVARIUM 2026
+            </MudText>
+        </footer>
+
+    </MudMainContent>
 </MudLayout>
 
 @code {
@@ -34,12 +34,20 @@
     {
         PaletteLight = new PaletteLight()
         {
-            Primary = "#74B816",   
-            AppbarBackground = "#ffffff",
+            Primary = "#74B816",
+            Secondary = "#2D3436",
+            AppbarBackground = "#F9FBF9",
             Background = "#ffffff",
             Surface = "#ffffff",
             TextPrimary = "#2D3436",
             Divider = "#EAECEE"
+        },
+        Typography = new Typography()
+        {
+            Default = new DefaultTypography()
+            {
+                FontFamily = new[] { "Inter", "sans-serif" }
+            }        
         }
     };
 }

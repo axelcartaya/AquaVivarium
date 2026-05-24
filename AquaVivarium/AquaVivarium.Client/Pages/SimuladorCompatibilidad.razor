@@ -1,5 +1,5 @@
-﻿@page "/calculadora"
-@page "/calculadora/{Id:int}"
+﻿@page "/simulador"
+@page "/simulador/{Id:int}"
 
 @using Domain.Models
 @using Domain.Models.DTOs
@@ -14,14 +14,14 @@
 
 @rendermode InteractiveWebAssembly
 
-<PageTitle>Calculadora - AquaVivarium</PageTitle>
+<PageTitle>Simulador - AquaVivarium</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-8 mb-16">
     @* cabecera *@
     <div class="d-flex flex-column flex-md-row justify-space-between align-start align-md-center mb-8" style="gap: 16px;">
         <div class="pr-md-4">
-            <MudText Typo="Typo.h4" Style="font-weight: 800;" Class="av-text-main mb-1">Calculadora de Compatibilidad</MudText>
-            <MudText Typo="Typo.subtitle1" Class="av-text-muted">Diseña tu entorno ideal y comprueba la convivencia de tus especies en tiempo real.</MudText>
+            <MudText Typo="Typo.h4" Style="font-weight: 800;" Class="av-text-main mb-1">Simulador de Compatibilidad</MudText>
+            <MudText Typo="Typo.subtitle1" Class="av-text-muted">Diseña tu entorno ideal y comprueba la convivencia de tus especies.</MudText>
         </div>
 
         <div class="d-flex flex-column flex-sm-row w-100 justify-end" style="gap: 12px; max-width: fit-content;">
@@ -30,7 +30,7 @@
                     @* menú desplegable *@
                     <MudMenu Label="Mis Acuarios"
                              Variant="Variant.Outlined"
-                             Color="Color.Secondary"
+                             Color="Color.Primary"
                              StartIcon="@Icons.Material.Filled.FolderSpecial"
                              EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
                              Size="Size.Large"
@@ -45,7 +45,7 @@
                         {
                             @foreach (var ac in _listaMisAcuarios)
                             {
-                                <MudMenuItem OnClick="@(() => CargarAcuarioEnCalculadora(ac))">
+                                <MudMenuItem OnClick="@(() => CargarAcuarioEnSimulador(ac))">
                                     @ac.Nombre (@ac.Litros L)
                                 </MudMenuItem>
                             }
@@ -106,7 +106,7 @@
     <MudGrid Spacing="4">
         @* coulmna izquierda *@
         <MudItem xs="12" lg="4">
-            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: #ffffff; border: 1px solid #e0e0e0;">
+            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: var(--av-bg-soft); border: 1px solid #e0e0e0;">
                 <div class="d-flex align-center mb-4">
                     <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Primary" Class="mr-2" />
                     <MudText Typo="Typo.h5" Style="font-weight: 700;">Detalles del acuario</MudText>
@@ -114,40 +114,40 @@
 
                <MudGrid Spacing="2">
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="_acuario.Nombre" Label="Nombre del Acuario" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                        <MudTextField @bind-Value="_acuario.Nombre" Label="Nombre del Acuario" Variant="Variant.Outlined" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);" />
                     </MudItem>
 
                     <MudItem xs="12">
-                        <MudNumericField @bind-Value="_acuario.Litros" Label="Volumen Total (Litros)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="1" />
+                        <MudNumericField @bind-Value="_acuario.Litros" Label="Volumen Total (Litros)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="1" Style="background-color: var(--av-bg-pure);" />
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudNumericField @bind-Value="_acuario.LargoCm" Label="Largo (cm)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" />
+                        <MudNumericField @bind-Value="_acuario.LargoCm" Label="Largo (cm)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" Style="background-color: var(--av-bg-pure);" />
                     </MudItem>
                     <MudItem xs="4">
-                        <MudNumericField @bind-Value="_acuario.AnchoCm" Label="Ancho (cm)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" />
+                        <MudNumericField @bind-Value="_acuario.AnchoCm" Label="Ancho (cm)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" Style="background-color: var(--av-bg-pure);" />
                     </MudItem>
                     <MudItem xs="4">
-                        <MudNumericField @bind-Value="_acuario.AltoCm" Label="Alto (cm)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" />
+                        <MudNumericField @bind-Value="_acuario.AltoCm" Label="Alto (cm)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" Style="background-color: var(--av-bg-pure);" />
                     </MudItem>
 
                     <MudItem xs="12" Class="mt-4">
-                        <MudText Typo="Typo.body2" Style="font-weight: 600;">pH del Agua: <span style="color:#0288d1;">@_acuario.PhActual</span></MudText>
-                        <MudSlider T="decimal" Value="@(_acuario.PhActual ?? 7.0m)" ValueChanged="@(v => _acuario.PhActual = v)" Min="4.0m" Max="9.0m" Step="0.1m" Color="Color.Info" ValueLabel="false" />
+                        <MudText Typo="Typo.body2" Style="font-weight: 600;">pH del Agua: <span>@_acuario.PhActual</span></MudText>
+                        <MudSlider T="decimal" Value="@(_acuario.PhActual ?? 7.0m)" ValueChanged="@(v => _acuario.PhActual = v)" Min="4.0m" Max="9.0m" Step="0.1m" Color="Color.Primary" ValueLabel="false" />
                     </MudItem>
 
                     <MudItem xs="12" Class="mt-2">
-                        <MudText Typo="Typo.body2" Style="font-weight: 600;">Temperatura: <span style="color:#d32f2f;">@_acuario.TempActual °C</span></MudText>
-                        <MudSlider T="int" Value="@(_acuario.TempActual ?? 25)" ValueChanged="@(v => _acuario.TempActual = v)" Min="15" Max="35" Step="1" Color="Color.Error" ValueLabel="false" />
+                        <MudText Typo="Typo.body2" Style="font-weight: 600;">Temperatura: <span>@_acuario.TempActual °C</span></MudText>
+                        <MudSlider T="int" Value="@(_acuario.TempActual ?? 25)" ValueChanged="@(v => _acuario.TempActual = v)" Min="15" Max="35" Step="1" Color="Color.Primary" ValueLabel="false" />
                     </MudItem>
 
                     <MudItem xs="12" Class="mt-2 mb-4">
-                        <MudText Typo="Typo.body2" Style="font-weight: 600;">Dureza (GH): <span style="color:#7b1fa2;">@_acuario.GhActual °dGH</span></MudText>
-                        <MudSlider T="int" Value="@(_acuario.GhActual ?? 10)" ValueChanged="@(v => _acuario.GhActual = v)" Min="0" Max="30" Step="1" Color="Color.Secondary" ValueLabel="false" />
+                        <MudText Typo="Typo.body2" Style="font-weight: 600;">Dureza (GH): <span>@_acuario.GhActual °dGH</span></MudText>
+                        <MudSlider T="int" Value="@(_acuario.GhActual ?? 10)" ValueChanged="@(v => _acuario.GhActual = v)" Min="0" Max="30" Step="1" Color="Color.Primary" ValueLabel="false" />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudSelect T="string" @bind-Value="_acuario.NivelIluminacion" Label="Iluminación" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        <MudSelect T="string" @bind-Value="_acuario.NivelIluminacion" Label="Iluminación" Variant="Variant.Outlined" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);">
                             <MudSelectItem Value="@("Baja")">Baja</MudSelectItem>
                             <MudSelectItem Value="@("Media")">Media</MudSelectItem>
                             <MudSelectItem Value="@("Alta")">Alta</MudSelectItem>
@@ -155,7 +155,7 @@
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudSelect T="string" @bind-Value="_acuario.FlujoAgua" Label="Flujo" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        <MudSelect T="string" @bind-Value="_acuario.FlujoAgua" Label="Flujo" Variant="Variant.Outlined" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);">
                             <MudSelectItem Value="@("Lento")">Lento</MudSelectItem>
                             <MudSelectItem Value="@("Moderado")">Moderado</MudSelectItem>
                             <MudSelectItem Value="@("Fuerte")">Fuerte</MudSelectItem>
@@ -163,7 +163,7 @@
                     </MudItem>
 
                     <MudItem xs="12">
-                        <MudSelect T="string" @bind-Value="_acuario.TipoSustrato" Label="Tipo de Sustrato" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        <MudSelect T="string" @bind-Value="_acuario.TipoSustrato" Label="Tipo de Sustrato" Variant="Variant.Outlined" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);">
                             <MudSelectItem Value="@("Arena")">Arena Fina</MudSelectItem>
                             <MudSelectItem Value="@("Grava")">Grava Fina</MudSelectItem>
                             <MudSelectItem Value="@("Nutritivo")">Sustrato Nutritivo</MudSelectItem>
@@ -172,7 +172,7 @@
                     </MudItem>
 
                     <MudItem xs="12" Class="d-flex align-center mt-2">
-                        <MudSwitch T="bool?" @bind-Value="_acuario.TieneCo2" Color="Color.Primary" Label="Sistema de inyección de CO2" />
+                        <MudSwitch T="bool?" @bind-Value="_acuario.TieneCo2" Color="Color.Primary" Label="Sistema de inyección de CO2" Style="background-color: var(--av-bg-pure);" />
                     </MudItem>
                    
                 </MudGrid>
@@ -181,7 +181,7 @@
 
         @* columna derecha *@
         <MudItem xs="12" lg="8">
-            <MudPaper Class="pa-6 rounded-lg border d-flex flex-column" Elevation="0" Style="background-color: #ffffff; border: 1px solid #e0e0e0; min-height: 100%;">
+            <MudPaper Class="pa-6 rounded-lg border d-flex flex-column" Elevation="0" Style="background-color: var(--av-bg-soft); border: 1px solid #e0e0e0; min-height: 100%;">
                 <div class="d-flex align-center mb-4">
                     <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Primary" Class="mr-2" />
                     <MudText Typo="Typo.h5" Style="font-weight: 700;">Habitantes del acuario</MudText>
@@ -196,7 +196,8 @@
                                  AdornmentIcon="@Icons.Material.Filled.Search"
                                  AdornmentColor="Color.Primary"
                                  Clearable="true"
-                                 Class="mb-4">
+                                 Class="mb-4"
+                                 Style="background-color: var(--av-bg-pure)">
                     <ItemTemplate Context="especie">
                         <div class="d-flex align-center">
                             @if (!string.IsNullOrWhiteSpace(especie.ImagenUrl))
@@ -211,17 +212,17 @@
                             }
                             <div>
                                 <MudText Typo="Typo.body2">@especie.Nombre</MudText>
-                                <MudText Typo="Typo.caption" Style="color: gray;">@especie.NombreCientifico</MudText>
+                                <MudText Typo="Typo.caption" Style="color: var(--av-text-muted);">@especie.NombreCientifico</MudText>
                             </div>
                         </div>
                     </ItemTemplate>
                 </MudAutocomplete>
 
-                <div class="flex-grow-1 rounded-lg pa-4" style="background-color: #f8f9fa; border: 1px dashed #dee2e6; min-height: 350px;">
+                <div class="flex-grow-1 rounded-lg pa-4" style="background-color: var(--av-bg-pure); border: 1px dashed #dee2e6; min-height: 350px;">
                     @if (_acuario.AcuarioEspecies == null || !_acuario.AcuarioEspecies.Any())
                     {
                         <div class="d-flex flex-column align-center justify-center text-center my-16" style="color: #9e9e9e;">
-                            <MudIcon Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Large" Class="mb-2" />
+                            <MudIcon Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Large" Class="mb-2"/>
                             <MudText Typo="Typo.body1">El acuario está vacío.</MudText>
                             <MudText Typo="Typo.body2">Usa el buscador de arriba para poblar el ecosistema.</MudText>
                         </div>
@@ -230,8 +231,8 @@
                     {
                         <MudGrid Spacing="3">
                             <MudItem xs="12" md="6">
-                                <div class="d-flex align-center mb-3" style="border-bottom: 2px solid #0288d1; padding-bottom: 4px;">
-                                    <MudIcon Icon="@Icons.Material.Filled.SetMeal" Color="Color.Info" Class="mr-2" Size="Size.Small" />
+                                <div class="d-flex align-center mb-3" style="border-bottom: 2px solid var(--av-primary); padding-bottom: 4px;">
+                                    <MudIcon Icon="@Icons.Material.Filled.SetMeal" Color="Color.Primary" Class="mr-2" Size="Size.Small"/>
                                     <MudText Typo="Typo.subtitle1" Style="font-weight: 700;">Peces</MudText>
                                 </div>
 
@@ -277,8 +278,8 @@
                             </MudItem>
 
                             <MudItem xs="12" md="6">
-                                <div class="d-flex align-center mb-3" style="border-bottom: 2px solid #2e7d32; padding-bottom: 4px;">
-                                    <MudIcon Icon="@Icons.Material.Filled.Grass" Color="Color.Success" Class="mr-2" Size="Size.Small" />
+                                <div class="d-flex align-center mb-3" style="border-bottom: 2px solid var(--av-primary); padding-bottom: 4px;">
+                                    <MudIcon Icon="@Icons.Material.Filled.Grass" Color="Color.Primary" Class="mr-2" Size="Size.Small" />
                                     <MudText Typo="Typo.subtitle1" Style="font-weight: 700;">Plantas</MudText>
                                 </div>
 
@@ -333,7 +334,7 @@
 
         @* sección matematica *@
         <MudItem xs="12">
-            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: #ffffff; border: 1px solid #e0e0e0; border-left: 6px solid #74B816;">
+            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: var(--av-bg-soft); border: 1px solid #e0e0e0; border-left: 6px solid #74B816;">
                 <MudText Typo="Typo.h5" Style="font-weight: 700;" Class="mb-4">
                     <MudIcon Icon="@Icons.Material.Filled.Circle" Class="mr-2 ms-n1" Color="Color.Primary" />
                     Análisis de Parámetros del Agua
@@ -373,7 +374,7 @@
 
         @* sección IA *@
         <MudItem xs="12">
-            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: #fafdff; border: 1px solid #e0e0e0; border-left: 6px solid #74B816;">
+            <MudPaper Class="pa-6 rounded-lg border" Elevation="0" Style="background-color: var(--av-bg-soft); border: 1px solid #e0e0e0; border-left: 6px solid #74B816;">
                 <div class="d-flex justify-space-between align-start align-md-center flex-column flex-md-row gap-4">
                     <div>
                         <MudText Typo="Typo.h5" Style="font-weight: 700;" Class="mb-4">
@@ -392,7 +393,7 @@
                     </MudButton>
                 </div>
 
-                <div class="mt-6 pa-5 rounded-lg border" style="background-color: #ffffff; min-height: 120px;">
+                <div class="mt-6 pa-5 rounded-lg" style="background-color: #ffffff; min-height: 120px; border: 1px dashed #dee2e6">
                     @if (!string.IsNullOrWhiteSpace(_acuario.UltimoAnalisisIA))
                     {
                         <MudText Typo="Typo.body1" Style="white-space: pre-line; line-height: 1.6;">
@@ -401,8 +402,8 @@
                     }
                     else
                     {
-                        <div class="d-flex flex-column align-center justify-center av-text-muted" style="height: 100%;">
-                            <MudIcon Icon="@Icons.Material.Filled.Forum" Size="Size.Large" Class="mb-2 opacity-50" />
+                        <div class="d-flex flex-column align-center justify-center av-text-muted" style="height: 100%; color: #9e9e9e;">
+                            <MudIcon Icon="@Icons.Material.Filled.Forum" Size="Size.Large" Class="mb-2 opacity-30" />
                             <MudText Typo="Typo.body2">Añade especies y haz clic en el botón superior para generar un dictamen experto.</MudText>
                         </div>
                     }
@@ -464,7 +465,6 @@
             }
             else
             {
-                // 2. Enviamos el DTO limpio al servidor, evitando el error 400
                 var resultado = await AcuarioService.AddDesdeDtoAsync(dtoParaGuardar);
 
                 if (resultado != null && resultado.Id > 0)
@@ -657,7 +657,7 @@
             _listaMisAcuarios = new List<Acuario>();
         }
     }
-    private void CargarAcuarioEnCalculadora(Acuario ac)
+    private void CargarAcuarioEnSimulador(Acuario ac)
     {
         if (ac == null) return;
 

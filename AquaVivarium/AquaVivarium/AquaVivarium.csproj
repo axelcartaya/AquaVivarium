@@ -9,10 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\imagenes\imagenesEspecie\1\**" />
-    <Content Remove="wwwroot\imagenes\imagenesEspecie\1\**" />
-    <EmbeddedResource Remove="wwwroot\imagenes\imagenesEspecie\1\**" />
-    <None Remove="wwwroot\imagenes\imagenesEspecie\1\**" />
+    <Compile Remove="wwwroot\imagenes\**" />
+    <Content Remove="wwwroot\imagenes\**" />
+    <EmbeddedResource Remove="wwwroot\imagenes\**" />
+    <None Remove="wwwroot\imagenes\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,10 +34,6 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.1.7" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\imagenes\imagenesEspecie\" />
   </ItemGroup>
 
 </Project>

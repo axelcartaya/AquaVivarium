@@ -1,96 +1,240 @@
 ﻿@page "/"
 @rendermode InteractiveAuto
-@*Sección Hero*@
-<section class="hero-section d-flex align-center">
-    <MudGrid Justify="Justify.Center" Class="align-center px-10">
-        <MudItem xs="12" md="6" Class="pr-md-16">
-            <MudText Typo="Typo.h1" Class="av-title mb-4">
-                Nature <span class="text-primary fw-light">Aquarium</span>
-            </MudText>
-            <MudText Typo="Typo.h5" Class="av-subtitle mb-10">
-                Donde la botánica se encuentra con la acuariofilia. Una enciclopedia diseñada para el aquascaping profesional.
-            </MudText>
-            <div class="d-flex gap-4">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                           Class="adv-btn-main" Href="/peces">
-                    Explorar Especies
-                </MudButton>
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary"
-                           Class="av-btn-alt">
-                    Nuestra Filosofía
-                </MudButton>
-            </div>
-        </MudItem>
+@inject NavigationManager NavigationManager
 
-        <MudItem xs="12" md="6" Class="mt-10 mt-md-0">
-            <div class="hero-image-container">
-                <MudCarousel Class="hero-carousel"
-                             TData="object"
-                             ShowArrows="false"
-                             ShowBullets="true"
-                             AutoCycle="true"
-                             ItemsSource="@_carrouselImages">
-                    <ItemTemplate>
-                        <div class="d-flex justify-center">
-                            <MudImage Src="@((string)context)"
-                                      Alt="Nature Aquarium"
-                                      Fluid="true"
-                                      Class="hero-img shadow-xl" />
+<div class="home-container">
+    @* hero *@
+    <section class="hero-section">
+        <MudContainer MaxWidth="MaxWidth.Large">
+            <MudGrid Justify="Justify.Center" Class="align-center">
+                <MudItem xs="12" md="6" Class="pr-md-12 d-flex flex-column justify-center">
+
+                    <MudText Typo="Typo.overline" Style="letter-spacing: 2px; font-weight: 700; color: var(--av-primary);" Class="mb-3">
+                        EL ECOSISTEMA DIGITAL
+                    </MudText>
+
+                    <MudText Typo="Typo.h2" Style="font-weight: 800; color: var(--av-text-main); line-height: 1.2;" Class="mb-6 mt-1">
+                        Unidos por la acuariofilia y la <span class="hero-highlight">conservación de especies</span>
+                    </MudText>
+
+                    <MudText Typo="Typo.body1" Style="color: var(--av-text-muted); line-height: 1.8; max-width: 95%;" Class="mb-10">
+                        Una plataforma profesional diseñada para aprender, planificar, simular y mantener ecosistemas en perfecto equilibrio.
+                    </MudText>
+
+                    <div class="d-flex gap-4 flex-wrap">
+                        <MudButton Variant="Variant.Outlined" Class="av-btn-alt px-8 py-3" Style="border-radius: 8px; font-weight: 700; letter-spacing: 1px;" DisableElevation="true" Href="#herramientas">
+                            EXPLORAR PLATAFORMA
+                        </MudButton>
+                    </div>
+
+                </MudItem>
+
+                <MudItem xs="12" md="6" Class="mt-10 mt-md-0">
+                    <div class="hero-image-wrapper">
+                        <MudCarousel Style="height: 500px;"
+                                     TData="object"
+                                     ShowArrows="false"
+                                     ShowBullets="true"
+                                     AutoCycle="true"
+                                     AutoCycleTime="TimeSpan.FromSeconds(8)"
+                                     ItemsSource="@_carrouselImages">
+                            <ItemTemplate>
+                                <img src="@((string)context)"
+                                     alt="Imagen de Acuario"
+                                     style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+                            </ItemTemplate>
+                        </MudCarousel>
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </MudContainer>
+    </section>
+
+    @* sección cita *@
+    <section class="quote-section py-16">
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="d-flex flex-column align-center py-8">
+            <MudIcon Icon="@Icons.Material.Filled.FormatQuote" Style="color: var(--av-primary-light); font-size: 4rem; align-self: flex-start;" Class="mb-2" />
+            <MudText Typo="Typo.h4" Align="Align.Center" Class="quote-text fst-italic fw-light mb-6">
+                "Aprender de la naturaleza para crear la naturaleza."
+            </MudText>
+            <MudText Typo="Typo.overline" Align="Align.Center" Style="letter-spacing: 4px; font-weight: 700; color: var(--av-primary-deep);">
+                — Takashi Amano
+            </MudText>
+        </MudContainer>
+    </section>
+
+    @* sección nuestra visión *@
+    <section class="vision-section py-16" style="background-color: var(--av-bg-soft);">
+        <MudContainer MaxWidth="MaxWidth.Large">
+            <MudGrid Spacing="6" Class="align-center">
+                <MudItem xs="12" md="6">
+                    <MudText Typo="Typo.overline" Style="letter-spacing: 2px; font-weight: 700; color: var(--av-primary);">
+                        NUESTRO PROPÓSITO
+                    </MudText>
+                    <MudText Typo="Typo.h3" Style="font-weight: 800; color: var(--av-text-main);" Class="mb-6 mt-2">
+                        Más que un hobby, <br /> un <span style="color: var(--av-primary);">compromiso vital</span>
+                    </MudText>
+                    <MudText Typo="Typo.body1" Style="color: var(--av-text-muted); line-height: 1.8;" Class="mb-4">
+                        Creemos que la acuariofilia moderna debe ir mucho más allá de mantener un tanque estéticamente bonito. Nuestro objetivo es transformar la forma en la que los aficionados interactúan con el medio acuático, proporcionando las herramientas necesarias para <strong>aprender y comprender</strong> la compleja biología y química que requiere un ecosistema cerrado.
+                    </MudText>
+                    <MudText Typo="Typo.body1" Style="color: var(--av-text-muted); line-height: 1.8;">
+                        Al mismo tiempo, estamos profundamente concienciados con la <strong>conservación de las especies</strong>. Fomentamos prácticas responsables, el respeto por los hábitats naturales y el conocimiento exhaustivo de cada ser vivo antes de introducirlo en nuestras casas. Porque solo protegiendo lo que conocemos, garantizamos el futuro de nuestra afición.
+                    </MudText>
+                </MudItem>
+
+                @* pilares *@
+                <MudItem xs="12" md="6">
+                    <div class="d-flex flex-column gap-5 pl-md-8">
+
+                        <div class="d-flex pa-6" style="background: var(--av-bg-pure); border-radius: 16px; box-shadow: var(--av-shadow-premium);">
+                            <div class="mr-4 mt-1">
+                                <MudIcon Icon="@Icons.Material.Filled.School" Style="color: var(--av-primary); font-size: 2.5rem;" />
+                            </div>
+                            <div>
+                                <MudText Typo="Typo.h6" Style="font-weight: 700; color: var(--av-text-main);" Class="mb-1">
+                                    Educación Accesible
+                                </MudText>
+                                <MudText Typo="Typo.body2" Style="color: var(--av-text-muted);">
+                                    Democratizamos el conocimiento técnico para evitar errores comunes y asegurar ecosistemas prósperos desde el primer día.
+                                </MudText>
+                            </div>
                         </div>
-                    </ItemTemplate>
-                </MudCarousel>
-                <div class="image-accent"></div>
-            </div>
-        </MudItem>
-    </MudGrid>
-</section>
 
-@*Sección Cita*@
-<section class="py-16 my-16 bg-light-green">
-    <MudContainer MaxWidth="MaxWidth.Medium" Class="text-center py-10">
-        <MudIcon Icon="@Icons.Material.Filled.FormatQuote" Color="Color.Primary" Size="Size.Large" Class="mb-4" />
-        <MudText Typo="Typo.h4" Class="fst-italic fw-light mb-6" Style="color: #2D3436; line-height: 1.6;">
-            "Aprender de la naturaleza para crear la naturaleza."
-        </MudText>
-        <MudText Typo="Typo.overline" Style="letter-spacing: 3px; font-weight: 700;">— Takashi Amano</MudText>
-    </MudContainer>
-</section>
+                        <div class="d-flex pa-6" style="background: var(--av-bg-pure); border-radius: 16px; box-shadow: var(--av-shadow-premium);">
+                            <div class="mr-4 mt-1">
+                                <MudIcon Icon="@Icons.Material.Filled.Public" Style="color: var(--av-primary); font-size: 2.5rem;" />
+                            </div>
+                            <div>
+                                <MudText Typo="Typo.h6" Style="font-weight: 700; color: var(--av-text-main);" Class="mb-1">
+                                    Respeto Biológico
+                                </MudText>
+                                <MudText Typo="Typo.body2" Style="color: var(--av-text-muted);">
+                                    Promovemos la compatibilidad ética y el bienestar animal frente a la simple exhibición. Cada vida importa.
+                                </MudText>
+                            </div>
+                        </div>
 
-@*Sección Características: Tres pilares*@
-<MudContainer MaxWidth="MaxWidth.False" Class="px-10 mb-16 pb-16">
-    <MudGrid Spacing="6">
-        <MudItem xs="12" md="4">
-            <div class="feature-card">
-                <MudText Typo="Typo.h6" Color="Color.Primary" Class="mb-2">01. BIODIVERSIDAD</MudText>
-                <MudText Typo="Typo.body1" Class="text-muted">
-                    Base de datos exhaustiva con más de 250 especies seleccionadas por su valor estético y biológico.
+                        <div class="d-flex pa-6" style="background: var(--av-bg-pure); border-radius: 16px; box-shadow: var(--av-shadow-premium);">
+                            <div class="mr-4 mt-1">
+                                <MudIcon Icon="@Icons.Material.Filled.Biotech" Style="color: var(--av-primary); font-size: 2.5rem;" />
+                            </div>
+                            <div>
+                                <MudText Typo="Typo.h6" Style="font-weight: 700; color: var(--av-text-main);" Class="mb-1">
+                                    Innovación Consciente
+                                </MudText>
+                                <MudText Typo="Typo.body2" Style="color: var(--av-text-muted);">
+                                    Unimos la ciencia de datos y la tecnología para eliminar el ensayo y error, permitiéndote recrear la naturaleza con precisión.
+                                </MudText>
+                            </div>
+                        </div>
+
+                    </div>
+                </MudItem>
+
+            </MudGrid>
+        </MudContainer>
+    </section>
+
+    @* sección cita  *@
+    <section class="quote-section py-16">
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="d-flex flex-column align-center py-8">
+            <MudIcon Icon="@Icons.Material.Filled.FormatQuote" Style="color: var(--av-primary-light); font-size: 4rem; align-self: flex-start;" Class="mb-2" />
+
+            <MudText Typo="Typo.h4" Align="Align.Center" Class="quote-text fst-italic fw-light mb-6">
+                "Solo amamos aquello que conocemos, y solo protegemos aquello que amamos."
+            </MudText>
+
+            <MudText Typo="Typo.overline" Align="Align.Center" Style="letter-spacing: 4px; font-weight: 700; color: var(--av-primary-deep);">
+                — Jacques-Yves Cousteau
+            </MudText>
+        </MudContainer>
+    </section>
+
+    @* sección funcionalidades *@
+    <section class="features-section py-16" id="herramientas">
+        <MudContainer MaxWidth="MaxWidth.Large">
+            <div class="d-flex flex-column align-center mb-14">
+                <MudText Typo="Typo.h3" Align="Align.Center" Style="font-weight: 800; color: var(--av-text-main);" Class="mb-3">
+                    Herramientas
+                </MudText>
+                <MudText Typo="Typo.body1" Align="Align.Center" Style="color: var(--av-text-muted); max-width: 600px;">
+                    Todo lo que necesitas centralizado en un solo lugar. Desde la documentación sobre especies hasta el análisis de compatibilidad biológica.
                 </MudText>
             </div>
-        </MudItem>
-        <MudItem xs="12" md="4">
-            <div class="feature-card">
-                <MudText Typo="Typo.h6" Color="Color.Primary" Class="mb-2">02. PARÁMETROS</MudText>
-                <MudText Typo="Typo.body1" Class="text-muted">
-                    Datos técnicos precisos sobre pH, dureza y temperatura para el éxito de tu ecosistema.
-                </MudText>
-            </div>
-        </MudItem>
-        <MudItem xs="12" md="4">
-            <div class="feature-card border-none">
-                <MudText Typo="Typo.h6" Color="Color.Primary" Class="mb-2">03. DISEÑO</MudText>
-                <MudText Typo="Typo.body1" Class="text-muted">
-                    Herramientas pensadas para paisajistas acuáticos que buscan la perfección visual.
-                </MudText>
-            </div>
-        </MudItem>
-    </MudGrid>
-</MudContainer>
+
+            <MudGrid Spacing="6" Justify="Justify.Center">
+
+                <MudItem xs="12" sm="6" md="3">
+                    <div class="feature-card d-flex flex-column align-center text-center" @onclick="@(() => NavegarA("/peces"))">
+                        <div class="icon-wrapper mb-3">
+                            <MudIcon Icon="@Icons.Material.Filled.SetMeal" Style="color: var(--av-primary); font-size: 2rem;" />
+                        </div>
+                        <MudText Typo="Typo.h6" Align="Align.Center" Style="font-weight: 700; color: var(--av-text-main);" Class="mb-3">
+                            Catálogo Fauna
+                        </MudText>
+                        <MudText Typo="Typo.body2" Align="Align.Center" Style="color: var(--av-text-muted);">
+                            Base de datos técnica con parámetros exactos, comportamientos y dietas de cientos de especies.
+                        </MudText>
+                    </div>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="3">
+                    <div class="feature-card d-flex flex-column align-center text-center" @onclick="@(() => NavegarA("/plantas"))">
+                        <div class="icon-wrapper mb-3">
+                            <MudIcon Icon="@Icons.Material.Filled.Grass" Style="color: var(--av-primary); font-size: 2rem;" />
+                        </div>
+                        <MudText Typo="Typo.h6" Align="Align.Center" Style="font-weight: 700; color: var(--av-text-main);" Class="mb-3">
+                            Archivo Botánico
+                        </MudText>
+                        <MudText Typo="Typo.body2" Align="Align.Center" Style="color: var(--av-text-muted);">
+                            Requisitos de luz, CO2 y tasas de crecimiento para tapizantes, musgos y plantas de tallo.
+                        </MudText>
+                    </div>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="3">
+                    <div class="feature-card d-flex flex-column align-center text-center" @onclick="@(() => NavegarA("/simulador"))">
+                        <div class="icon-wrapper mb-3">
+                            <MudIcon Icon="@Icons.Material.Filled.Calculate" Style="color: var(--av-primary); font-size: 2rem;" />
+                        </div>
+                        <MudText Typo="Typo.h6" Align="Align.Center" Style="font-weight: 700; color: var(--av-text-main);" Class="mb-3">
+                            Simulador IA
+                        </MudText>
+                        <MudText Typo="Typo.body2" Align="Align.Center" Style="color: var(--av-text-muted);">
+                            Planifica tu tanque y deja que nuestra Inteligencia Artificial evalúe la carga biológica y convivencia.
+                        </MudText>
+                    </div>
+                </MudItem>
+
+  
+                <MudItem xs="12" sm="6" md="3">
+                    <div class="feature-card d-flex flex-column align-center text-center" @onclick="@(() => NavegarA("/categorias-guias"))">
+                        <div class="icon-wrapper mb-3">
+                            <MudIcon Icon="@Icons.Material.Filled.AutoStories" Style="color: var(--av-primary); font-size: 2rem;" />
+                        </div>
+                        <MudText Typo="Typo.h6" Align="Align.Center" Style="font-weight: 700; color: var(--av-text-main);" Class="mb-3">
+                            Guías
+                        </MudText>
+                        <MudText Typo="Typo.body2" Align="Align.Center" Style="color: var(--av-text-muted);">
+                            Manuales profesionales sobre química del agua, hardscape, erradicación de algas y mucho más.
+                        </MudText>
+                    </div>
+                </MudItem>
+
+            </MudGrid>
+        </MudContainer>
+    </section>
+</div>
+
 @code {
-    // Lista de imágenes carrusel
     private List<string> _carrouselImages = new()
     {
-        "",
-        "",
-        ""
+        "/images/otros/foto2.webp",
+        "/images/otros/foto1.webp"     
     };
+
+    private void NavegarA(string ruta)
+    {
+        NavigationManager.NavigateTo(ruta);
+    }
 }

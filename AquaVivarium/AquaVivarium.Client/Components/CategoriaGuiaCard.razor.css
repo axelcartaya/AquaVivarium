@@ -9,9 +9,9 @@
 }
 
 .hover-card:hover {
-     transform: translateY(-5px);
-     border-color: var(--mud-palette-primary);
-     box-shadow: 0 8px 24px rgba(var(--mud-palette-primary-rgb), 0.12) !important;
+    transform: translateY(-8px);
+    box-shadow: var(--av-shadow-premium);
+    border-color: var(--av-primary);
 }
 
 .fallback-img {

@@ -1,20 +1,20 @@
 ﻿@using Domain.Models.DTOs
 
-<MudExpansionPanels Class="mb-6" Elevation="2">
-    <MudExpansionPanel Text="Filtros de Búsqueda" Icon="@Icons.Material.Filled.FilterAlt">
-        <MudGrid>
+<MudExpansionPanels Class="mb-6" Elevation="1">
+    <MudExpansionPanel Text="Filtros de Búsqueda" Icon="@Icons.Material.Filled.FilterAlt" Style="background-color: var(--av-bg-soft); border-radius: var(--av-radius-sm);">
+        <MudGrid Style="background-color: var(--av-bg-soft);">
             @* Fila 1 *@
             <MudItem xs="12" sm="6" md="3">
-                <MudTextField @bind-Value="Filtro.Nombre" Label="Nombre" Variant="Variant.Outlined" Clearable="true" Margin="Margin.Dense" />
+                <MudTextField @bind-Value="Filtro.Nombre" Label="Nombre" Variant="Variant.Outlined" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);"/>
             </MudItem>
             <MudItem xs="12" sm="6" md="3">
-                <MudTextField @bind-Value="Filtro.Familia" Label="Familia" Variant="Variant.Outlined" Clearable="true" Margin="Margin.Dense" />
+                <MudTextField @bind-Value="Filtro.Familia" Label="Familia" Variant="Variant.Outlined" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);" />
             </MudItem>
             <MudItem xs="12" sm="6" md="3">
-                <MudTextField @bind-Value="Filtro.Genero" Label="Género" Variant="Variant.Outlined" Clearable="true" Margin="Margin.Dense" />
+                <MudTextField @bind-Value="Filtro.Genero" Label="Género" Variant="Variant.Outlined" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);" />
             </MudItem>
             <MudItem xs="12" sm="6" md="3">
-                <MudSelect T="string" @bind-Value="Filtro.Dificultad" Label="Dificultad" Variant="Variant.Outlined" Clearable="true" Margin="Margin.Dense">
+                <MudSelect T="string" @bind-Value="Filtro.Dificultad" Label="Dificultad" Variant="Variant.Outlined" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);">
                     <MudSelectItem Value="@("Muy Fácil")" />
                     <MudSelectItem Value="@("Fácil")" />
                     <MudSelectItem Value="@("Media")" />
@@ -24,33 +24,33 @@
 
             @* Fila 2*@
             <MudItem xs="6" sm="3" md="2">
-                <MudNumericField @bind-Value="Filtro.PhDesde" Label="pH Mínimo" Variant="Variant.Outlined" Step="0.5M" Min="0M" Clearable="true" Margin="Margin.Dense" />
+                <MudNumericField @bind-Value="Filtro.PhDesde" Label="pH Mínimo" Variant="Variant.Outlined" Step="0.5M" Min="0M" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);" />
             </MudItem>
             <MudItem xs="6" sm="3" md="2">
-                <MudNumericField @bind-Value="Filtro.PhHasta" Label="pH Máximo" Variant="Variant.Outlined" Step="0.5M" Min="0M" Clearable="true" Margin="Margin.Dense" />
+                <MudNumericField @bind-Value="Filtro.PhHasta" Label="pH Máximo" Variant="Variant.Outlined" Step="0.5M" Min="0M" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);" />
             </MudItem>
             <MudItem xs="6" sm="3" md="2">
-                <MudNumericField @bind-Value="Filtro.TempDesde" Label="Temp. Mín (ºC)" Variant="Variant.Outlined" Step="1" Min="0" Clearable="true" Margin="Margin.Dense" />
+                <MudNumericField @bind-Value="Filtro.TempDesde" Label="Temp. Mín (ºC)" Variant="Variant.Outlined" Step="1" Min="0" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);" />
             </MudItem>
             <MudItem xs="6" sm="3" md="2">
-                <MudNumericField @bind-Value="Filtro.TempHasta" Label="Temp. Máx (ºC)" Variant="Variant.Outlined" Step="1" Min="0" Clearable="true" Margin="Margin.Dense" />
+                <MudNumericField @bind-Value="Filtro.TempHasta" Label="Temp. Máx (ºC)" Variant="Variant.Outlined" Step="1" Min="0" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);" />
             </MudItem>
             <MudItem xs="6" sm="3" md="2">
-                <MudNumericField @bind-Value="Filtro.GhDesde" Label="GH Mínimo" Variant="Variant.Outlined" Step="1" Min="0" Clearable="true" Margin="Margin.Dense" />
+                <MudNumericField @bind-Value="Filtro.GhDesde" Label="GH Mínimo" Variant="Variant.Outlined" Step="1" Min="0" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);" />
             </MudItem>
             <MudItem xs="6" sm="3" md="2">
-                <MudNumericField @bind-Value="Filtro.GhHasta" Label="GH Máximo" Variant="Variant.Outlined" Step="1" Min="0" Clearable="true" Margin="Margin.Dense" />
+                <MudNumericField @bind-Value="Filtro.GhHasta" Label="GH Máximo" Variant="Variant.Outlined" Step="1" Min="0" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);" />
             </MudItem>
 
             @* Fila 3 *@
             <MudItem xs="6" sm="3" md="2">
-                <MudNumericField @bind-Value="Filtro.TamanoDesde" Label="Tamaño Mín (cm)" Variant="Variant.Outlined" Step="1" Min="0" Clearable="true" Margin="Margin.Dense" />
+                <MudNumericField @bind-Value="Filtro.TamanoDesde" Label="Tamaño Mín (cm)" Variant="Variant.Outlined" Step="1" Min="0" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);" />
             </MudItem>
             <MudItem xs="6" sm="3" md="2">
-                <MudNumericField @bind-Value="Filtro.TamanoHasta" Label="Tamaño Máx (cm)" Variant="Variant.Outlined" Step="1" Min="0" Clearable="true" Margin="Margin.Dense" />
+                <MudNumericField @bind-Value="Filtro.TamanoHasta" Label="Tamaño Máx (cm)" Variant="Variant.Outlined" Step="1" Min="0" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);" />
             </MudItem>
             <MudItem xs="12" sm="6" md="3">
-                <MudSelect T="string" @bind-Value="Filtro.Alimentacion" Label="Alimentación" Variant="Variant.Outlined" Clearable="true" Margin="Margin.Dense">
+                <MudSelect T="string" @bind-Value="Filtro.Alimentacion" Label="Alimentación" Variant="Variant.Outlined" Clearable="true" Margin="Margin.Dense" Style="background-color: var(--av-bg-pure);">
                     <MudSelectItem Value="@("Carnívoro")" />
                     <MudSelectItem Value="@("Herbívoro")" />
                     <MudSelectItem Value="@("Omnívoro")" />
@@ -59,7 +59,7 @@
 
             @* Botones *@
             <MudItem xs="12" md="5" Class="d-flex justify-end gap-4 mt-2">
-                <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="OnLimpiarClick">
+                <MudButton Variant="Variant.Outlined" Color="Color.Default" OnClick="OnLimpiarClick">
                     Limpiar
                 </MudButton>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="OnBuscarClick">

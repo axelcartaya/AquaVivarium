@@ -4,39 +4,39 @@
 @* Sidebar *@
 <MudDrawer @bind-Open="@sideBarAbierto" Anchor="Anchor.Left" Elevation="4" Variant="@DrawerVariant.Temporary" Style="position: fixed !important; top: 0 !important; height: 100vh !important;">
     <MudDrawerHeader Class="align-center d-flex border-bottom">
-        <MudText Typo="Typo.h6" Style="font-weight: 800; color: #2D3436;">
-            AQUA<span style="color: #74B816; font-weight: 300;"> • VIVARIUM</span>
+        <MudText Typo="Typo.h6" Style="font-weight: 800; color: var(--av-text-main);">
+            AQUA<span style="color: var(--av-primary); font-weight: 300;"> • VIVARIUM</span>
         </MudText>
     </MudDrawerHeader>
 
     <MudNavMenu Color="Color.Primary" Class="mt-4">
-        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" IconColor="Color.Dark" Style="color: #2D3436; font-weight: 500;">Home</MudNavLink>
-        <MudNavLink Href="/peces" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.SetMeal" IconColor="Color.Dark" Style="color: #2D3436; font-weight: 500;">Peces</MudNavLink>
-        <MudNavLink Href="/plantas" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Grass" IconColor="Color.Dark" Style="color: #2D3436; font-weight: 500;">Plantas</MudNavLink>
-        <MudNavLink Href="/categorias-guias" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Book" IconColor="Color.Dark" Style="color: #2D3436; font-weight: 500;">Guias</MudNavLink>
-        <MudNavLink Href="/calculadora" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Calculate" IconColor="Color.Dark" Style="color: #2D3436; font-weight: 500;">Calculadora</MudNavLink>
+        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" IconColor="Color.Dark" Style="color: var(--av-text-main); font-weight: 500;">Home</MudNavLink>
+        <MudNavLink Href="/peces" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.SetMeal" IconColor="Color.Dark" Style="color: var(--av-text-main); font-weight: 500;">Peces</MudNavLink>
+        <MudNavLink Href="/plantas" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Grass" IconColor="Color.Dark" Style="color: var(--av-text-main); font-weight: 500;">Plantas</MudNavLink>
+        <MudNavLink Href="/categorias-guias" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Book" IconColor="Color.Dark" Style="color: var(--av-text-main); font-weight: 500;">Guias</MudNavLink>
+        <MudNavLink Href="/simulador" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Calculate" IconColor="Color.Dark" Style="color: var(--av-text-main); font-weight: 500;">Simulador</MudNavLink>
     </MudNavMenu>
 </MudDrawer>
 
 @* NavBar *@
-<MudAppBar Elevation="0" Class="bg-white border-bottom py-2" Fixed="true">
+<MudAppBar Elevation="0" Class="bg-white py-2" Fixed="true">
     <MudContainer MaxWidth="MaxWidth.False" Class="d-flex align-center px-4 px-md-8">
 
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Default" Edge="Edge.Start" OnClick="@ToggleEstadoBar" Class="d-md-none mr-2" />
 
         <NavLink href="/" Style="text-decoration: none; display: flex; align-items: center;" Class="mr-4 mr-md-8 cursor-pointer">
             <MudIcon Icon="@Icons.Material.Filled.Spa" Color="Color.Primary" Class="mr-2" Style="width: 36px; height: 36px; flex-shrink: 0;" />
-            <MudText Typo="Typo.h6" Class="d-none d-sm-block" Style="font-weight: 800; letter-spacing: 2px; color: #2D3436;">
-                AQUA<span style="color: #74B816; font-weight: 300;"> • VIVARIUM</span>
+            <MudText Typo="Typo.h6" Class="d-none d-sm-block" Style="font-weight: 800; letter-spacing: 2px; color: var(--av-text-main);">
+                AQUA<span style="color: var(--av-primary); font-weight: 300;"> • VIVARIUM</span>
             </MudText>
         </NavLink>
 
         <div class="d-none d-md-flex gap-4">
-            <MudButton Variant="Variant.Text" Href="/" Style="color: #2D3436; font-weight: 600;">Home</MudButton>
-            <MudButton Variant="Variant.Text" Href="/peces" Style="color: #2D3436; font-weight: 600;">Peces</MudButton>
-            <MudButton Variant="Variant.Text" Href="/plantas" Style="color: #2D3436; font-weight: 600;">Plantas</MudButton>
-            <MudButton Variant="Variant.Text" Href="/categorias-guias" Style="color: #2D3436; font-weight: 600;">Guías</MudButton>
-            <MudButton Variant="Variant.Text" Href="/calculadora" Style="color: #2D3436; font-weight: 600;">Calculadora</MudButton>
+            <MudButton Variant="Variant.Text" Href="/" Style="color: var(--av-text-main); font-weight: 600;">Home</MudButton>
+            <MudButton Variant="Variant.Text" Href="/peces" Style="color: var(--av-text-main); font-weight: 600;">Peces</MudButton>
+            <MudButton Variant="Variant.Text" Href="/plantas" Style="color: var(--av-text-main); font-weight: 600;">Plantas</MudButton>
+            <MudButton Variant="Variant.Text" Href="/categorias-guias" Style="color: var(--av-text-main); font-weight: 600;">Guías</MudButton>
+            <MudButton Variant="Variant.Text" Href="/simulador" Style="color: var(--av-text-main); font-weight: 600;">Simulador</MudButton>
         </div>
 
         <MudSpacer />

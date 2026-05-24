@@ -1,7 +1,8 @@
 ﻿
 .av-card-float {
-    background-color: var(--av-bg-pure);
+    background-color: var(--av-bg-soft);
     border: 1px solid var(--av-border);
+    border-radius: var(--av-radius-sm);
     transition: var(--av-transition-smooth);
     overflow: hidden;
     height: 100%;
@@ -11,9 +12,9 @@
 }
 
 .av-card-float:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
     box-shadow: var(--av-shadow-premium);
-    border-color: var(--av-primary-light);
+    border-color: var(--av-primary);
 }
 
 .av-card-image-wrapper {
