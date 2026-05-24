@@ -10,15 +10,49 @@
     <link rel="stylesheet" href="@Assets["AquaVivarium.styles.css"]" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link rel="preload" as="image" href="/images/otros/foto1.webp">
+    <link rel="preload" as="image" href="/images/otros/foto2.webp">
     <ImportMap />
     <HeadOutlet @rendermode="PageRenderMode" />
 </head>
 
 <body>
+    @* splash screen *@
+    <div id="av-splash" class="av-splash-screen">
+        <div class="splash-glow"></div>
+        <div class="splash-content">
+            <div class="splash-logo-wrapper">
+                <svg class="splash-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    @((MarkupString)MudBlazor.Icons.Material.Filled.Spa)
+                </svg>
+            </div>
+            <div class="splash-text-container">
+                <div class="splash-text">
+                    AQUA<span class="splash-text-light"> • VIVARIUM</span>
+                </div>
+                <div class="splash-slogan">
+                    Ecosistemas en equilibrio
+                </div>
+            </div>
+        </div>
+    </div>
     <AquaVivarium.Components.Routes />
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('av-splash');
+                if (splash) {
+                    splash.style.opacity = '0';
+                    splash.style.transform = 'scale(1.05)';
+                    splash.style.filter = 'blur(4px)';
+                    setTimeout(() => splash.remove(), 500);
+                }
+            }, 1200);
+        });
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,117 @@
+﻿/* splash screen */
+.av-splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--av-bg-pure);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out, filter 0.5s ease-out;
+}
+
+.splash-glow {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(116, 184, 22, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulseGlow 3s ease-in-out infinite alternate;
+}
+
+.splash-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.splash-logo-wrapper {
+    transform: scale(0);
+    opacity: 0;
+    animation: popInLogo 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.splash-logo {
+    width: 90px;
+    height: 90px;
+    fill: var(--av-primary);
+    filter: drop-shadow(0 4px 12px rgba(116, 184, 22, 0.3)); 
+}
+
+.splash-text-container {
+    text-align: center;
+}
+
+.splash-text {
+    font-family: var(--av-font-heading);
+    font-weight: 900;
+    font-size: 2.5rem;
+    color: var(--av-text-main);
+    letter-spacing: 4px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUpFade 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s forwards;
+}
+
+.splash-text-light {
+    font-weight: 300;
+    color: var(--av-primary);
+}
+
+.splash-slogan {
+    font-family: var(--av-font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--av-text-muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+    opacity: 0;
+    transform: translateY(15px);
+    animation: slideUpFade 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s forwards;
+}
+
+@keyframes popInLogo {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpFade {
+    0% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulseGlow {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+
