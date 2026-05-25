@@ -14,6 +14,26 @@
     <link rel="preload" as="image" href="/images/otros/foto2.webp">
     <ImportMap />
     <HeadOutlet @rendermode="PageRenderMode" />
+
+    @* Suaviza el cambio entre pagina *@
+    <style>             
+        .mud-layout {
+            animation: revelarWeb 0.6s ease-out forwards;
+        }
+
+        @@keyframes revelarWeb {
+            0% {
+                opacity: 0;
+            }
+
+            60% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -39,16 +59,28 @@
     <AquaVivarium.Components.Routes />
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
+    @* Transición entre páginas *@
+    <script>
+        Blazor.addEventListener('enhancedload', function () {
+            const layout = document.querySelector('.mud-layout');
+            if (layout) {
+                layout.style.animation = 'none';
+                void layout.offsetWidth;
+                layout.style.animation = 'revelarWeb 0.6s ease-out forwards';
+            }
+        });
+    </script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    @* Splash screen *@
     <script>
         window.addEventListener('load', () => {
             setTimeout(() => {
-                const splash = document.getElementById('av-splash');
-                if (splash) {
-                    splash.style.opacity = '0';
-                    splash.style.transform = 'scale(1.05)';
-                    splash.style.filter = 'blur(4px)';
-                    setTimeout(() => splash.remove(), 500);
+            const splash = document.getElementById('av-splash');
+            if (splash) {
+                splash.style.opacity = '0';
+                splash.style.transform = 'scale(1.05)';
+                splash.style.filter = 'blur(4px)';
+                setTimeout(() => splash.remove(), 500);
                 }
             }, 1200);
         });
