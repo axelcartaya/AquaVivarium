@@ -18,7 +18,7 @@
     else
     {
         @* Buscador desplegado *@
-        <div class="d-flex align-center animacion-apertura">
+        <div class="d-flex align-center animacion-apertura buscador-mobile-overlay w-100">
             <MudAutocomplete @ref="autocompleteRef"
                              T="EspecieBusquedaDto"
                              Placeholder="Buscar peces, plantas..."
@@ -59,7 +59,7 @@
                            Color="Color.Default"
                            Size="Size.Small"
                            OnClick="CerrarBusqueda"
-                           Class="ml-1" />
+                           Class="ml-2" />
         </div>
     }
 </div>
