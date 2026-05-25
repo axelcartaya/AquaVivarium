@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -105,6 +106,12 @@ builder.Services.AddControllers()
     });
 
 var app = builder.Build();
+
+// Le decimos a .NET que confíe en las cabeceras HTTPS que le envía Render para que no lo bloquee
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto
+});
 
 // Asignar rol Admin al usuario registrado con el email 
 if (app.Environment.IsDevelopment())
