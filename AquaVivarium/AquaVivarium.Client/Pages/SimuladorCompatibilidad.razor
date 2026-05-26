@@ -121,13 +121,13 @@
                         <MudNumericField @bind-Value="_acuario.Litros" Label="Volumen Total (Litros)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="1" Style="background-color: var(--av-bg-pure);" />
                     </MudItem>
 
-                    <MudItem xs="4">
+                    <MudItem xs="4" sm="4">
                         <MudNumericField @bind-Value="_acuario.LargoCm" Label="Largo (cm)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" Style="background-color: var(--av-bg-pure);" />
                     </MudItem>
-                    <MudItem xs="4">
+                    <MudItem xs="4" sm="4">
                         <MudNumericField @bind-Value="_acuario.AnchoCm" Label="Ancho (cm)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" Style="background-color: var(--av-bg-pure);" />
                     </MudItem>
-                    <MudItem xs="4">
+                    <MudItem xs="4" sm="4">
                         <MudNumericField @bind-Value="_acuario.AltoCm" Label="Alto (cm)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" Style="background-color: var(--av-bg-pure);" />
                     </MudItem>
 
@@ -248,9 +248,9 @@
                                     <div class="d-flex flex-column gap-2">
                                         @foreach (var item in peces)
                                         {
-                                            <MudPaper Class="pa-3 d-flex align-center justify-space-between" Elevation="1">
-                                                <div class="d-flex align-center" style="max-width: 65%;">
-                                                    <div class="rounded-circle mr-3 d-flex align-center justify-center flex-shrink-0" style="width: 36px; height: 36px; background-color: #e3f2fd; overflow:hidden;">
+                                            <MudPaper Class="pa-2 pa-sm-3 d-flex align-center justify-space-between" Elevation="1">
+                                                <div class="d-flex align-center flex-grow-1 mr-2" style="min-width: 0;">
+                                                    <div class="rounded-circle mr-2 mr-sm-3 d-flex align-center justify-center flex-shrink-0" style="width: 36px; height: 36px; background-color: #e3f2fd; overflow:hidden;">
                                                         @if (item.Especie.EspecieImagenes?.Any() == true)
                                                         {
                                                             <img src="@item.Especie.EspecieImagenes.First().Url" style="width:100%; height:100%; object-fit:cover;" />
@@ -260,16 +260,16 @@
                                                             <MudIcon Icon="@Icons.Material.Filled.SetMeal" Color="Color.Primary" Size="Size.Small" />
                                                         }
                                                     </div>
-                                                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;">
                                                         <MudText Typo="Typo.body2" Style="font-weight: 700;">@item.Especie.Nombre</MudText>
                                                     </div>
                                                 </div>
 
-                                                <div class="d-flex align-center">
-                                                    <MudIconButton Icon="@Icons.Material.Filled.Remove" Size="Size.Small" OnClick="@(() => ModificarCantidad(item, -1))" />
+                                                <div class="d-flex align-center flex-shrink-0">
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Remove" Size="Size.Small" OnClick="@(() => ModificarCantidad(item, -1))" Class="pa-1 pa-sm-2" />
                                                     <MudText Typo="Typo.body2" Class="mx-1" Style="font-weight: 800;">@item.Cantidad</MudText>
-                                                    <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="@(() => ModificarCantidad(item, 1))" />
-                                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" Class="ml-1" OnClick="@(() => EliminarEspecie(item))" />
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="@(() => ModificarCantidad(item, 1))" Class="pa-1 pa-sm-2" />
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" Class="ml-1 pa-1 pa-sm-2" OnClick="@(() => EliminarEspecie(item))" />
                                                 </div>
                                             </MudPaper>
                                         }
@@ -295,9 +295,9 @@
                                     <div class="d-flex flex-column gap-2">
                                         @foreach (var item in plantas)
                                         {
-                                            <MudPaper Class="pa-3 d-flex align-center justify-space-between" Elevation="1">
-                                                <div class="d-flex align-center" style="max-width: 65%;">
-                                                    <div class="rounded-circle mr-3 d-flex align-center justify-center flex-shrink-0" style="width: 36px; height: 36px; background-color: #e8f5e9; overflow:hidden;">
+                                            <MudPaper Class="pa-2 pa-sm-3 d-flex align-center justify-space-between" Elevation="1">
+                                                <div class="d-flex align-center flex-grow-1 mr-2" style="min-width: 0;">
+                                                    <div class="rounded-circle mr-2 mr-sm-3 d-flex align-center justify-center flex-shrink-0" style="width: 36px; height: 36px; background-color: #e3f2fd; overflow:hidden;">
                                                         @if (item.Especie.EspecieImagenes?.Any() == true)
                                                         {
                                                             <img src="@item.Especie.EspecieImagenes.First().Url" style="width:100%; height:100%; object-fit:cover;" />
@@ -307,16 +307,16 @@
                                                             <MudIcon Icon="@Icons.Material.Filled.Grass" Color="Color.Success" Size="Size.Small" />
                                                         }
                                                     </div>
-                                                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;">
                                                         <MudText Typo="Typo.body2" Style="font-weight: 700;">@item.Especie.Nombre</MudText>
                                                     </div>
                                                 </div>
 
-                                                <div class="d-flex align-center">
-                                                    <MudIconButton Icon="@Icons.Material.Filled.Remove" Size="Size.Small" OnClick="@(() => ModificarCantidad(item, -1))" />
+                                                <div class="d-flex align-center flex-shrink-0">
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Remove" Size="Size.Small" OnClick="@(() => ModificarCantidad(item, -1))" Class="pa-1 pa-sm-2" />
                                                     <MudText Typo="Typo.body2" Class="mx-1" Style="font-weight: 800;">@item.Cantidad</MudText>
-                                                    <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="@(() => ModificarCantidad(item, 1))" />
-                                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" Class="ml-1" OnClick="@(() => EliminarEspecie(item))" />
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="@(() => ModificarCantidad(item, 1))" Class="pa-1 pa-sm-2" />
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" Class="ml-1 pa-1 pa-sm-2" OnClick="@(() => EliminarEspecie(item))" />
                                                 </div>
                                             </MudPaper>
                                         }
@@ -381,7 +381,7 @@
                             <MudIcon Icon="@Icons.Material.Filled.Circle" Class="mr-2 ms-n1" Color="Color.Primary" />
                             Dictamen de Compatibilidad Inteligente (IA)
                         </MudText>
-                        <MudText Typo="Typo.body2" Class="av-text-muted mt-1">Evalúa temperamentos, agresividad inter-especie, competencia alimentaria y distribución de nado.</MudText>
+                        <MudText Typo="Typo.body2" Class="av-text-muted mt-1">Evalúa temperamentos, agresividad inter-especie, competencia alimentaria, distribución de nado y mucho más.</MudText>
                     </div>
                     <MudButton Variant="Variant.Filled"
                                Style="background-color: #74B816; color: white; min-width: 250px;"
@@ -411,6 +411,88 @@
             </MudPaper>
         </MudItem>
     </MudGrid>
+    @* botones inferiores solo para móviles *@
+    <div class="d-flex d-md-none flex-column gap-3 mt-8">
+        <AuthorizeView>
+            <Authorized>
+                <MudMenu Label="Mis Acuarios"
+                         Variant="Variant.Outlined"
+                         Color="Color.Primary"
+                         StartIcon="@Icons.Material.Filled.FolderSpecial"
+                         EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+                         Size="Size.Large"
+                         MaxHeight="400"
+                         FullWidth="true">
+
+                    <MudMenuItem OnClick="PrepararNuevoAcuario" Icon="@Icons.Material.Filled.Add" IconColor="Color.Info">
+                        <strong>Nuevo Acuario</strong>
+                    </MudMenuItem>
+                    <MudDivider />
+
+                    @if (_listaMisAcuarios != null && _listaMisAcuarios.Any())
+                    {
+                        @foreach (var ac in _listaMisAcuarios)
+                        {
+                            <MudMenuItem OnClick="@(() => CargarAcuarioEnSimulador(ac))">
+                                @ac.Nombre (@ac.Litros L)
+                            </MudMenuItem>
+                        }
+                    }
+                    else
+                    {
+                        <MudMenuItem Disabled="true">No tienes acuarios guardados</MudMenuItem>
+                    }
+                </MudMenu>
+
+                @if (_idAcuarioGuardado.HasValue)
+                {
+                    <div class="d-flex gap-2">
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Error"
+                                   StartIcon="@Icons.Material.Filled.Delete"
+                                   OnClick="EliminarAcuario"
+                                   Size="Size.Large"
+                                   Style="flex: 1;">
+                            Eliminar
+                        </MudButton>
+
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Info"
+                                   StartIcon="@Icons.Material.Filled.Save"
+                                   OnClick="GuardarAcuario"
+                                   Disabled="_guardando"
+                                   Size="Size.Large"
+                                   Style="flex: 1;">
+                            @(_guardando ? "Guardando..." : "Actualizar")
+                        </MudButton>
+                    </div>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               OnClick="GuardarAcuario"
+                               Disabled="_guardando"
+                               Size="Size.Large"
+                               FullWidth="true">
+                        @(_guardando ? "Guardando..." : "Guardar")
+                    </MudButton>
+                }
+            </Authorized>
+            <NotAuthorized>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Surface"
+                           StartIcon="@Icons.Material.Filled.Lock"
+                           Href="/login"
+                           Size="Size.Large"
+                           Style="color: #757575;"
+                           FullWidth="true">
+                    Inicia sesión para guardar
+                </MudButton>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
 </MudContainer>
 
 @code {

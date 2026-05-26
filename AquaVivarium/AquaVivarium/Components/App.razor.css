@@ -4,7 +4,7 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     background-color: var(--av-bg-pure);
     z-index: 999999;
     display: flex;
@@ -30,6 +30,8 @@
     flex-direction: column;
     align-items: center;
     gap: 1.5rem;
+    padding: 0 1.5rem;
+    text-align: center;
 }
 
 .splash-logo-wrapper {
@@ -52,9 +54,9 @@
 .splash-text {
     font-family: var(--av-font-heading);
     font-weight: 900;
-    font-size: 2.5rem;
+    font-size: clamp(1.8rem, 7vw, 2.5rem);
     color: var(--av-text-main);
-    letter-spacing: 4px;
+    letter-spacing: clamp(2px, 1vw, 4px);
     opacity: 0;
     transform: translateY(20px);
     animation: slideUpFade 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s forwards;
@@ -67,10 +69,10 @@
 
 .splash-slogan {
     font-family: var(--av-font-body);
-    font-size: 0.95rem;
+    font-size: clamp(0.7rem, 2.5vw, 0.95rem);
     font-weight: 600;
     color: var(--av-text-muted);
-    letter-spacing: 3px;
+    letter-spacing: clamp(1px, 2vw, 3px);
     text-transform: uppercase;
     margin-top: 0.5rem;
     opacity: 0;

@@ -30,8 +30,8 @@
                 </MudItem>
 
                 <MudItem xs="12" md="6" Class="mt-10 mt-md-0">
-                    <div class="hero-image-wrapper">
-                        <MudCarousel Style="height: 500px;"
+                    <div class="hero-image-wrapper" style="border-radius: var(--av-radius-sm); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+                        <MudCarousel Style="height: clamp(280px, 45vh, 500px);"
                                      TData="object"
                                      ShowArrows="false"
                                      ShowBullets="true"
@@ -229,8 +229,8 @@
 @code {
     private List<string> _carrouselImages = new()
     {
-        "/images/otros/foto2.webp",
-        "/images/otros/foto1.webp"     
+        "/images/otros/fotoHome2.webp",
+        "/images/otros/fotoHome1.webp"     
     };
 
     private void NavegarA(string ruta)

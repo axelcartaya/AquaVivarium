@@ -131,7 +131,7 @@ if (app.Environment.IsDevelopment())
             }
 
             // PON TU CORREO AQUÍ
-            var user = await userManager.FindByEmailAsync("axel@gmail.com");
+            var user = await userManager.FindByEmailAsync("admin@gmail.com");
 
             if (user != null)
             {

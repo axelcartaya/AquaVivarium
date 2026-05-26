@@ -9,7 +9,7 @@
 
 <PageTitle>@(Planta?.Especie?.Nombre ?? "Cargando...") • AquaVivarium</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8 mb-16">
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4 mt-md-8 mb-16">
     @if (isLoading)
     {
         <div class="d-flex justify-center align-center" style="height: 60vh;">
@@ -26,7 +26,7 @@
     else
     {
         @* Volver atrás *@
-        <div class="mb-8">
+        <div class="mb-4 mb-md-8">
             <MudButton Variant="Variant.Text"
                        Color="Color.Dark"
                        StartIcon="@Icons.Material.Filled.ArrowBackIosNew"
@@ -37,52 +37,51 @@
         </div>
 
         <MudGrid Spacing="10" Class="mb-12">
-            @* columna izquierda: Imagen *@
+            @* Columna izquierda *@
             <MudItem xs="12" md="6">
                 @if (Planta.Especie.EspecieImagenes != null && Planta.Especie.EspecieImagenes.Any())
                 {
-                    <MudCarousel Class="rounded-0"
-                                 Style="height: 650px; width: 100%; background-color: #f8f9fa;"
+                    <MudCarousel Style="height: clamp(300px, 50vh, 650px); width: 100%; background-color: #f8f9fa; overflow: hidden; border-radius: var(--av-radius-sm);"
                                  ShowArrows="@(Planta.Especie.EspecieImagenes.Count > 1)"
                                  ShowBullets="@(Planta.Especie.EspecieImagenes.Count > 1)"
                                  AutoCycle="false"
                                  TData="EspecieImagen"
                                  ItemsSource="Planta.Especie.EspecieImagenes.ToList()">
                         <BulletTemplate Context="bulletContext">
-                            <div style="width: 30px; height: 2px; background-color: #1a1a1a; opacity: 0.3; margin: 0 4px; cursor:pointer;" class="mud-carousel-bullet"></div>
+                            <div style="width: 30px; height: 3px; background-color: #1a1a1a; border-radius: 2px; opacity: 0.3; margin: 0 4px; cursor:pointer;" class="mud-carousel-bullet"></div>
                         </BulletTemplate>
                         <ItemTemplate Context="imagen">
-                            <div class="d-flex justify-center align-center" style="width: 100%; height: 100%;">
-                                <img src="@imagen.Url" alt="@Planta.Especie.Nombre" style="max-width: 100%; max-height: 100%; object-fit: contain; box-shadow: 0 4px 12px rgba(0,0,0,0.05);" />
+                            <div class="d-flex justify-center align-center pa-2" style="width: 100%; height: 100%;">
+                                <img src="@imagen.Url" alt="@Planta.Especie.Nombre" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: var(--av-radius-sm);" />
                             </div>
                         </ItemTemplate>
                     </MudCarousel>
                 }
                 else
                 {
-                    <div style="height: 650px; background-color: #f8f9fa; display:flex; align-items:center; justify-content:center;">
+                    <div style="height: clamp(300px, 50vh, 650px); background-color: #f8f9fa; display:flex; align-items:center; justify-content:center; border-radius: var(--av-radius-sm);">
                         <MudText Typo="Typo.overline" Style="letter-spacing: 2px; color: #adb5bd;">FOTOGRAFÍA NO DISPONIBLE</MudText>
                     </div>
                 }
             </MudItem>
 
-            @* columna derecha: Título y Parámetros *@
+            @* Columna derecha*@
             <MudItem xs="12" md="6" Class="pr-md-8 pt-md-10">
-                <MudText Typo="Typo.h2" Style="font-weight: 800; color: #1a1a1a; line-height: 1.1; letter-spacing: -1px;" Class="mb-2">
+                <MudText Typo="Typo.h2" Style="font-weight: 800; color: #1a1a1a; line-height: 1.1; letter-spacing: -1px; font-size: clamp(2rem, 6vw, 3.75rem); overflow-wrap: break-word; hyphens: auto;" Class="mb-2">
                     @Planta.Especie.Nombre
                 </MudText>
 
-                <MudText Typo="Typo.h5" Style="font-family: 'Georgia', serif; font-style: italic; color: #888;" Class="mb-2">
+                <MudText Typo="Typo.h5" Style="font-family: 'Georgia', serif; font-style: italic; color: #888; font-size: clamp(1.1rem, 3vw, 1.5rem); overflow-wrap: break-word;" Class="mb-2">
                     Nombre Científico: @Planta.Especie.NombreCientifico
                 </MudText>
-                <MudText Typo="Typo.h5" Style="font-family: 'Georgia', serif; font-style: italic; color: #888;" Class="mb-10">
+                <MudText Typo="Typo.h5" Style="font-family: 'Georgia', serif; font-style: italic; color: #888; font-size: clamp(1.1rem, 3vw, 1.5rem);" Class="mb-10">
                     Familia: @Planta.Especie.Familia
-                </MudText>             
+                </MudText>
 
                 <MudDivider Class="mb-8" Style="border-color: #eaeaea;" />
 
                 @* Parámetros Técnicos *@
-                <MudText Typo="Typo.overline" Style="letter-spacing: 3px; font-weight: 600; color: #1a1a1a;" Class="mb-6 d-block">
+                <MudText Typo="Typo.overline" Style="letter-spacing: 2px; font-weight: 600; color: #1a1a1a;" Class="mb-6 d-block">
                     REQUERIMIENTOS TÉCNICOS
                 </MudText>
 
@@ -103,14 +102,14 @@
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Dificultad</MudText>
                         <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@(Planta.Especie.Dificultad ?? "--")</MudText>
                     </MudItem>
-                    
+
                     <MudItem xs="6" sm="4">
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Iluminación</MudText>
-                        <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@(Planta.Iluminacion ?? "--")</MudText>
+                        <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a; word-wrap: break-word;">@(Planta.Iluminacion ?? "--")</MudText>
                     </MudItem>
                     <MudItem xs="6" sm="4">
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Crecimiento</MudText>
-                        <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a;">@(Planta.Crecimiento ?? "--")</MudText>
+                        <MudText Typo="Typo.body1" Style="font-weight: 500; color: #1a1a1a; word-wrap: break-word;">@(Planta.Crecimiento ?? "--")</MudText>
                     </MudItem>
                     <MudItem xs="6" sm="4">
                         <MudText Typo="Typo.caption" Style="color: #888; text-transform: uppercase; letter-spacing: 1px;">Inyección CO2</MudText>
@@ -128,10 +127,10 @@
         <MudGrid Class="mb-16">
             <MudItem xs="12">
                 <MudDivider Class="mb-8" Style="border-color: #eaeaea;" />
-                <MudText Typo="Typo.overline" Style="letter-spacing: 3px; font-weight: 600; color: #1a1a1a;" Class="mb-6 d-block">
+                <MudText Typo="Typo.overline" Style="letter-spacing: 2px; font-weight: 600; color: #1a1a1a;" Class="mb-6 d-block">
                     DESCRIPCIÓN DETALLADA
                 </MudText>
-                <div style="font-size: 1.1rem; line-height: 1.9; color: #4a4a4a; font-weight: 300;" class="py-4">
+                <div style="font-size: 1.1rem; line-height: 1.9; color: #4a4a4a; font-weight: 300; overflow-wrap: break-word;" class="py-2 py-md-4">
                     @((MarkupString)(Planta.Especie.Descripcion ?? "No hay descripción disponible."))
                 </div>
             </MudItem>
