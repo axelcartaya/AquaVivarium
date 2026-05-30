@@ -15,11 +15,16 @@ using Microsoft.AspNetCore.HttpOverrides;
 var builder = WebApplication.CreateBuilder(args);
 
 //Configuración de la base de datos
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
 builder.Services.AddDbContext<AquaVivariumContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlServerOptionsAction: sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        }));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -114,44 +119,43 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 });
 
 // Asignar rol Admin al usuario registrado con el email 
-if (app.Environment.IsDevelopment())
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var services = scope.ServiceProvider;
-        try
-        {
-            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-            // Aquí está el cambio clave: usamos ApplicationUser
-            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+//if (app.Environment.IsDevelopment())
+//{
+//    using (var scope = app.Services.CreateScope())
+//    {
+//        var services = scope.ServiceProvider;
+//        try
+//        {
+//            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+//            // Aquí está el cambio clave: usamos ApplicationUser
+//            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
-            if (!await roleManager.RoleExistsAsync("Admin"))
-            {
-                await roleManager.CreateAsync(new IdentityRole("Admin"));
-            }
+//            if (!await roleManager.RoleExistsAsync("Admin"))
+//            {
+//                await roleManager.CreateAsync(new IdentityRole("Admin"));
+//            }
 
-            // PON TU CORREO AQUÍ
-            var user = await userManager.FindByEmailAsync("admin@gmail.com");
+//            var user = await userManager.FindByEmailAsync("admin@gmail.com");
 
-            if (user != null)
-            {
-                if (!await userManager.IsInRoleAsync(user, "Admin"))
-                {
-                    await userManager.AddToRoleAsync(user, "Admin");
-                    Console.WriteLine("¡Rol Admin asignado con éxito!");
-                }
-            }
-            else
-            {
-                Console.WriteLine("No se encontró el usuario con ese correo.");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al asignar el rol: {ex.Message}");
-        }
-    }
-}
+//            if (user != null)
+//            {
+//                if (!await userManager.IsInRoleAsync(user, "Admin"))
+//                {
+//                    await userManager.AddToRoleAsync(user, "Admin");
+//                    Console.WriteLine("¡Rol Admin asignado con éxito!");
+//                }
+//            }
+//            else
+//            {
+//                Console.WriteLine("No se encontró el usuario con ese correo.");
+//            }
+//        }
+//        catch (Exception ex)
+//        {
+//            Console.WriteLine($"Error al asignar el rol: {ex.Message}");
+//        }
+//    }
+//}
 
 // Middleware
 if (app.Environment.IsDevelopment())
