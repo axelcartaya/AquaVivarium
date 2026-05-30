@@ -113,10 +113,13 @@ builder.Services.AddControllers()
 var app = builder.Build();
 
 // Le decimos a .NET que confíe en las cabeceras HTTPS que le envía Render para que no lo bloquee
-app.UseForwardedHeaders(new ForwardedHeadersOptions
+var forwardedHeadersOptions = new ForwardedHeadersOptions
 {
-    ForwardedHeaders = ForwardedHeaders.XForwardedProto
-});
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+forwardedHeadersOptions.KnownNetworks.Clear();
+forwardedHeadersOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardedHeadersOptions);
 
 // Asignar rol Admin al usuario registrado con el email
 //if (app.Environment.IsDevelopment())
