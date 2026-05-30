@@ -99,27 +99,57 @@ namespace Data.Repositories
                     .ThenInclude(e => e.EspecieImagenes)
                 .AsQueryable();
 
-            //filtro de especies
-            if (!string.IsNullOrWhiteSpace(filtro.Nombre))query = query.Where(p => p.Especie.Nombre.Contains(filtro.Nombre));
-            if (!string.IsNullOrWhiteSpace(filtro.Familia))query = query.Where(p => p.Especie.Familia.Contains(filtro.Familia));
-            if (!string.IsNullOrWhiteSpace(filtro.Genero))query = query.Where(p => p.Especie.Genero.Contains(filtro.Genero));
-            if (filtro.PhDesde.HasValue)query = query.Where(p => p.Especie.PhMin >= filtro.PhDesde.Value);
-            if (filtro.PhHasta.HasValue)query = query.Where(p => p.Especie.PhMax <= filtro.PhHasta.Value);
-            if (filtro.TempDesde.HasValue)query = query.Where(p => p.Especie.TempMin >= filtro.TempDesde.Value);
-            if (filtro.TempHasta.HasValue)query = query.Where(p => p.Especie.TempMax <= filtro.TempHasta.Value);
-            if (filtro.GhDesde.HasValue)query = query.Where(p => p.Especie.GhMin >= filtro.GhDesde.Value);
-            if (filtro.GhHasta.HasValue)query = query.Where(p => p.Especie.GhMax <= filtro.GhHasta.Value);
+            // --- Filtros de texto (Especies) ---
+            if (!string.IsNullOrWhiteSpace(filtro.Nombre))
+                query = query.Where(p => p.Especie.Nombre.Contains(filtro.Nombre));
 
-            // filtros de peces
-            if (filtro.TamanoDesde.HasValue)query = query.Where(p => p.TamanoMaxCm >= filtro.TamanoDesde.Value);
-            if (filtro.TamanoHasta.HasValue)query = query.Where(p => p.TamanoMaxCm <= filtro.TamanoHasta.Value);
-            if (!string.IsNullOrWhiteSpace(filtro.Alimentacion))query = query.Where(p => p.Alimentacion == filtro.Alimentacion);
+            if (!string.IsNullOrWhiteSpace(filtro.Familia))
+                query = query.Where(p => p.Especie.Familia.Contains(filtro.Familia));
 
-            // paginación
+            if (!string.IsNullOrWhiteSpace(filtro.Genero))
+                query = query.Where(p => p.Especie.Genero.Contains(filtro.Genero));
+
+            // ¡Solucionado! Aquí faltaba procesar la Dificultad que mandaba la interfaz
+            if (!string.IsNullOrWhiteSpace(filtro.Dificultad))
+                query = query.Where(p => p.Especie.Dificultad == filtro.Dificultad);
+
+
+            // --- LÓGICA CORREGIDA PARA RANGOS QUÍMICOS (Cruce de rangos) ---
+            if (filtro.PhDesde.HasValue)
+                query = query.Where(p => p.Especie.PhMax >= filtro.PhDesde.Value);
+
+            if (filtro.PhHasta.HasValue)
+                query = query.Where(p => p.Especie.PhMin <= filtro.PhHasta.Value);
+
+            if (filtro.TempDesde.HasValue)
+                query = query.Where(p => p.Especie.TempMax >= filtro.TempDesde.Value);
+
+            if (filtro.TempHasta.HasValue)
+                query = query.Where(p => p.Especie.TempMin <= filtro.TempHasta.Value);
+
+            if (filtro.GhDesde.HasValue)
+                query = query.Where(p => p.Especie.GhMax >= filtro.GhDesde.Value);
+
+            if (filtro.GhHasta.HasValue)
+                query = query.Where(p => p.Especie.GhMin <= filtro.GhHasta.Value);
+
+
+            // --- Filtros fijos de Peces (El tamaño es valor fijo, la lógica era correcta) ---
+            if (filtro.TamanoDesde.HasValue)
+                query = query.Where(p => p.TamanoMaxCm >= filtro.TamanoDesde.Value);
+
+            if (filtro.TamanoHasta.HasValue)
+                query = query.Where(p => p.TamanoMaxCm <= filtro.TamanoHasta.Value);
+
+            if (!string.IsNullOrWhiteSpace(filtro.Alimentacion))
+                query = query.Where(p => p.Alimentacion == filtro.Alimentacion);
+
+
+            // --- Paginación ---
             var totalCount = await query.CountAsync();
- 
+
             var peces = await query
-                .OrderBy(p => p.Especie.Nombre) 
+                .OrderBy(p => p.Especie.Nombre)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();

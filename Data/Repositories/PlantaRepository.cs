@@ -103,15 +103,13 @@ namespace Data.Repositories
                 .AsQueryable();
 
             //filtro de especies
-            if (!string.IsNullOrWhiteSpace(filtro.Nombre))query = query.Where(p => p.Especie.Nombre.Contains(filtro.Nombre));
-            if (!string.IsNullOrWhiteSpace(filtro.Familia))query = query.Where(p => p.Especie.Familia.Contains(filtro.Familia));
-            if (!string.IsNullOrWhiteSpace(filtro.Genero))query = query.Where(p => p.Especie.Genero.Contains(filtro.Genero));
-            if (filtro.PhDesde.HasValue) query = query.Where(p => p.Especie.PhMin >= filtro.PhDesde.Value);
-            if (filtro.PhHasta.HasValue) query = query.Where(p => p.Especie.PhMax <= filtro.PhHasta.Value);
-            if (filtro.TempDesde.HasValue) query = query.Where(p => p.Especie.TempMin >= filtro.TempDesde.Value);
-            if (filtro.TempHasta.HasValue) query = query.Where(p => p.Especie.TempMax <= filtro.TempHasta.Value);
-            if (filtro.GhDesde.HasValue) query = query.Where(p => p.Especie.GhMin >= filtro.GhDesde.Value);
-            if (filtro.GhHasta.HasValue) query = query.Where(p => p.Especie.GhMax <= filtro.GhHasta.Value);
+            if (filtro.PhDesde.HasValue) query = query.Where(p => p.Especie.PhMax >= filtro.PhDesde.Value);
+            if (filtro.PhHasta.HasValue) query = query.Where(p => p.Especie.PhMin <= filtro.PhHasta.Value);
+            if (filtro.TempDesde.HasValue) query = query.Where(p => p.Especie.TempMax >= filtro.TempDesde.Value);
+            if (filtro.TempHasta.HasValue) query = query.Where(p => p.Especie.TempMin <= filtro.TempHasta.Value);
+            if (filtro.GhDesde.HasValue) query = query.Where(p => p.Especie.GhMax >= filtro.GhDesde.Value);
+            if (filtro.GhHasta.HasValue) query = query.Where(p => p.Especie.GhMin <= filtro.GhHasta.Value);
+            if (!string.IsNullOrWhiteSpace(filtro.Dificultad)) query = query.Where(p => p.Especie.Dificultad == filtro.Dificultad);
 
             // Filtros de plantas
             if (!string.IsNullOrWhiteSpace(filtro.Iluminacion)) query = query.Where(p => p.Iluminacion == filtro.Iluminacion);
