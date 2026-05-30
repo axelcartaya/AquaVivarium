@@ -60,15 +60,27 @@
     <AquaVivarium.Components.Routes />
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
-    @* Transición entre páginas *@
+    @* Transición entre páginas y persistencia del tema*@
     <script>
+        // 1. Esto evita el destello blanco si el usuario le da a F5 recargando la web entera
+        if (localStorage.getItem('av_tema') === 'oscuro') {
+        document.body.classList.add('av-dark-theme');
+        }
+
+        // 2. Esto vuelve a poner el modo oscuro cuando Blazor navega de una página a otra
         Blazor.addEventListener('enhancedload', function () {
-            const layout = document.querySelector('.mud-layout');
-            if (layout) {
-                layout.style.animation = 'none';
-                void layout.offsetWidth;
-                layout.style.animation = 'revelarWeb 0.6s ease-out forwards';
-            }
+        // Restaurar el modo oscuro si Blazor borró el <body>
+        if (localStorage.getItem('av_tema') === 'oscuro') {
+        document.body.classList.add('av-dark-theme');
+        }
+
+        // Animación del velo (tu código intacto)
+        const layout = document.querySelector('.mud-layout');
+        if (layout) {
+        layout.style.animation = 'none';
+        void layout.offsetWidth;
+        layout.style.animation = 'revelarWeb 0.6s ease-out forwards';
+        }
         });
     </script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>

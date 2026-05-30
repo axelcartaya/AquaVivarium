@@ -9,8 +9,8 @@
 <PageTitle>Centro de Guías - AquaVivarium</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8 mb-16">
-    <MudText Typo="Typo.h3" Class="av-text-main mb-2" Style="font-weight: 800;">Centro de Guías</MudText>
-    <MudText Typo="Typo.subtitle1" Class="av-text-muted mb-8">Selecciona una categoría para empezar a aprender.</MudText>
+    <MudText Typo="Typo.h3" Class="mb-2" Style="font-weight: 800; color: var(--av-text-main);">Centro de Guías</MudText>
+    <MudText Typo="Typo.subtitle1" Class="mb-8" Style="color: var(--av-text-muted);">Selecciona una categoría para empezar a aprender.</MudText>
 
     <AuthorizeView Roles="Admin">
         <Authorized>
@@ -40,7 +40,7 @@
             @foreach (var cat in _categorias.Where(c => c.Activo))
             {
                 <MudItem xs="12" sm="6" md="4">
-   
+
                     <CategoriaGuiaCard Id="@cat.Id"
                                        Nombre="@cat.Nombre"
                                        DescripcionBreve="@cat.DescripcionBreve"
@@ -50,7 +50,7 @@
         </MudGrid>
     }
 </MudContainer>
-  
+
 @code {
     private IEnumerable<CategoriaGuia>? _categorias;
 

@@ -31,7 +31,7 @@
                              Margin="Margin.Dense"
                              Clearable="true"
                              Class="buscador-input"
-                             Style="background-color: white; border-radius: 8px;">
+                             Style="background-color: var(--av-bg-pure); border-radius: 8px;">
                 <ItemTemplate Context="especie">
                     <div class="d-flex align-center">
                         @if (!string.IsNullOrWhiteSpace(especie.ImagenUrl))
@@ -48,8 +48,8 @@
                             </MudAvatar>
                         }
                         <div>
-                            <MudText Typo="Typo.body2">@especie.Nombre</MudText>
-                            <MudText Typo="Typo.caption" Style="color: gray;">@especie.NombreCientifico</MudText>
+                            <MudText Typo="Typo.body2" Style="color: var(--av-text-main);">@especie.Nombre</MudText>
+                            <MudText Typo="Typo.caption" Style="color: var(--av-text-muted);">@especie.NombreCientifico</MudText>
                         </div>
                     </div>
                 </ItemTemplate>

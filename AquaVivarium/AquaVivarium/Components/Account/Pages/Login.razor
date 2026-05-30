@@ -15,8 +15,8 @@
 <PageTitle>Iniciar Sesión</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.ExtraSmall" Class="mt-10">
-    <MudCard Class="pa-6">
-        <MudText Typo="Typo.h4" Class="mb-4 text-center" Style="font-weight: 700; color: #2D3436;">Iniciar Sesión</MudText>
+    <MudCard Class="pa-6" Style="background-color: var(--av-bg-pure);">
+        <MudText Typo="Typo.h4" Class="mb-4 text-center" Style="font-weight: 700; color: var(--av-text-main);">Iniciar Sesión</MudText>
 
         <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
             <DataAnnotationsValidator />
@@ -43,14 +43,14 @@
 
             <div class="d-flex align-center mb-4 cursor-pointer">
                 <InputCheckbox id="rememberMe" @bind-Value="Input.RememberMe" style="width: 18px; height: 18px; accent-color: var(--mud-palette-primary);" />
-                <label for="rememberMe" class="ms-2 mud-typography mud-typography-body1" style="cursor:pointer; color: #2D3436;">
+                <label for="rememberMe" class="ms-2 mud-typography mud-typography-body1" style="cursor:pointer; color: var(--av-text-main);">
                     Recordarme
                 </label>
             </div>
 
             @if (!string.IsNullOrEmpty(errorMessage))
             {
-                <MudAlert Severity="Severity.Error" Class="mb-4" Style="border-radius: 8px;">@errorMessage</MudAlert>
+                <MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Class="mb-4" Style="border-radius: 8px;">@errorMessage</MudAlert>
             }
 
             <MudButton Variant="Variant.Filled"

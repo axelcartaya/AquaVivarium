@@ -1,6 +1,8 @@
 ﻿@inject NavigationManager Nav
+@inject IJSRuntime JS
 @rendermode InteractiveWebAssembly
 
+<MudThemeProvider Theme="_avTheme" @bind-IsDarkMode="_isDarkMode" />
 @* Sidebar *@
 <MudDrawer @bind-Open="@sideBarAbierto" Anchor="Anchor.Left" Elevation="4" Variant="@DrawerVariant.Temporary" Style="position: fixed !important; top: 0 !important; height: 100vh !important;">
     <MudDrawerHeader Class="align-center d-flex border-bottom">
@@ -10,16 +12,16 @@
     </MudDrawerHeader>
 
     <MudNavMenu Color="Color.Primary" Class="mt-4">
-        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" IconColor="Color.Dark" Style="color: var(--av-text-main); font-weight: 500;">Home</MudNavLink>
-        <MudNavLink Href="/peces" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.SetMeal" IconColor="Color.Dark" Style="color: var(--av-text-main); font-weight: 500;">Peces</MudNavLink>
-        <MudNavLink Href="/plantas" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Grass" IconColor="Color.Dark" Style="color: var(--av-text-main); font-weight: 500;">Plantas</MudNavLink>
-        <MudNavLink Href="/categorias-guias" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Book" IconColor="Color.Dark" Style="color: var(--av-text-main); font-weight: 500;">Guias</MudNavLink>
-        <MudNavLink Href="/simulador" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Calculate" IconColor="Color.Dark" Style="color: var(--av-text-main); font-weight: 500;">Simulador</MudNavLink>
+        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit" Style="color: var(--av-text-main); font-weight: 500;">Home</MudNavLink>
+        <MudNavLink Href="/peces" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.SetMeal" IconColor="Color.Inherit" Style="color: var(--av-text-main); font-weight: 500;">Peces</MudNavLink>
+        <MudNavLink Href="/plantas" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Grass" IconColor="Color.Inherit" Style="color: var(--av-text-main); font-weight: 500;">Plantas</MudNavLink>
+        <MudNavLink Href="/categorias-guias" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Book" IconColor="Color.Inherit" Style="color: var(--av-text-main); font-weight: 500;">Guias</MudNavLink>
+        <MudNavLink Href="/simulador" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Calculate" IconColor="Color.Inherit" Style="color: var(--av-text-main); font-weight: 500;">Simulador</MudNavLink>
     </MudNavMenu>
 </MudDrawer>
 
 @* NavBar *@
-<MudAppBar Elevation="0" Class="bg-white py-2" Fixed="true">
+<MudAppBar Elevation="0" Class="py-2" Style="background-color: var(--av-bg-pure) !important;" Fixed="true">
     <MudContainer MaxWidth="MaxWidth.False" Class="d-flex align-center px-4 px-md-8">
 
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Default" Edge="Edge.Start" OnClick="@ToggleEstadoBar" Class="d-md-none mr-2" />
@@ -43,16 +45,78 @@
 
         @* acciones *@
         <BuscadorGlobal />
+        <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Default" OnClick="@ToggleDarkMode" Class="mr-2" />
         <MenuUsuario/>
-
     </MudContainer>
 </MudAppBar>
 
 @code {
     private bool sideBarAbierto = false;
+    private bool _isDarkMode = false;
 
     private void ToggleEstadoBar()
     {
         sideBarAbierto = !sideBarAbierto;
     }
+
+    // Obtiene el tema guardado en localStorage al cargar la aplicación
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var temaGuardado = await JS.InvokeAsync<string>("localStorage.getItem", "av_tema");
+            if (temaGuardado == "oscuro")
+            {
+                _isDarkMode = true;
+                StateHasChanged(); 
+            }
+        }
+    }
+
+    private async Task ToggleDarkMode()
+    {
+        _isDarkMode = !_isDarkMode;
+
+        if (_isDarkMode)
+        {
+            await JS.InvokeVoidAsync("localStorage.setItem", "av_tema", "oscuro");
+            await JS.InvokeVoidAsync("document.body.classList.add", "av-dark-theme");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("localStorage.setItem", "av_tema", "claro");
+            await JS.InvokeVoidAsync("document.body.classList.remove", "av-dark-theme");
+        }
+    }
+
+    private MudTheme _avTheme = new MudTheme()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = "#74B816",
+            Secondary = "#2D3436",
+            AppbarBackground = "#F9FBF9",
+            Background = "#ffffff",
+            Surface = "#ffffff",
+            TextPrimary = "#2D3436",
+            Divider = "#EAECEE"
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = "#74B816",
+            Secondary = "#F9FBF9",
+            AppbarBackground = "#1E1E1E",
+            Background = "#121212",
+            Surface = "#1E1E1E",
+            TextPrimary = "#F9FBF9",
+            Divider = "#2D3436"
+        },
+        Typography = new Typography()
+        {
+            Default = new DefaultTypography()
+            {
+                FontFamily = new[] { "Inter", "sans-serif" }
+            }
+        }
+    };
 }

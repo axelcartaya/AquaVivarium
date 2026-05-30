@@ -2,19 +2,20 @@
 @using Domain.Interfaces.Services
 @inject IEspecieService EspecieService
 
-<MudDivider Class="my-16" Style="border-color: #eaeaea;" />
+<MudDivider Class="my-16" Style="border-color: var(--av-border);" />
 
-<MudText Typo="Typo.h5" Style="font-weight: 700; color: #1a1a1a; letter-spacing: -0.5px;" Class="mb-2">
-    Comunidad
+<MudText Typo="Typo.h5" Style="font-weight: 700; color: var(--av-text-main); letter-spacing: -0.5px;" Class="mb-2">
+    COMUNIDAD
 </MudText>
-<MudText Typo="Typo.body2" Style="color: #888;" Class="mb-8">
+
+<MudText Typo="Typo.body2" Style="color: var(--av-text-muted);" Class="mb-8">
     Preguntas y experiencias de otros acuaristas sobre esta especie.
 </MudText>
 
 @* Formulario preguntar *@
 <AuthorizeView>
     <Authorized>
-        <div class="mb-10 pa-4" style="background-color: var(--av-bg-soft); border-radius: var(--av-radius-sm); border: 1px solid #eaeaea;">
+        <div class="mb-10 pa-4" style="background-color: var(--av-bg-soft); border-radius: var(--av-radius-sm); border: 1px solid var(--av-border);">
             <MudTextField @bind-Value="_nuevaPregunta" Label="¿Tienes alguna duda sobre esta especie?" Variant="Variant.Outlined" Lines="2" Class="mb-2" Style="border-radius: var(--av-radius-sm); background-color: var(--av-bg-pure);" />
             <div class="d-flex justify-end">
                 <MudButton OnClick="PublicarPregunta" Disabled="@_isSubmittingPregunta" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Style="font-weight: 600; letter-spacing: 1px;">
@@ -42,30 +43,30 @@
 {
     @foreach (var consulta in Consultas.OrderByDescending(c => c.FechaPublicacion))
     {
-        <div class="mb-6 pb-6" style="border-bottom: 1px solid #f4f4f4;">
+        <div class="mb-6 pb-6" style="border-bottom: 1px solid var(--av-border);">
             <div class="d-flex align-center mb-2">
-                <MudAvatar Color="Color.Dark" Size="Size.Small" Class="mr-3" Style="font-weight: 600;">
+                <MudAvatar Color="Color.Default" Size="Size.Small" Class="mr-3" Style="font-weight: 600;">
                     @(consulta.NombreUsuario?.FirstOrDefault().ToString().ToUpper() ?? "?")
                 </MudAvatar>
 
-                <MudText Typo="Typo.subtitle2" Style="font-weight: 600;">@consulta.NombreUsuario</MudText>
+                <MudText Typo="Typo.subtitle2" Style="font-weight: 600; color: var(--av-text-main);">@consulta.NombreUsuario</MudText>
 
                 @if (consulta.FechaPublicacion.HasValue)
                 {
-                    <MudText Typo="Typo.caption" Style="color: #aaa;" Class="ml-2">
+                    <MudText Typo="Typo.caption" Style="color: var(--av-text-muted);" Class="ml-2">
                         • @consulta.FechaPublicacion.Value.ToString("dd MMM yyyy, HH:mm")
                     </MudText>
                 }
             </div>
 
-            <MudText Typo="Typo.body1" Style="color: #4a4a4a; line-height: 1.6;" Class="mb-3 pl-10">
+            <MudText Typo="Typo.body1" Style="color: var(--av-text-main); line-height: 1.6;" Class="mb-3 pl-10">
                 @consulta.Cuerpo
             </MudText>
 
             <AuthorizeView>
                 <Authorized>
                     <div class="pl-10 mb-4">
-                        <MudButton OnClick="@(() => ToggleCajaRespuesta(consulta.Id))" Variant="Variant.Text" Size="Size.Small" Style="color: #888; text-transform: none; font-weight: 600;">
+                        <MudButton OnClick="@(() => ToggleCajaRespuesta(consulta.Id))" Variant="Variant.Text" Size="Size.Small" Style="color: var(--av-text-muted); text-transform: none; font-weight: 600;">
                             Responder
                         </MudButton>
                     </div>
@@ -73,9 +74,9 @@
                     @if (_mostrarCajaRespuesta.ContainsKey(consulta.Id) && _mostrarCajaRespuesta[consulta.Id])
                     {
                         <div class="pl-10 mb-4">
-                            <MudTextField @bind-Value="_nuevasRespuestas[consulta.Id]" Placeholder="Escribe tu respuesta..." Variant="Variant.Outlined" Margin="Margin.Dense" Class="mb-2" Style="border-radius: var(--av-radius-sm);"/>
+                            <MudTextField @bind-Value="_nuevasRespuestas[consulta.Id]" Placeholder="Escribe tu respuesta..." Variant="Variant.Outlined" Margin="Margin.Dense" Class="mb-2" Style="border-radius: var(--av-radius-sm);" />
                             <div class="d-flex justify-end">
-                                <MudButton OnClick="@(() => PublicarRespuesta(consulta.Id))" Disabled="@_isSubmittingRespuesta" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">
+                                <MudButton OnClick="@(() => PublicarRespuesta(consulta.Id))" Disabled="@_isSubmittingRespuesta" Variant="Variant.Filled" Color="Color.Default" Size="Size.Small">
                                     Enviar Respuesta
                                 </MudButton>
                             </div>
@@ -91,10 +92,10 @@
                     {
                         <div class="pa-4 mb-2" style="background-color: var(--av-bg-soft); border-left: 2px solid var(--av-primary); border-radius: var(--av-radius-sm);">
                             <div class="d-flex align-center mb-1">
-                                <MudText Typo="Typo.subtitle2" Style="font-weight: 600;">@respuesta.NombreUsuario</MudText>
+                                <MudText Typo="Typo.subtitle2" Style="font-weight: 600; color: var(--av-text-main);">@respuesta.NombreUsuario</MudText>
                                 @if (respuesta.FechaPublicacion.HasValue)
                                 {
-                                    <MudText Typo="Typo.caption" Style="color: #aaa;" Class="ml-2">
+                                    <MudText Typo="Typo.caption" Style="color: var(--av-text-muted);" Class="ml-2">
                                         • @respuesta.FechaPublicacion.Value.ToString("dd MMM yyyy, HH:mm")
                                     </MudText>
                                 }
@@ -111,7 +112,7 @@
 }
 else
 {
-    <MudText Typo="Typo.body2" Style="color: #888; font-style: italic;" Class="mb-10 text-center">
+    <MudText Typo="Typo.body2" Style="color: var(--av-text-muted); font-style: italic;" Class="mb-10 text-center">
         Aún no hay preguntas en la comunidad. ¡Sé el primero en consultar tus dudas sobre esta especie!
     </MudText>
 }

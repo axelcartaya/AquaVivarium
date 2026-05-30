@@ -3,11 +3,11 @@
 
 <MudCard Elevation="@_elevation"
          Class="rounded-lg h-100 d-flex flex-column"
-         Style="@($"cursor: pointer; overflow: hidden; background-color: #ffffff; transition: all 0.3s ease-out; transform: translateY({_elevacionVertical}px);")"
+         Style="@($"cursor: pointer; overflow: hidden; background-color: var(--av-bg-pure); transition: all 0.3s ease-out; transform: translateY({_elevacionVertical}px);")"
          @onclick="NavegarACategoria"
          @onmouseenter="ActivarHover"
          @onmouseleave="DesactivarHover">
-    
+
     <div style="position: relative;">
 
         @if (!string.IsNullOrEmpty(ImagenPortadaUrl))
@@ -16,8 +16,8 @@
         }
         else
         {
-            <div class="d-flex justify-center align-center" style="height: 220px; background-color: #f8f9fa; border-bottom: 1px solid #eaeaea;">
-                <MudText Typo="Typo.h1" Style="font-weight: 900; color: #dee2e6;">
+            <div class="d-flex justify-center align-center" style="height: 220px; background-color: var(--av-bg-soft); border-bottom: 1px solid var(--av-border);">
+                <MudText Typo="Typo.h1" Style="font-weight: 900; color: var(--av-border);">
                     @(string.IsNullOrWhiteSpace(Nombre) ? "" : Nombre.Substring(0, 1).ToUpper())
                 </MudText>
             </div>
@@ -33,17 +33,17 @@
                                        Size="Size.Small"
                                        Class="mr-2"
                                        Href="@($"/admin/categorias/editar/{Id}")" />
-                    </MudTooltip>                    
+                    </MudTooltip>
                 </div>
             </Authorized>
         </AuthorizeView>
     </div>
-    
+
     <MudCardContent Class="flex-grow-1 pa-6">
-        <MudText Typo="Typo.h5" Style="font-weight: 800; color: #1a1a1a; line-height: 1.2;" Class="mb-3">
+        <MudText Typo="Typo.h5" Style="font-weight: 800; color: var(--av-text-main); line-height: 1.2;" Class="mb-3">
             @Nombre
         </MudText>
-        <MudText Typo="Typo.body2" Style="color: #666; line-height: 1.6;">
+        <MudText Typo="Typo.body2" Style="color: var(--av-text-muted); line-height: 1.6;">
             @DescripcionBreve
         </MudText>
     </MudCardContent>

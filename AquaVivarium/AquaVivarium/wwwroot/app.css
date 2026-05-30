@@ -3,23 +3,29 @@
     --av-bg-pure: #FFFFFF;
     --av-bg-soft: #F9FBF9;
     --av-border: #F1F2F6;
+
     /* Principal */
     --av-primary: #74B816;
-    --av-primary-light: #E8F5E9;
-    --av-primary-deep: #2D5A27;
     --av-text-main: #2D3436;
     --av-text-muted: #636E72;
-    /* Semántica */
-    --av-success: #26b050;
-    --av-error: #e50000;
-    --av-warning: #f5a623;
+
     /* Tipografía */
     --av-font-body: 'Inter', sans-serif;
     /* Efectos y Formas  */
-    --av-shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.03);
-    --av-transition-smooth: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     --av-radius-sm: 8px;
-    --av-radius-lg: 16px;
+}
+
+.av-dark-theme {
+    --av-bg-pure: #121212;
+    --av-bg-soft: #1E1E1E;
+    --av-border: #2D3436;
+
+    --av-text-main: #F9FBF9;
+    --av-text-muted: #A0AAB2;
+
+    --av-shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+    --av-primary-light: #1A2E19;
 }
 
 /* Oculta la estructura rota cuando se cambia entre Servidor y WebAssembly */
