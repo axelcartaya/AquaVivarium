@@ -118,7 +118,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedProto
 });
 
-// Asignar rol Admin al usuario registrado con el email 
+// Asignar rol Admin al usuario registrado con el email
 //if (app.Environment.IsDevelopment())
 //{
 //    using (var scope = app.Services.CreateScope())
@@ -127,7 +127,6 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 //        try
 //        {
 //            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-//            // Aquí está el cambio clave: usamos ApplicationUser
 //            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
 //            if (!await roleManager.RoleExistsAsync("Admin"))

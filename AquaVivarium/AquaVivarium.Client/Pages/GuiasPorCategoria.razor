@@ -29,7 +29,7 @@
     else
     {
         <div class="mb-10">
-            <MudText Typo="Typo.h3" Class="av-text-main" Style="font-weight: 800;">@_categoria.Nombre</MudText>
+            <MudText Typo="Typo.h3" Class="av-text-main" Style="font-weight: 800; word-break: break-word; font-size: clamp(1.5rem, 5vw, 3rem); line-height: 1.2;">@_categoria.Nombre</MudText>
             @if (!string.IsNullOrWhiteSpace(_categoria.DescripcionBreve))
             {
                 <MudText Typo="Typo.subtitle1" Class="av-text-muted mt-2">@_categoria.DescripcionBreve</MudText>

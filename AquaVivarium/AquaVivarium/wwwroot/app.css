@@ -1,14 +1,12 @@
 :root {
     /* Fondos y Estructura */
     --av-bg-pure: #FFFFFF;
-    --av-bg-soft: #F9FBF9;
+    --av-bg-soft: #f9faf2;
     --av-border: #F1F2F6;
-
     /* Principal */
     --av-primary: #74B816;
     --av-text-main: #2D3436;
     --av-text-muted: #636E72;
-
     /* Tipografía */
     --av-font-body: 'Inter', sans-serif;
     /* Efectos y Formas  */

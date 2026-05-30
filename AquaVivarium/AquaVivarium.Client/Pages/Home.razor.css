@@ -134,6 +134,9 @@
     color: var(--av-bg-pure) !important;
 }
 
+section {
+    border-radius: var(--av-radius-sm);
+}
 @media (max-width: 599px) {
     ::deep .hero-section h2,
     ::deep .hero-section .mud-typography-h2 {
