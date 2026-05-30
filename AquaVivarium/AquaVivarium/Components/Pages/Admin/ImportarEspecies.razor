@@ -1,5 +1,6 @@
 ﻿@page "/admin/importar"
 @rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
 @using System.Text.Json
 @using Domain.Interfaces.Repositories
 @using Domain.Models
@@ -7,6 +8,7 @@
 @using SixLabors.ImageSharp
 @using SixLabors.ImageSharp.Processing
 @using System.IO
+@using Microsoft.AspNetCore.Authorization
 @inject IEspecieRepository EspecieRepo
 @inject IPezRepository PezRepo
 @inject IWebHostEnvironment WebHostEnvironment
