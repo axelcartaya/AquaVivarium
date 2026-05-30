@@ -16,7 +16,7 @@
 
 <MudContainer MaxWidth="MaxWidth.ExtraSmall" Class="mt-10">
     <MudCard Class="pa-6" Style="background-color: var(--av-bg-pure);">
-        <MudText Typo="Typo.h4" Class="mb-4 text-center" Style="font-weight: 700; color: var(--av-text-main);">Iniciar Sesión</MudText>
+        <MudText Typo="Typo.h4" Class="mb-4 text-center" Style="font-weight: 700; color: var(--av-text-main);" Align="Align.Center">Iniciar Sesión</MudText>
 
         <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
             <DataAnnotationsValidator />
@@ -73,9 +73,6 @@
                 <MudLink Href="@NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl })" Color="Color.Primary">
                     Registrarse como nuevo usuario
                 </MudLink>
-            </MudText>
-            <MudText Typo="Typo.body2">
-                <MudLink Href="Account/ResendEmailConfirmation" Color="Color.Primary">Reenviar confirmación por correo</MudLink>
             </MudText>
         </div>
     </MudCard>
