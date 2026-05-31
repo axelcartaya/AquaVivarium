@@ -1,4 +1,4 @@
-﻿namespace AquaVivarium.DTOs
+﻿namespace Domain.Models.DTOs
 {
     public class ImportPezDto
     {
