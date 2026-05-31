@@ -20,7 +20,7 @@
 
 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-10">
     <MudCard Class="pa-6" Style="background-color: var(--av-bg-pure);">
-        <MudText Typo="Typo.h4" Class="mb-4 text-center" Align="Align.Center" Style =" font-weight: 700; color: var(--av-text-main);">Registro</MudText>
+        <MudText Typo="Typo.h4" Class="mb-4 text-center" Align="Align.Center" Style=" font-weight: 700; color: var(--av-text-main);">Registro</MudText>
 
         @if (!string.IsNullOrEmpty(Message))
         {
@@ -33,16 +33,16 @@
             <MudDivider Class="mb-6" Style="border-color: var(--av-border);" />
 
             <MudTextField @bind-Value="Input.Email"
+                          For="@(() => Input.Email)"
                           Name="Input.Email"
                           Label="Correo electrónico"
                           Placeholder="ejemplo@correo.com"
                           Required="true"
                           Variant="Variant.Outlined"
-                          Class="mb-4"
-                          Error="@HasError("Email")"
-                          ErrorText="@GetErrorText("Email")" />
+                          Class="mb-4" />
 
             <MudTextField @bind-Value="Input.Password"
+                          For="@(() => Input.Password)"
                           Name="Input.Password"
                           Label="Contraseña"
                           InputType="InputType.Password"
@@ -50,11 +50,10 @@
                           Required="true"
                           Variant="Variant.Outlined"
                           ShrinkLabel="true"
-                          Class="mb-4"
-                          Error="@HasError("Password")"
-                          ErrorText="@GetErrorText("Password")" />
+                          Class="mb-4" />
 
             <MudTextField @bind-Value="Input.ConfirmPassword"
+                          For="@(() => Input.ConfirmPassword)"
                           Name="Input.ConfirmPassword"
                           Label="Confirmar contraseña"
                           InputType="InputType.Password"
@@ -62,9 +61,7 @@
                           Required="true"
                           Variant="Variant.Outlined"
                           ShrinkLabel="true"
-                          Class="mb-6"
-                          Error="@HasError("ConfirmPassword")"
-                          ErrorText="@GetErrorText("ConfirmPassword")" />
+                          Class="mb-6" />
 
             <MudButton Variant="Variant.Filled"
                        Color="Color.Primary"
@@ -80,37 +77,16 @@
 
 @code {
     private IEnumerable<IdentityError>? identityErrors;
-    private EditContext? editContext;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = default!;
+    private InputModel Input { get; set; } = new();
 
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 
     private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
 
-    protected override void OnInitialized()
-    {
-        Input ??= new();
-        editContext = new EditContext(Input);
-    }
-
-    private bool HasError(string fieldName)
-    {
-        if (editContext == null) return false;
-        var fieldIdentifier = new FieldIdentifier(Input, fieldName);
-        return editContext.GetValidationMessages(fieldIdentifier).Any();
-    }
-
-    private string GetErrorText(string fieldName)
-    {
-        if (editContext == null) return string.Empty;
-        var fieldIdentifier = new FieldIdentifier(Input, fieldName);
-        return editContext.GetValidationMessages(fieldIdentifier).FirstOrDefault() ?? string.Empty;
-    }
-
-    public async Task RegisterUser(EditContext ctx)
+    public async Task RegisterUser()
     {
         var user = CreateUser();
 
@@ -179,7 +155,7 @@
         public string Email { get; set; } = "";
 
         [Required(ErrorMessage = "La contraseña es obligatoria.")]
-        [StringLength(100, ErrorMessage = "La {0} debe tener al menos {2} y un máximo de {1} caracteres.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "La contraseña debe tener al menos {2} y un máximo de {1} caracteres.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Contraseña")]
         public string Password { get; set; } = "";
