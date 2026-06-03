@@ -48,7 +48,8 @@ namespace Microsoft.AspNetCore.Routing
             {
                 await signInManager.SignOutAsync();
                 return TypedResults.LocalRedirect($"~/{returnUrl}");
-            });
+            })
+            .DisableAntiforgery(); 
 
             accountGroup.MapPost("/PasskeyCreationOptions", async (
                 HttpContext context,
