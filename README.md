@@ -74,9 +74,7 @@ El almacenamiento persistente recae sobre **Microsoft SQL Server**, gestionado �
 
 El diseño relacional aplica estrictos principios de normalización (Tercera Forma Normal) para garantizar la integridad referencial y evitar anomalías transaccionales.
 
-<div align="center">
-  <img src="docs/images/EntidadRelacion.png" alt="Diagrama Entidad-Relación" style="background-color: white; padding: 10px; border-radius: 5px;" />
-</div>
+![Diagrama entidad relación](docs/images/EntidadRelacion.jpg)
 
 ---
 
