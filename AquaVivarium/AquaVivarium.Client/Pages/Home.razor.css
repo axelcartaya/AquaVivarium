@@ -137,6 +137,22 @@
 section {
     border-radius: var(--av-radius-sm);
 }
+
+/*Permitir scroll vertical en dispositivos móviles */
+::deep .hero-image-wrapper .mud-swipe-area,
+::deep .hero-image-wrapper .mud-carousel-transition,
+::deep .hero-image-wrapper .mud-carousel-previous,
+::deep .hero-image-wrapper .mud-carousel-next,
+::deep .hero-image-wrapper .mud-carousel-item {
+    pointer-events: none !important;
+    touch-action: pan-y !important; 
+}
+::deep .hero-image-wrapper .mud-carousel-bullets,
+::deep .hero-image-wrapper .mud-carousel-bullets .mud-button-root {
+    pointer-events: auto !important;
+    z-index: 100 !important;
+}
+
 @media (max-width: 599px) {
     ::deep .hero-section h2,
     ::deep .hero-section .mud-typography-h2 {
