@@ -99,7 +99,6 @@ namespace Data.Repositories
                     .ThenInclude(e => e.EspecieImagenes)
                 .AsQueryable();
 
-            // --- Filtros de texto (Especies) ---
             if (!string.IsNullOrWhiteSpace(filtro.Nombre))
                 query = query.Where(p => p.Especie.Nombre.Contains(filtro.Nombre));
 
@@ -109,12 +108,9 @@ namespace Data.Repositories
             if (!string.IsNullOrWhiteSpace(filtro.Genero))
                 query = query.Where(p => p.Especie.Genero.Contains(filtro.Genero));
 
-            // ¡Solucionado! Aquí faltaba procesar la Dificultad que mandaba la interfaz
             if (!string.IsNullOrWhiteSpace(filtro.Dificultad))
                 query = query.Where(p => p.Especie.Dificultad == filtro.Dificultad);
 
-
-            // --- LÓGICA CORREGIDA PARA RANGOS QUÍMICOS (Cruce de rangos) ---
             if (filtro.PhDesde.HasValue)
                 query = query.Where(p => p.Especie.PhMax >= filtro.PhDesde.Value);
 
@@ -133,8 +129,6 @@ namespace Data.Repositories
             if (filtro.GhHasta.HasValue)
                 query = query.Where(p => p.Especie.GhMin <= filtro.GhHasta.Value);
 
-
-            // --- Filtros fijos de Peces (El tamaño es valor fijo, la lógica era correcta) ---
             if (filtro.TamanoDesde.HasValue)
                 query = query.Where(p => p.TamanoMaxCm >= filtro.TamanoDesde.Value);
 
@@ -144,8 +138,6 @@ namespace Data.Repositories
             if (!string.IsNullOrWhiteSpace(filtro.Alimentacion))
                 query = query.Where(p => p.Alimentacion == filtro.Alimentacion);
 
-
-            // --- Paginación ---
             var totalCount = await query.CountAsync();
 
             var peces = await query
